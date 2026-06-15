@@ -110,3 +110,109 @@ async def test_save_assets_promotes_temporary_asset_id(
     )
     assert temp_asset.asset_id not in images[0]["public_url"]
     assert len(list(asset_dir.iterdir())) == 1
+
+
+@pytest.mark.asyncio
+async def test_generate_images_prefers_quickrouter_when_key_present(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, object] = {}
+
+    async def fake_process_tasks(
+        prompts: list[str],
+        api_key: str,
+        base_url: str | None,
+        model: str,
+    ) -> list[str]:
+        captured["prompts"] = prompts
+        captured["api_key"] = api_key
+        captured["base_url"] = base_url
+        captured["model"] = model
+        return ["https://example.com/generated.png"]
+
+    monkeypatch.setattr("agent.tools.runtime.QUICKROUTER_IMAGE_API_KEY", "quick-key")
+    monkeypatch.setattr(
+        "agent.tools.runtime.QUICKROUTER_IMAGE_BASE_URL",
+        "https://api.quickrouter.ai/v1",
+    )
+    monkeypatch.setattr("agent.tools.runtime.REPLICATE_API_KEY", "replicate-key")
+    monkeypatch.setattr("agent.tools.runtime.process_tasks", fake_process_tasks)
+
+    runtime = AgentToolRuntime(
+        file_state=AgentFileState(),
+        should_generate_images=True,
+        openai_api_key="openai-key",
+        openai_base_url="https://vip-sg.freemodel.dev",
+    )
+
+    result = await runtime.execute(
+        ToolCall(
+            id="call-1",
+            name="generate_images",
+            arguments={"prompts": ["hero banner"]},
+        )
+    )
+
+    assert result.ok is True
+    assert captured == {
+        "prompts": ["hero banner"],
+        "api_key": "quick-key",
+        "base_url": "https://api.quickrouter.ai/v1",
+        "model": "quickrouter",
+    }
+
+
+@pytest.mark.asyncio
+async def test_replace_background_uses_quickrouter_when_key_present(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_replace_background_quickrouter(
+        image_url: str,
+        prompt: str,
+        api_key: str,
+        *,
+        base_url: str = "https://api.quickrouter.ai",
+    ) -> dict[str, str]:
+        return {
+            "request_id": "req-123",
+            "task_id": "task-123",
+            "task_status": "submitted",
+            "result_url": "https://example.com/replaced.png",
+        }
+
+    monkeypatch.setattr("agent.tools.runtime.QUICKROUTER_IMAGE_API_KEY", "quick-key")
+    monkeypatch.setattr(
+        "agent.tools.runtime.replace_background_quickrouter",
+        fake_replace_background_quickrouter,
+    )
+
+    runtime = AgentToolRuntime(
+        file_state=AgentFileState(),
+        should_generate_images=True,
+        openai_api_key="openai-key",
+        openai_base_url="https://vip-sg.freemodel.dev",
+    )
+
+    result = await runtime.execute(
+        ToolCall(
+            id="call-1",
+            name="replace_background",
+            arguments={
+                "image_urls": ["https://example.com/input.png"],
+                "prompt": "Replace the background with a cozy cafe interior",
+            },
+        )
+    )
+
+    assert result.ok is True
+    assert result.result["images"] == [
+        {
+            "image_url": "https://example.com/input.png",
+            "prompt": "Replace the background with a cozy cafe interior",
+            "result_url": "https://example.com/replaced.png",
+            "task_id": "task-123",
+            "task_status": "submitted",
+            "request_id": "req-123",
+            "status": "ok",
+        }
+    ]

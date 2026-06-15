@@ -185,7 +185,7 @@ class TestModelSelectionOpenAIOnly:
 
     @pytest.mark.asyncio
     async def test_openai_only(self):
-        """OpenAI only: GPT 5.2 Codex (high/medium) only"""
+        """OpenAI only: GPT 5.5 (high/medium) only"""
         models = await self.model_selector.select_models(
             generation_type="create",
             input_mode="text",
@@ -195,10 +195,10 @@ class TestModelSelectionOpenAIOnly:
         )
 
         expected = [
-            Llm.GPT_5_2_CODEX_HIGH,
-            Llm.GPT_5_2_CODEX_MEDIUM,
-            Llm.GPT_5_2_CODEX_HIGH,
-            Llm.GPT_5_2_CODEX_MEDIUM,
+            Llm.GPT_5_5_HIGH,
+            Llm.GPT_5_5_MEDIUM,
+            Llm.GPT_5_5_HIGH,
+            Llm.GPT_5_5_MEDIUM,
         ]
         assert models == expected
 

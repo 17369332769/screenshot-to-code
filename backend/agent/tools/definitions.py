@@ -89,6 +89,26 @@ def _remove_background_schema() -> Dict[str, Any]:
     }
 
 
+def _replace_background_schema() -> Dict[str, Any]:
+    return {
+        "type": "object",
+        "properties": {
+            "image_urls": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "description": "URL of an image whose background should be replaced.",
+                },
+            },
+            "prompt": {
+                "type": "string",
+                "description": "Description of the new background to place behind the subject.",
+            },
+        },
+        "required": ["image_urls", "prompt"],
+    }
+
+
 def _retrieve_option_schema() -> Dict[str, Any]:
     return {
         "type": "object",
@@ -145,6 +165,15 @@ def canonical_tool_definitions(
                     "transparent backgrounds."
                 ),
                 parameters=_remove_background_schema(),
+            ),
+            CanonicalToolDefinition(
+                name="replace_background",
+                description=(
+                    "Replace the background in one or more images using a text prompt. "
+                    "Returns available result URLs plus task metadata from the "
+                    "background replacement service."
+                ),
+                parameters=_replace_background_schema(),
             ),
             SAVE_ASSETS_TOOL_DEFINITION,
             CanonicalToolDefinition(

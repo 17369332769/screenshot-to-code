@@ -4,6 +4,8 @@ from typing import List, Literal, Union
 
 from openai import AsyncOpenAI
 
+from config import QUICKROUTER_IMAGE_MODEL
+from image_generation.quickrouter import generate_image_quickrouter
 from image_generation.replicate import (
     DEFAULT_IMAGE_MODEL,
     ReplicateImageModel,
@@ -19,12 +21,25 @@ async def process_tasks(
     prompts: List[str],
     api_key: str,
     base_url: str | None,
-    model: Literal["dalle3", "flux"],
+    model: Literal["dalle3", "flux", "quickrouter"],
 ) -> List[Union[str, None]]:
     start_time = time.time()
     results: list[str | BaseException | None]
     if model == "dalle3":
         tasks = [generate_image_dalle(prompt, api_key, base_url) for prompt in prompts]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+    elif model == "quickrouter":
+        if not base_url:
+            raise ValueError("QuickRouter image generation requires a base URL")
+        tasks = [
+            generate_image_quickrouter(
+                prompt,
+                api_key,
+                base_url,
+                QUICKROUTER_IMAGE_MODEL,
+            )
+            for prompt in prompts
+        ]
         results = await asyncio.gather(*tasks, return_exceptions=True)
     else:
         results = []

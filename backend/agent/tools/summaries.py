@@ -64,6 +64,16 @@ def summarize_tool_input(tool_call: ToolCall, file_state: AgentFileState) -> Dic
             }
         return {"image_urls": []}
 
+    if tool_call.name == "replace_background":
+        image_urls = args.get("image_urls") or []
+        if isinstance(image_urls, list):
+            return {
+                "count": len(image_urls),
+                "image_urls": [ensure_str(u) for u in image_urls],
+                "prompt": ensure_str(args.get("prompt")),
+            }
+        return {"image_urls": [], "prompt": ensure_str(args.get("prompt"))}
+
     if tool_call.name == "save_assets":
         return summarize_save_assets_input(args)
 

@@ -11,6 +11,13 @@ OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", None)
 
 # Image generation (optional)
 REPLICATE_API_KEY = os.environ.get("REPLICATE_API_KEY", None)
+QUICKROUTER_IMAGE_API_KEY = os.environ.get("QUICKROUTER_IMAGE_API_KEY", None)
+QUICKROUTER_IMAGE_BASE_URL = os.environ.get(
+    "QUICKROUTER_IMAGE_BASE_URL", "https://api.quickrouter.ai/v1"
+)
+QUICKROUTER_IMAGE_MODEL = os.environ.get(
+    "QUICKROUTER_IMAGE_MODEL", "gpt-image-2-all"
+)
 
 # Debugging-related
 IS_DEBUG_ENABLED = bool(os.environ.get("IS_DEBUG_ENABLED", False))

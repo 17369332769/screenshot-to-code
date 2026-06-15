@@ -4,8 +4,13 @@ import difflib
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from codegen.utils import extract_html_content
-from config import REPLICATE_API_KEY
+from config import (
+    QUICKROUTER_IMAGE_API_KEY,
+    QUICKROUTER_IMAGE_BASE_URL,
+    REPLICATE_API_KEY,
+)
 from image_generation.generation import process_tasks
+from image_generation.quickrouter_ideogram import replace_background_quickrouter
 from image_generation.replicate import remove_background
 from uploaded_assets.tools import run_save_assets
 
@@ -51,6 +56,8 @@ class AgentToolRuntime:
             return await self._generate_images(tool_call.arguments)
         if tool_call.name == "remove_background":
             return await self._remove_background(tool_call.arguments)
+        if tool_call.name == "replace_background":
+            return await self._replace_background(tool_call.arguments)
         if tool_call.name == "save_assets":
             return await run_save_assets(tool_call.arguments, user_id=self.user_id)
         if tool_call.name == "retrieve_option":
@@ -243,7 +250,11 @@ class AgentToolRuntime:
                 result={"error": "No valid prompts provided"},
                 summary={"error": "No valid prompts"},
             )
-        if REPLICATE_API_KEY:
+        if QUICKROUTER_IMAGE_API_KEY:
+            model = "quickrouter"
+            api_key = QUICKROUTER_IMAGE_API_KEY
+            base_url = QUICKROUTER_IMAGE_BASE_URL
+        elif REPLICATE_API_KEY:
             model = "flux"
             api_key = REPLICATE_API_KEY
             base_url = None
@@ -324,6 +335,101 @@ class AgentToolRuntime:
             {
                 "image_url": summarize_text(r["image_url"], 100),
                 "result_url": r["result_url"],
+                "status": r["status"],
+            }
+            for r in results
+        ]
+        return ToolExecutionResult(
+            ok=True,
+            result={"images": results},
+            summary={"images": summary_items},
+        )
+
+    async def _replace_background(self, args: Dict[str, Any]) -> ToolExecutionResult:
+        if not QUICKROUTER_IMAGE_API_KEY:
+            return ToolExecutionResult(
+                ok=False,
+                result={
+                    "error": "Background replacement requires QUICKROUTER_IMAGE_API_KEY."
+                },
+                summary={"error": "Missing QuickRouter image API key"},
+            )
+
+        image_urls = args.get("image_urls") or []
+        prompt = ensure_str(args.get("prompt"))
+        if not isinstance(image_urls, list) or not image_urls:
+            return ToolExecutionResult(
+                ok=False,
+                result={
+                    "error": "replace_background requires a non-empty image_urls list"
+                },
+                summary={"error": "Missing image_urls"},
+            )
+        if not prompt:
+            return ToolExecutionResult(
+                ok=False,
+                result={"error": "replace_background requires a prompt"},
+                summary={"error": "Missing prompt"},
+            )
+
+        cleaned = [url.strip() for url in image_urls if isinstance(url, str)]
+        unique_urls = list(dict.fromkeys([u for u in cleaned if u]))
+        if not unique_urls:
+            return ToolExecutionResult(
+                ok=False,
+                result={"error": "No valid image URLs provided"},
+                summary={"error": "No valid image_urls"},
+            )
+
+        raw_results: list[dict[str, Any] | BaseException] = []
+        for url in unique_urls:
+            try:
+                raw = await replace_background_quickrouter(
+                    url,
+                    prompt,
+                    QUICKROUTER_IMAGE_API_KEY,
+                    base_url="https://api.quickrouter.ai",
+                )
+                raw_results.append(raw)
+            except BaseException as exc:
+                raw_results.append(exc)
+
+        results: List[Dict[str, Any]] = []
+        for url, raw in zip(unique_urls, raw_results):
+            if isinstance(raw, BaseException):
+                print(f"Background replacement failed for {url}: {raw}")
+                results.append(
+                    {
+                        "image_url": url,
+                        "prompt": prompt,
+                        "result_url": None,
+                        "task_id": None,
+                        "task_status": "error",
+                        "request_id": None,
+                        "status": "error",
+                    }
+                )
+            else:
+                task_status = ensure_str(raw.get("task_status")) or "submitted"
+                results.append(
+                    {
+                        "image_url": url,
+                        "prompt": prompt,
+                        "result_url": raw.get("result_url"),
+                        "task_id": raw.get("task_id"),
+                        "task_status": task_status,
+                        "request_id": raw.get("request_id"),
+                        "status": "ok",
+                    }
+                )
+
+        summary_items = [
+            {
+                "image_url": summarize_text(r["image_url"], 100),
+                "prompt": summarize_text(r["prompt"], 120),
+                "result_url": r["result_url"],
+                "task_id": r["task_id"],
+                "task_status": r["task_status"],
                 "status": r["status"],
             }
             for r in results
