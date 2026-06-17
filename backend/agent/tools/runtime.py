@@ -8,6 +8,8 @@ from config import (
     QUICKROUTER_IMAGE_API_KEY,
     QUICKROUTER_IMAGE_BASE_URL,
     REPLICATE_API_KEY,
+    RUNNINGHUB_API_KEY,
+    RUNNINGHUB_BASE_URL,
 )
 from image_generation.generation import process_tasks
 from image_generation.quickrouter_ideogram import replace_background_quickrouter
@@ -250,7 +252,11 @@ class AgentToolRuntime:
                 result={"error": "No valid prompts provided"},
                 summary={"error": "No valid prompts"},
             )
-        if QUICKROUTER_IMAGE_API_KEY:
+        if RUNNINGHUB_API_KEY:
+            model = "runninghub"
+            api_key = RUNNINGHUB_API_KEY
+            base_url = RUNNINGHUB_BASE_URL
+        elif QUICKROUTER_IMAGE_API_KEY:
             model = "quickrouter"
             api_key = QUICKROUTER_IMAGE_API_KEY
             base_url = QUICKROUTER_IMAGE_BASE_URL

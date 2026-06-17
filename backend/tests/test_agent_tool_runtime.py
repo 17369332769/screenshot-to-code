@@ -113,7 +113,7 @@ async def test_save_assets_promotes_temporary_asset_id(
 
 
 @pytest.mark.asyncio
-async def test_generate_images_prefers_quickrouter_when_key_present(
+async def test_generate_images_prefers_runninghub_when_key_present(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     captured: dict[str, object] = {}
@@ -130,6 +130,11 @@ async def test_generate_images_prefers_quickrouter_when_key_present(
         captured["model"] = model
         return ["https://example.com/generated.png"]
 
+    monkeypatch.setattr("agent.tools.runtime.RUNNINGHUB_API_KEY", "runninghub-key")
+    monkeypatch.setattr(
+        "agent.tools.runtime.RUNNINGHUB_BASE_URL",
+        "https://www.runninghub.cn",
+    )
     monkeypatch.setattr("agent.tools.runtime.QUICKROUTER_IMAGE_API_KEY", "quick-key")
     monkeypatch.setattr(
         "agent.tools.runtime.QUICKROUTER_IMAGE_BASE_URL",
@@ -156,9 +161,9 @@ async def test_generate_images_prefers_quickrouter_when_key_present(
     assert result.ok is True
     assert captured == {
         "prompts": ["hero banner"],
-        "api_key": "quick-key",
-        "base_url": "https://api.quickrouter.ai/v1",
-        "model": "quickrouter",
+        "api_key": "runninghub-key",
+        "base_url": "https://www.runninghub.cn",
+        "model": "runninghub",
     }
 
 

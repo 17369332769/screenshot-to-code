@@ -18,6 +18,11 @@ QUICKROUTER_IMAGE_BASE_URL = os.environ.get(
 QUICKROUTER_IMAGE_MODEL = os.environ.get(
     "QUICKROUTER_IMAGE_MODEL", "gpt-image-2-all"
 )
+RUNNINGHUB_API_KEY = os.environ.get("RUNNINGHUB_API_KEY", None)
+RUNNINGHUB_BASE_URL = os.environ.get("RUNNINGHUB_BASE_URL", "https://www.runninghub.cn")
+RUNNINGHUB_IMAGE_MODEL = os.environ.get(
+    "RUNNINGHUB_IMAGE_MODEL", "rhart-image-g-2-official/text-to-image"
+)
 
 # Debugging-related
 IS_DEBUG_ENABLED = bool(os.environ.get("IS_DEBUG_ENABLED", False))
