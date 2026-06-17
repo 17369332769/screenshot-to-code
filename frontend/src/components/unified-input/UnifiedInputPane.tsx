@@ -7,6 +7,7 @@ import UrlTab from "./tabs/UrlTab";
 import TextTab from "./tabs/TextTab";
 import ImportTab from "./tabs/ImportTab";
 import { DesignSystemSelectorProps } from "../settings/DesignSystemSelector";
+import { useI18n } from "../../i18n";
 
 interface Props {
   doCreate: (
@@ -35,6 +36,7 @@ function UnifiedInputPane({
   onAddNewDesignSystem,
   onManageDesignSystems,
 }: Props) {
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<InputTab>("upload");
 
   function setStack(stack: Stack) {
@@ -60,44 +62,44 @@ function UnifiedInputPane({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4">
+    <div className="w-full max-w-5xl mx-auto">
       <Tabs
         value={activeTab}
         onValueChange={(value) => setActiveTab(value as InputTab)}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-4 mb-6">
+        <TabsList className="mb-6 grid h-auto w-full grid-cols-2 gap-2 rounded-[1.4rem] border border-stone-200/80 bg-white/70 p-2 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/80 sm:grid-cols-4">
           <TabsTrigger
             value="upload"
-            className="flex items-center gap-2"
+            className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl text-sm data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
             data-testid="tab-upload"
           >
             <UploadIcon />
-            <span className="hidden sm:inline">Upload</span>
+            <span>{t("uploadTab")}</span>
           </TabsTrigger>
           <TabsTrigger
             value="url"
-            className="flex items-center gap-2"
+            className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl text-sm data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
             data-testid="tab-url"
           >
             <UrlIcon />
-            <span className="hidden sm:inline">URL</span>
+            <span>{t("urlTab")}</span>
           </TabsTrigger>
           <TabsTrigger
             value="text"
-            className="flex items-center gap-2"
+            className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl text-sm data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
             data-testid="tab-text"
           >
             <TextIcon />
-            <span className="hidden sm:inline">Text</span>
+            <span>{t("textTab")}</span>
           </TabsTrigger>
           <TabsTrigger
             value="import"
-            className="flex items-center gap-2"
+            className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl text-sm data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
             data-testid="tab-import"
           >
             <ImportIcon />
-            <span className="hidden sm:inline">Import</span>
+            <span>{t("importTab")}</span>
           </TabsTrigger>
         </TabsList>
 

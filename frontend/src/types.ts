@@ -1,5 +1,6 @@
 import { Stack } from "./lib/stacks";
 import { CodeGenerationModel } from "./lib/models";
+import type { Commit } from "./components/commits/types";
 
 export enum EditorTheme {
   ESPRESSO = "espresso",
@@ -89,3 +90,15 @@ export type FullGenerationSettings = CodeGenerationParams &
   Settings & {
     designSystem?: string | null;
   };
+
+export interface HostedProjectSnapshot {
+  name: string;
+  appState: AppState;
+  stack: Stack | null;
+  inputMode: "image" | "video" | "text" | null;
+  initialPrompt: string;
+  referenceImages: string[];
+  commits: Record<string, Commit>;
+  head: string | null;
+  latestCommitHash: string | null;
+}

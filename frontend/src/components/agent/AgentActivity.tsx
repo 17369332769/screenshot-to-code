@@ -37,7 +37,10 @@ function CodePreviewBlock({ code, isGenerating }: { code: string; isGenerating: 
   }, [code, isGenerating]);
 
   return (
-    <div ref={containerRef} className="max-h-60 overflow-auto rounded-md">
+    <div
+      ref={containerRef}
+      className="max-h-60 overflow-auto rounded-xl border border-stone-200 dark:border-zinc-700"
+    >
       <SyntaxHighlighter
         language="html"
         style={vs2015}
@@ -183,7 +186,7 @@ function renderToolDetails(event: AgentEvent, variantCode?: string) {
       json = json.slice(0, 900) + "...";
     }
     return (
-      <pre className="mt-2 rounded-md bg-gray-50 dark:bg-gray-800 p-2 text-xs text-gray-700 dark:text-gray-200 overflow-x-auto">
+      <pre className="mt-2 overflow-x-auto rounded-xl bg-stone-100 p-2 text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-200">
         {json}
       </pre>
     );
@@ -457,7 +460,7 @@ function AgentEventCard({
   if (event.type === "assistant") {
     if (!event.content) return null;
     return (
-      <div className="py-1 text-sm text-gray-700 dark:text-gray-300 prose prose-sm dark:prose-invert max-w-none">
+      <div className="studio-panel prose prose-sm max-w-none rounded-[1.15rem] px-4 py-3 text-sm text-gray-700 dark:prose-invert dark:text-gray-300">
         <ReactMarkdown
           components={{
             img: ({ ...props }) => (
@@ -481,7 +484,7 @@ function AgentEventCard({
     <div>
       <button
         onClick={() => setExpanded((prev) => !prev)}
-        className="w-full flex items-center gap-2 py-1.5 text-left text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+        className="flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left text-gray-500 transition-colors hover:bg-stone-100/70 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-zinc-800 dark:hover:text-gray-300"
       >
         {getEventIcon(event.type, event.toolName)}
         <span className={`text-sm flex-1 ${event.status === "running" ? "active-step-shimmer" : ""}`}>
@@ -494,9 +497,9 @@ function AgentEventCard({
         )}
       </button>
       {isExpanded && (
-        <div className="pb-2">
+        <div className="pb-2 pl-2 pr-1">
           {event.type === "thinking" && event.content && (
-            <div className="prose prose-sm dark:prose-invert max-w-none">
+            <div className="prose prose-sm max-w-none rounded-[1rem] border border-stone-200/80 bg-white/75 p-3 dark:prose-invert dark:border-zinc-800 dark:bg-zinc-900/50">
               <ReactMarkdown
                 components={{
                   img: ({ ...props }) => (
@@ -576,7 +579,7 @@ function AgentActivity() {
   const assistantEvents = events.filter((e) => e.type === "assistant");
 
   return (
-    <div className="space-y-1 mb-3">
+    <div className="mb-3 space-y-2">
       {isDone ? (
         <>
           {/* Collapsed steps summary */}
@@ -587,7 +590,7 @@ function AgentActivity() {
                 [variantUiKey]: !prev[variantUiKey],
               }))
             }
-            className="w-full flex items-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/60 px-3 py-2 text-left"
+            className="studio-panel flex w-full items-center gap-2 rounded-[1.2rem] px-3 py-2 text-left"
           >
             {stepsExpanded ? (
               <BsChevronDown className="text-gray-400 text-xs" />
@@ -599,7 +602,7 @@ function AgentActivity() {
             </span>
           </button>
           {stepsExpanded && (
-            <div className="space-y-1">
+            <div className="studio-panel space-y-1 rounded-[1.2rem] p-2">
               {stepEvents.map((event) => (
                 <AgentEventCard key={event.id} event={event} variantCode={event.toolName === "create_file" ? variantCode : undefined} />
               ))}
@@ -616,7 +619,7 @@ function AgentActivity() {
         </>
       ) : (
         <>
-          <div className="flex items-center justify-between rounded-xl border border-violet-200 dark:border-violet-800 bg-gradient-to-r from-violet-50 to-white dark:from-violet-900/20 dark:to-zinc-900 px-3 py-2 shadow-[0_0_15px_-3px_rgba(139,92,246,0.3)] dark:shadow-[0_0_15px_-3px_rgba(139,92,246,0.4)] transition-all duration-500">
+          <div className="flex items-center justify-between rounded-[1.2rem] border border-cyan-200 bg-gradient-to-r from-cyan-50 to-white px-3 py-2 shadow-[0_0_15px_-3px_rgba(34,211,238,0.22)] transition-all duration-500 dark:border-cyan-900/50 dark:from-cyan-950/20 dark:to-zinc-900 dark:shadow-[0_0_15px_-3px_rgba(34,211,238,0.2)]">
             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
               <WorkingPulse />
               <span>Working...</span>

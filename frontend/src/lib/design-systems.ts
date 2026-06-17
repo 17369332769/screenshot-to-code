@@ -28,7 +28,51 @@ export interface DesignSystemsClient {
   deleteDesignSystem: (id: string) => Promise<void>;
 }
 
-export const NEW_DESIGN_SYSTEM_CONTENT = "";
+export const NEW_DESIGN_SYSTEM_CONTENT = `Create interfaces for a screenshot-to-code product with a precise creative-tool aesthetic.
+
+Brand direction:
+- Feel like a modern design lab or developer workbench, not a generic SaaS landing page.
+- Balance technical precision with editorial calm.
+- The result should feel trustworthy, sharp, and premium without looking flashy.
+
+Color:
+- Prefer warm off-white, graphite, ink, soft stone, and restrained accent colors.
+- Use accent colors sparingly for focus states, key actions, progress, and selected surfaces.
+- Avoid purple-heavy gradients and neon rainbow palettes.
+
+Typography:
+- Use bold, compact heading hierarchy with clear contrast against quieter body copy.
+- Favor a sophisticated sans-serif look with tight headline tracking and comfortable body spacing.
+- Avoid oversized marketing copy blocks that feel generic.
+
+Layout and composition:
+- Emphasize structured panels, workspaces, rails, canvases, inspectors, and staged content blocks.
+- Use asymmetric composition when it helps create visual hierarchy.
+- Let the page breathe with generous spacing and distinct section rhythm.
+- Avoid repeating identical card grids for every section.
+
+Components:
+- Prefer rounded-xl or rounded-2xl surfaces, thin borders, layered panels, and subtle shadow depth.
+- Buttons should feel intentional and tactile, not bubbly or toy-like.
+- Inputs, tabs, and upload areas should resemble professional tooling.
+- Showcase outputs inside framed canvases, browser shells, or mock workspaces.
+
+Motion and interaction:
+- Use restrained motion: soft fades, panel lift, shimmer only when it communicates work in progress.
+- Hover states should be crisp and minimal.
+- Avoid decorative animation that competes with the product.
+
+Content tone:
+- Be concise, product-focused, and concrete.
+- Describe transformation, iteration, output quality, and workflow speed.
+- Avoid vague hype language and filler marketing copy.
+
+Anti-patterns:
+- Do not generate cookie-cutter startup pages.
+- Do not rely on large gradient blobs as the main visual idea.
+- Do not make every section a centered headline above three identical cards.
+- Do not overuse emojis, glossy glassmorphism, or fake analytics widgets.
+- Do not make the UI feel like a crypto dashboard or consumer social app.`;
 
 async function parseJsonResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {

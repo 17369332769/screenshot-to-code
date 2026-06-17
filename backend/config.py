@@ -1,5 +1,18 @@
 import os
 
+
+def env_flag(name: str, default: bool = False) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def env_list(name: str) -> list[str]:
+    value = os.environ.get(name, "")
+    return [item.strip() for item in value.split(",") if item.strip()]
+
 NUM_VARIANTS = 4
 NUM_VARIANTS_VIDEO = 2
 
@@ -25,7 +38,7 @@ RUNNINGHUB_IMAGE_MODEL = os.environ.get(
 )
 
 # Debugging-related
-IS_DEBUG_ENABLED = bool(os.environ.get("IS_DEBUG_ENABLED", False))
+IS_DEBUG_ENABLED = env_flag("IS_DEBUG_ENABLED", default=False)
 DEBUG_DIR = os.environ.get("DEBUG_DIR", "")
 
 # When enabled, every LLM request is written to run_logs/prompt_reports as a
@@ -39,4 +52,12 @@ LOCAL_ASSET_DIR = os.environ.get(
 
 # Set to True when running in production (on the hosted version)
 # Used as a feature flag to enable or disable certain features
-IS_PROD = os.environ.get("IS_PROD", False)
+IS_PROD = env_flag("IS_PROD", default=False)
+
+# Comma-separated list of allowed browser origins in production, for example:
+# https://yourdomain.com,https://www.yourdomain.com
+ALLOWED_CORS_ORIGINS = env_list("ALLOWED_CORS_ORIGINS")
+
+# Hosted account features
+ENABLE_AUTH = env_flag("ENABLE_AUTH", default=IS_PROD)
+FREE_GENERATIONS_PER_USER = int(os.environ.get("FREE_GENERATIONS_PER_USER", "10"))

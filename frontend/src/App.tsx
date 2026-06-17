@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { generateCode } from "./generateCode";
-import { AppState, AppTheme, EditorTheme, Settings } from "./types";
+import {
+  AppState,
+  AppTheme,
+  EditorTheme,
+  HostedProjectSnapshot,
+  Settings,
+} from "./types";
 import { NEW_DESIGN_SYSTEM_CONTENT } from "./lib/design-systems";
 import { IS_RUNNING_ON_CLOUD } from "./config";
 import { OnboardingNote } from "./components/messages/OnboardingNote";
@@ -36,8 +42,21 @@ import SettingsTab from "./components/settings/SettingsTab";
 import DesignSystemsModal from "./components/settings/DesignSystemsModal";
 import { Commit } from "./components/commits/types";
 import { createCommit } from "./components/commits/utils";
+import {
+  createProject,
+  fetchProjects,
+  fetchSession,
+  updateProject,
+} from "./lib/account";
+import { useAccountStore } from "./store/account-store";
+import LanguageToggle from "./components/core/LanguageToggle";
+import { useI18n, translateCurrent } from "./i18n";
+
+const DEFAULT_DESIGN_SYSTEM_ID = "precision-canvas";
 
 function App() {
+  const { t } = useI18n();
+
   const {
     // Inputs
     inputMode,
@@ -69,6 +88,7 @@ function App() {
     // Outputs
     appendExecutionConsole,
     resetExecutionConsoles,
+    hydrateProjectSnapshot,
   } = useProjectStore();
 
   const {
@@ -82,6 +102,16 @@ function App() {
     setSelectedElement,
   } = useAppStore();
 
+  const {
+    session,
+    currentProjectId,
+    setSession,
+    setProjects,
+    upsertProject,
+    setCurrentProjectId,
+    setIsAuthLoading,
+  } = useAccountStore();
+
   // Settings
   const [settings, setSettings] = usePersistedState<Settings>(
     {
@@ -94,7 +124,7 @@ function App() {
       editorTheme: EditorTheme.COBALT,
       generatedCodeConfig: Stack.HTML_TAILWIND,
       codeGenerationModel: CodeGenerationModel.GPT_5_5_HIGH,
-      selectedDesignSystemId: null,
+      selectedDesignSystemId: DEFAULT_DESIGN_SYSTEM_ID,
       // Only relevant for hosted version
       isTermOfServiceAccepted: false,
     },
@@ -150,7 +180,7 @@ function App() {
       openDesignSystemsManager(created.id);
     } catch (error) {
       console.error("Failed to create design system", error);
-      toast.error("Could not create design system.");
+      toast.error(translateCurrent("createDesignSystemError"));
     }
   }, [
     createDesignSystem,
@@ -179,7 +209,7 @@ function App() {
     if (!("selectedDesignSystemId" in settings)) {
       setSettings((prev) => ({
         ...prev,
-        selectedDesignSystemId: null,
+        selectedDesignSystemId: DEFAULT_DESIGN_SYSTEM_ID,
       }));
     }
   }, [settings, setSettings]);
@@ -228,6 +258,97 @@ function App() {
     };
   }, [appTheme]);
 
+  useEffect(() => {
+    if (!IS_RUNNING_ON_CLOUD) return;
+
+    let isMounted = true;
+    setIsAuthLoading(true);
+
+    const bootstrapAccount = async () => {
+      try {
+        const nextSession = await fetchSession();
+        if (!isMounted) return;
+        setSession(nextSession);
+        const projects = await fetchProjects();
+        if (!isMounted) return;
+        setProjects(projects);
+      } catch {
+        if (!isMounted) return;
+        setSession(null);
+        setProjects([]);
+      } finally {
+        if (isMounted) {
+          setIsAuthLoading(false);
+        }
+      }
+    };
+
+    bootstrapAccount();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [setIsAuthLoading, setProjects, setSession]);
+
+  const buildHostedProjectSnapshot = useCallback((): HostedProjectSnapshot => {
+    const currentState = useProjectStore.getState();
+    return {
+      name:
+        currentState.initialPrompt?.trim() ||
+        (currentState.head ? "Generated project" : "Untitled project"),
+      appState: useAppStore.getState().appState,
+      stack: settings.generatedCodeConfig ?? null,
+      inputMode: currentState.inputMode ?? null,
+      initialPrompt: currentState.initialPrompt,
+      referenceImages: currentState.referenceImages,
+      commits: currentState.commits,
+      head: currentState.head,
+      latestCommitHash: currentState.latestCommitHash,
+    };
+  }, [settings.generatedCodeConfig]);
+
+  useEffect(() => {
+    if (!IS_RUNNING_ON_CLOUD || !session) return;
+
+    const snapshot = buildHostedProjectSnapshot();
+    const hasWork =
+      Object.keys(snapshot.commits).length > 0 ||
+      snapshot.initialPrompt.trim().length > 0 ||
+      snapshot.referenceImages.length > 0;
+
+    if (!hasWork) return;
+
+    const timeout = window.setTimeout(async () => {
+      try {
+        if (currentProjectId) {
+          const updated = await updateProject(currentProjectId, snapshot);
+          upsertProject(updated);
+          return;
+        }
+
+        const created = await createProject(snapshot);
+        upsertProject(created);
+        setCurrentProjectId(created.id);
+      } catch (error) {
+        console.error("Failed to autosave project", error);
+      }
+    }, 1200);
+
+    return () => window.clearTimeout(timeout);
+  }, [
+    appState,
+    buildHostedProjectSnapshot,
+    commits,
+    currentProjectId,
+    head,
+    hydrateProjectSnapshot,
+    initialPrompt,
+    referenceImages,
+    session,
+    setCurrentProjectId,
+    upsertProject,
+  ]);
+
   const getAssetsById = () => useProjectStore.getState().assetsById;
 
   // Functions
@@ -248,12 +369,13 @@ function App() {
     // Inputs
     setInputMode("image");
     setReferenceImages([]);
+    setCurrentProjectId(null);
   };
 
   const regenerate = () => {
     if (head === null) {
       toast.error(
-        "No current version set. Please contact support via chat or Github."
+        t("noCurrentVersion")
       );
       throw new Error("Regenerate called with no head");
     }
@@ -261,7 +383,7 @@ function App() {
     // Retrieve the previous command
     const currentCommit = commits[head];
     if (currentCommit.type !== "ai_create") {
-      toast.error("Only the first version can be regenerated.");
+      toast.error(t("onlyFirstVersionRegenerate"));
       return;
     }
 
@@ -621,13 +743,13 @@ function App() {
   // Subsequent updates
   async function doUpdate(updateInstruction: string) {
     if (updateInstruction.trim() === "") {
-      toast.error("Please include some instructions for AI on what to update.");
+      toast.error(t("noUpdateInstructions"));
       return;
     }
 
     if (head === null) {
       toast.error(
-        "No current version set. Contact support or open a Github issue."
+        t("noCurrentVersionIssue")
       );
       throw new Error("Update called with no head");
     }
@@ -753,43 +875,116 @@ function App() {
         />
       )}
 
-      {/* Icon strip - always visible */}
-      <div
-        className="sticky top-0 z-50 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-16 lg:flex-col"
-      >
-        <IconStrip
-          isHistoryOpen={isHistoryOpen}
-          isEditorOpen={!isHistoryOpen && !isSettingsOpen}
-          isSettingsOpen={isSettingsOpen}
-          showHistory={isCodingOrReady}
-          showEditor={isCodingOrReady}
-          onToggleHistory={() => {
-            setIsHistoryOpen((prev) => !prev);
-            setIsSettingsOpen(false);
-            setMobilePane("chat");
-          }}
-          onToggleEditor={() => {
-            setIsHistoryOpen(false);
-            setIsSettingsOpen(false);
-            setMobilePane("preview");
-          }}
-          onLogoClick={() => {
-            setIsHistoryOpen(false);
-            setIsSettingsOpen(false);
-            setMobilePane("preview");
-          }}
-          onNewProject={() => {
-            reset();
-            setIsHistoryOpen(false);
-            setIsSettingsOpen(false);
-            setMobilePane("preview");
-          }}
-          onOpenSettings={() => {
-            setIsSettingsOpen(true);
-            setIsHistoryOpen(false);
-          }}
-        />
-      </div>
+      {appState === AppState.INITIAL ? (
+        <header className="sticky top-0 z-50 border-b border-stone-200/70 bg-white/85 backdrop-blur dark:border-zinc-800 dark:bg-black/70">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <button
+              onClick={() => {
+                setIsHistoryOpen(false);
+                setIsSettingsOpen(false);
+                setMobilePane("preview");
+              }}
+              className="flex items-center gap-3 text-left"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-stone-950 text-white dark:bg-white dark:text-stone-950">
+                <img
+                  src="/favicon/main.png"
+                  alt="Logo"
+                  className="h-5 w-5 dark:invert"
+                />
+              </div>
+              <div>
+                <div className="text-sm font-semibold tracking-[0.2em] text-stone-500 dark:text-zinc-400">
+                  IMAGETOCODE
+                </div>
+                <div className="text-xs text-stone-500 dark:text-zinc-500">
+                  {t("websiteBuilderFromScreenshots")}
+                </div>
+              </div>
+            </button>
+
+            <div className="hidden items-center gap-6 text-sm text-stone-600 dark:text-zinc-300 lg:flex">
+              <a
+                href="#generator"
+                className="transition-colors hover:text-stone-950 dark:hover:text-white"
+              >
+                {t("navProduct")}
+              </a>
+              <a
+                href="#cases"
+                className="transition-colors hover:text-stone-950 dark:hover:text-white"
+              >
+                {t("navExamples")}
+              </a>
+              <a
+                href="#pricing"
+                className="transition-colors hover:text-stone-950 dark:hover:text-white"
+              >
+                {t("navPricing")}
+              </a>
+              <a
+                href="#faq"
+                className="transition-colors hover:text-stone-950 dark:hover:text-white"
+              >
+                {t("navFaq")}
+              </a>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <LanguageToggle />
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              >
+                {t("settings")}
+              </button>
+              <a
+                href="#generator"
+                className="hidden rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white sm:inline-flex dark:bg-white dark:text-stone-950"
+              >
+                {t("launchGenerator")}
+              </a>
+            </div>
+          </div>
+        </header>
+      ) : (
+        <div
+          className="sticky top-0 z-50 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-16 lg:flex-col"
+        >
+          <IconStrip
+            isHistoryOpen={isHistoryOpen}
+            isEditorOpen={!isHistoryOpen && !isSettingsOpen}
+            isSettingsOpen={isSettingsOpen}
+            showHistory={isCodingOrReady}
+            showEditor={isCodingOrReady}
+            onToggleHistory={() => {
+              setIsHistoryOpen((prev) => !prev);
+              setIsSettingsOpen(false);
+              setMobilePane("chat");
+            }}
+            onToggleEditor={() => {
+              setIsHistoryOpen(false);
+              setIsSettingsOpen(false);
+              setMobilePane("preview");
+            }}
+            onLogoClick={() => {
+              setIsHistoryOpen(false);
+              setIsSettingsOpen(false);
+              setMobilePane("preview");
+            }}
+            onNewProject={() => {
+              reset();
+              setIsHistoryOpen(false);
+              setIsSettingsOpen(false);
+              setMobilePane("preview");
+            }}
+            onOpenSettings={() => {
+              setIsSettingsOpen(true);
+              setIsHistoryOpen(false);
+            }}
+          />
+        </div>
+      )}
 
       {isCodingOrReady && !isSettingsOpen && (
         <div className="border-b border-gray-200 bg-white px-4 py-2 dark:border-zinc-800 dark:bg-zinc-950 lg:hidden">
@@ -805,7 +1000,7 @@ function App() {
                   : "text-gray-500 dark:text-zinc-400"
               }`}
             >
-              Preview
+              {t("preview")}
             </button>
             <button
               onClick={() => setMobilePane("chat")}
@@ -815,7 +1010,7 @@ function App() {
                   : "text-gray-500 dark:text-zinc-400"
               }`}
             >
-              Chat
+              {t("chat")}
             </button>
           </div>
         </div>
@@ -832,13 +1027,13 @@ function App() {
               <div className="flex-1 overflow-y-auto sidebar-scrollbar-stable px-4">
                 <div className="mt-3">
                   <div className="flex items-center justify-between mb-3 px-1">
-                    <h2 className="text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">Versions</h2>
+                    <h2 className="text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">{t("versions")}</h2>
                     <button
                       onClick={() => setIsHistoryOpen(false)}
                       className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                     >
                       <LuChevronLeft className="w-3.5 h-3.5" />
-                      Back to editor
+                      {t("backToEditor")}
                     </button>
                   </div>
                   <HistoryDisplay />
@@ -879,10 +1074,12 @@ function App() {
       <main
         className={`${
           isSettingsOpen
-            ? "flex flex-1 min-h-0 flex-col lg:h-full lg:pl-16"
+            ? `flex flex-1 min-h-0 flex-col ${appState === AppState.INITIAL ? "" : "lg:h-full lg:pl-16"}`
             : showContentPanel
               ? "flex flex-1 min-h-0 flex-col lg:h-full lg:pl-[28rem]"
-              : "lg:pl-16"
+              : appState === AppState.INITIAL
+                ? ""
+                : "lg:pl-16"
         } ${isCodingOrReady && !isSettingsOpen && mobilePane === "chat" ? "hidden lg:flex" : ""}`}
       >
         {isSettingsOpen ? (

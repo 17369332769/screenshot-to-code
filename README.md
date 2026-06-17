@@ -69,6 +69,31 @@ Open http://localhost:5173 to use the app.
 
 If you prefer to run the backend on a different port, update `VITE_WS_BACKEND_URL` in `frontend/.env.local`.
 
+## Production / Self-hosting Notes
+
+If you want to launch this as a real website, configure a few production basics first:
+
+- Set `IS_PROD=true` in the backend environment.
+- Set `ALLOWED_CORS_ORIGINS` to your frontend domain, for example `https://yourdomain.com`.
+- Set `VITE_HTTP_BACKEND_URL` and `VITE_WS_BACKEND_URL` in `frontend/.env.local` or your hosting provider.
+- Use `/api/healthz` for liveness checks and `/api/readyz` for readiness checks.
+
+Example frontend env:
+
+```bash
+VITE_HTTP_BACKEND_URL=https://api.yourdomain.com
+VITE_WS_BACKEND_URL=wss://api.yourdomain.com
+VITE_IS_DEPLOYED=true
+```
+
+Example backend env:
+
+```bash
+IS_PROD=true
+ALLOWED_CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+OPENAI_API_KEY=sk-...
+```
+
 ## Docker
 
 If you have Docker installed, run this from the root directory:

@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useI18n } from "../../i18n";
 
 const NO_DESIGN_SYSTEM = "__none__";
 const ADD_NEW = "__add_new__";
@@ -33,6 +34,8 @@ function DesignSystemSelector({
   disabled = false,
   compact = false,
 }: DesignSystemSelectorProps) {
+  const { t } = useI18n();
+
   const handleValueChange = (value: string) => {
     if (value === ADD_NEW) {
       onAddNew();
@@ -60,19 +63,19 @@ function DesignSystemSelector({
         <SelectTrigger
           className={
             hasSelection
-              ? "flex h-7 w-auto items-center gap-1.5 rounded-full border border-gray-200 bg-white px-2.5 py-0 text-xs font-medium text-gray-700 shadow-none hover:bg-gray-50 focus:ring-0 focus:ring-offset-0 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 [&>svg:last-child]:hidden"
-              : "flex h-7 w-7 items-center justify-center rounded-lg border-0 bg-transparent p-0 text-gray-400 shadow-none hover:bg-gray-100 hover:text-gray-600 focus:ring-0 focus:ring-offset-0 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300 [&>svg:last-child]:hidden"
+              ? "flex h-8 w-auto items-center gap-1.5 rounded-full border border-stone-200 bg-stone-50 px-3 py-0 text-xs font-medium text-stone-700 shadow-none hover:bg-white focus:ring-0 focus:ring-offset-0 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 [&>svg:last-child]:hidden"
+              : "flex h-8 w-8 items-center justify-center rounded-full border border-stone-200 bg-stone-50 p-0 text-gray-400 shadow-none hover:bg-white hover:text-gray-600 focus:ring-0 focus:ring-offset-0 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 [&>svg:last-child]:hidden"
           }
           data-testid="design-system-select"
           aria-label={
             hasSelection
-              ? `Design system: ${selectedDesignSystem.name}`
-              : "Add a design system"
+              ? t("designSystemTitle", { name: selectedDesignSystem.name })
+              : t("addDesignSystem")
           }
           title={
             hasSelection
-              ? `Design system: ${selectedDesignSystem.name}`
-              : "Add a design system"
+              ? t("designSystemTitle", { name: selectedDesignSystem.name })
+              : t("addDesignSystem")
           }
         >
           <LuPalette className="h-3.5 w-3.5 shrink-0" />
@@ -87,12 +90,12 @@ function DesignSystemSelector({
         </SelectTrigger>
       ) : hasSelection ? (
         <div className="grid grid-cols-3 items-center gap-4 text-sm">
-          <span>Design system:</span>
+          <span>{t("designSystem")}</span>
           <SelectTrigger
             className="col-span-2"
             data-testid="design-system-select"
           >
-            <SelectValue placeholder="No design system" />
+            <SelectValue placeholder={t("noDesignSystem")} />
           </SelectTrigger>
         </div>
       ) : (
@@ -101,13 +104,13 @@ function DesignSystemSelector({
             className="h-auto w-auto justify-start gap-1 border-0 bg-transparent px-0 py-0 text-gray-500 shadow-none hover:text-gray-700 focus:ring-0 focus:ring-offset-0 dark:text-zinc-400 dark:hover:text-zinc-200 [&>svg]:hidden"
             data-testid="design-system-select"
           >
-            <span>+ Add design system</span>
+            <span>{t("addDesignSystemAction")}</span>
           </SelectTrigger>
         </div>
       )}
       <SelectContent>
         <SelectGroup>
-          <SelectItem value={NO_DESIGN_SYSTEM}>No design system</SelectItem>
+          <SelectItem value={NO_DESIGN_SYSTEM}>{t("noDesignSystem")}</SelectItem>
           {designSystems.map((designSystem) => (
             <SelectItem key={designSystem.id} value={designSystem.id}>
               {designSystem.name}
@@ -117,11 +120,11 @@ function DesignSystemSelector({
         <SelectSeparator />
         <SelectGroup>
           <SelectItem value={ADD_NEW} data-testid="design-system-add-new">
-            + New design system…
+            {t("newDesignSystem")}
           </SelectItem>
           {designSystems.length > 0 && (
             <SelectItem value={MANAGE} data-testid="design-system-manage">
-              Manage design systems…
+              {t("manageDesignSystems")}
             </SelectItem>
           )}
         </SelectGroup>

@@ -10,6 +10,7 @@ import {
 import { Input } from "../ui/input";
 import { Switch } from "../ui/switch";
 import { IS_RUNNING_ON_CLOUD } from "../../config";
+import { useI18n } from "../../i18n";
 
 interface Props {
   settings: Settings;
@@ -19,6 +20,8 @@ interface Props {
 }
 
 function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
+  const { t } = useI18n();
+
   const handleThemeChange = (theme: EditorTheme) => {
     setSettings((s) => ({
       ...s,
@@ -28,30 +31,63 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="px-4 py-4 lg:px-6 lg:py-6">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Settings
+      <div className="mx-auto max-w-5xl px-4 py-6 lg:px-8 lg:py-8">
+        <div className="mb-8">
+          <p className="editorial-kicker">{t("settings")}</p>
+          <h1 className="mt-2 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-gray-900 dark:text-white">
+            Workspace controls, providers, and output defaults
           </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-600 dark:text-zinc-300">
+            Configure how the app looks, which model providers it can use, and
+            how generated code should be shaped before it reaches the canvas.
+          </p>
         </div>
 
-        <div className="mx-auto max-w-lg space-y-6">
+        <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="space-y-6">
+            <div className="studio-panel p-6">
+              <p className="editorial-kicker">Workspace</p>
+              <h2 className="mt-2 font-['Space_Grotesk'] text-xl font-semibold tracking-[-0.03em] text-gray-900 dark:text-white">
+                Personalize the control room
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-stone-600 dark:text-zinc-300">
+                Tune the interface for focus, choose a code editor theme, and
+                decide which services power generation.
+              </p>
+            </div>
+
+            <div className="studio-panel p-6">
+              <p className="editorial-kicker">Current defaults</p>
+              <div className="mt-4 space-y-3 text-sm text-stone-700 dark:text-zinc-300">
+                <div className="studio-surface px-4 py-3">
+                  App theme: <span className="font-medium">{capitalize(appTheme)}</span>
+                </div>
+                <div className="studio-surface px-4 py-3">
+                  Editor theme: <span className="font-medium notranslate" translate="no">{capitalize(settings.editorTheme)}</span>
+                </div>
+                <div className="studio-surface px-4 py-3">
+                  Image generation: <span className="font-medium">{settings.isImageGenerationEnabled ? "Enabled" : "Disabled"}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
           {/* Theme */}
-          <div className="rounded-lg border border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/60">
-            <div className="border-b border-gray-100 px-4 py-3 dark:border-zinc-700">
-              <h2 className="text-sm font-medium text-gray-900 dark:text-white">
-                Theme
+          <div className="studio-panel overflow-hidden">
+            <div className="border-b border-gray-100 px-5 py-4 dark:border-zinc-700">
+              <h2 className="font-['Space_Grotesk'] text-lg font-semibold text-gray-900 dark:text-white">
+                {t("theme")}
               </h2>
             </div>
             <div className="divide-y divide-gray-100 dark:divide-zinc-700">
-              <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center justify-between px-5 py-4">
                 <div>
                   <span className="text-sm text-gray-700 dark:text-zinc-300">
-                    App Theme
+                    {t("appTheme")}
                   </span>
                   <p className="mt-0.5 text-xs text-gray-500 dark:text-zinc-400">
-                    System default, with optional light/dark override
+                    {t("appThemeDescription")}
                   </p>
                 </div>
                 <Select
@@ -59,23 +95,23 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
                   value={appTheme}
                   onValueChange={(value) => setAppTheme(value as AppTheme)}
                 >
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-[160px] rounded-full">
                     {capitalize(appTheme)}
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={AppTheme.SYSTEM}>System</SelectItem>
-                    <SelectItem value={AppTheme.LIGHT}>Light</SelectItem>
-                    <SelectItem value={AppTheme.DARK}>Dark</SelectItem>
+                    <SelectItem value={AppTheme.SYSTEM}>{t("system")}</SelectItem>
+                    <SelectItem value={AppTheme.LIGHT}>{t("light")}</SelectItem>
+                    <SelectItem value={AppTheme.DARK}>{t("dark")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center justify-between px-5 py-4">
                 <div>
                   <span className="text-sm text-gray-700 dark:text-zinc-300">
-                    Code Editor Theme
+                    {t("codeEditorTheme")}
                   </span>
                   <p className="mt-0.5 text-xs text-gray-500 dark:text-zinc-400">
-                    Requires page refresh to update
+                    {t("codeEditorThemeDescription")}
                   </p>
                 </div>
                 <Select
@@ -85,7 +121,7 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
                     handleThemeChange(value as EditorTheme)
                   }
                 >
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-[160px] rounded-full">
                     <span className="notranslate" translate="no">
                       {capitalize(settings.editorTheme)}
                     </span>
@@ -104,25 +140,24 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
           </div>
 
           {/* API Keys */}
-          <div className="rounded-lg border border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/60">
-            <div className="border-b border-gray-100 px-4 py-3 dark:border-zinc-700">
-              <h2 className="text-sm font-medium text-gray-900 dark:text-white">
-                API Keys
+          <div className="studio-panel overflow-hidden">
+            <div className="border-b border-gray-100 px-5 py-4 dark:border-zinc-700">
+              <h2 className="font-['Space_Grotesk'] text-lg font-semibold text-gray-900 dark:text-white">
+                {t("apiKeys")}
               </h2>
             </div>
-            <div className="space-y-4 p-4">
+            <div className="space-y-5 p-5">
               <div>
                 <p className="text-sm font-medium text-gray-700 dark:text-zinc-300">
-                  OpenAI API key
+                  {t("openAiApiKey")}
                 </p>
                 <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400">
-                  Only stored in your browser. Never stored on servers. Overrides
-                  your .env config.
+                  {t("browserStorageDescription")}
                 </p>
                 <Input
                   id="openai-api-key"
-                  className="mt-2"
-                  placeholder="OpenAI API key"
+                  className="mt-2 rounded-[1rem]"
+                  placeholder={t("openAiApiKey")}
                   value={settings.openAiApiKey || ""}
                   onChange={(e) =>
                     setSettings((s) => ({
@@ -136,16 +171,15 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
               {!IS_RUNNING_ON_CLOUD && (
                 <div>
                   <p className="text-sm font-medium text-gray-700 dark:text-zinc-300">
-                    OpenAI Base URL (optional)
+                    {t("openAiBaseUrlOptional")}
                   </p>
                   <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400">
-                    Replace with a proxy URL if you don't want to use the
-                    default.
+                    {t("openAiBaseUrlDescription")}
                   </p>
                   <Input
                     id="openai-base-url"
-                    className="mt-2"
-                    placeholder="OpenAI Base URL"
+                    className="mt-2 rounded-[1rem]"
+                    placeholder={t("openAiBaseUrlOptional")}
                     value={settings.openAiBaseURL || ""}
                     onChange={(e) =>
                       setSettings((s) => ({
@@ -159,16 +193,15 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
 
               <div>
                 <p className="text-sm font-medium text-gray-700 dark:text-zinc-300">
-                  Anthropic API key
+                  {t("anthropicApiKey")}
                 </p>
                 <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400">
-                  Only stored in your browser. Never stored on servers. Overrides
-                  your .env config.
+                  {t("browserStorageDescription")}
                 </p>
                 <Input
                   id="anthropic-api-key"
-                  className="mt-2"
-                  placeholder="Anthropic API key"
+                  className="mt-2 rounded-[1rem]"
+                  placeholder={t("anthropicApiKey")}
                   value={settings.anthropicApiKey || ""}
                   onChange={(e) =>
                     setSettings((s) => ({
@@ -181,16 +214,15 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
 
               <div>
                 <p className="text-sm font-medium text-gray-700 dark:text-zinc-300">
-                  Gemini API key
+                  {t("geminiApiKey")}
                 </p>
                 <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400">
-                  Only stored in your browser. Never stored on servers. Overrides
-                  your .env config.
+                  {t("browserStorageDescription")}
                 </p>
                 <Input
                   id="gemini-api-key"
-                  className="mt-2"
-                  placeholder="Gemini API key"
+                  className="mt-2 rounded-[1rem]"
+                  placeholder={t("geminiApiKey")}
                   value={settings.geminiApiKey || ""}
                   onChange={(e) =>
                     setSettings((s) => ({
@@ -204,20 +236,20 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
           </div>
 
           {/* Image Generation */}
-          <div className="rounded-lg border border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/60">
-            <div className="border-b border-gray-100 px-4 py-3 dark:border-zinc-700">
-              <h2 className="text-sm font-medium text-gray-900 dark:text-white">
-                Image Generation
+          <div className="studio-panel overflow-hidden">
+            <div className="border-b border-gray-100 px-5 py-4 dark:border-zinc-700">
+              <h2 className="font-['Space_Grotesk'] text-lg font-semibold text-gray-900 dark:text-white">
+                {t("imageGeneration")}
               </h2>
             </div>
-            <div className="p-4">
+            <div className="p-5">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-700 dark:text-zinc-300">
-                    Placeholder Images
+                    {t("placeholderImages")}
                   </p>
                   <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400">
-                    More fun with it but if you want to save money, turn it off.
+                    {t("placeholderImagesDescription")}
                   </p>
                 </div>
                 <Switch
@@ -235,28 +267,27 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
           </div>
 
           {/* Screenshot by URL */}
-          <div className="rounded-lg border border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/60">
-            <div className="border-b border-gray-100 px-4 py-3 dark:border-zinc-700">
-              <h2 className="text-sm font-medium text-gray-900 dark:text-white">
-                Screenshot by URL
+          <div className="studio-panel overflow-hidden">
+            <div className="border-b border-gray-100 px-5 py-4 dark:border-zinc-700">
+              <h2 className="font-['Space_Grotesk'] text-lg font-semibold text-gray-900 dark:text-white">
+                {t("screenshotByUrl")}
               </h2>
             </div>
-            <div className="p-4">
+            <div className="p-5">
               <p className="text-xs text-gray-500 dark:text-zinc-400">
-                If you want to use URLs directly instead of taking the screenshot
-                yourself, add a ScreenshotOne API key.{" "}
+                {t("screenshotByUrlDescription")}{" "}
                 <a
                   href="https://screenshotone.com?via=screenshot-to-code"
-                  className="text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300"
+                  className="text-cyan-700 hover:text-cyan-800 dark:text-cyan-400 dark:hover:text-cyan-300"
                   target="_blank"
                 >
-                  Get 100 screenshots/mo for free.
+                  {t("getFreeScreenshots")}
                 </a>
               </p>
               <Input
                 id="screenshot-one-api-key"
-                className="mt-3"
-                placeholder="ScreenshotOne API key"
+                className="mt-3 rounded-[1rem]"
+                placeholder={t("screenshotOneApiKey")}
                 value={settings.screenshotOneApiKey || ""}
                 onChange={(e) =>
                   setSettings((s) => ({
@@ -266,6 +297,7 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
                 }
               />
             </div>
+          </div>
           </div>
         </div>
       </div>

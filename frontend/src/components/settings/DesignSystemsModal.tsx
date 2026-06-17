@@ -39,9 +39,11 @@ function DesignSystemsModal({
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl rounded-[1.8rem] border-stone-200/80 bg-white/90 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/92">
         <DialogHeader>
-          <DialogTitle>Design Systems</DialogTitle>
+          <DialogTitle className="font-['Space_Grotesk'] text-2xl tracking-[-0.03em]">
+            Design Systems
+          </DialogTitle>
           <DialogDescription>
             Define color, typography, and layout rules applied to every
             generation.

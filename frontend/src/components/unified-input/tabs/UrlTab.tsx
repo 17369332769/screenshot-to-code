@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import OutputSettingsSection from "../../settings/OutputSettingsSection";
 import { DesignSystemSelectorProps } from "../../settings/DesignSystemSelector";
 import { Stack } from "../../../lib/stacks";
+import { useI18n } from "../../../i18n";
 
 interface Props {
   screenshotOneApiKey: string | null;
@@ -30,6 +31,7 @@ function UrlTab({
   setStack,
   designSystem,
 }: Props) {
+  const { t } = useI18n();
   const [isLoading, setIsLoading] = useState(false);
   const [referenceUrl, setReferenceUrl] = useState("");
 
@@ -37,30 +39,22 @@ function UrlTab({
     const trimmedReferenceUrl = referenceUrl.trim();
 
     if (!screenshotOneApiKey) {
-      toast.error(
-        "Please add a ScreenshotOne API key in Settings. You can also upload screenshots directly in the Upload tab.",
-        { duration: 6000 },
-      );
+      toast.error(t("screenshotApiKeyMissing"), { duration: 6000 });
       return;
     }
 
     if (!trimmedReferenceUrl) {
-      toast.error("Please enter a URL");
+      toast.error(t("enterUrl"));
       return;
     }
 
     if (trimmedReferenceUrl.toLowerCase().startsWith("file://")) {
-      toast.error(
-        "file:// URLs can't be screenshot. If you're trying to import a local file, please use the Import tab.",
-      );
+      toast.error(t("fileUrlNotSupported"));
       return;
     }
 
     if (isFigmaUrl(trimmedReferenceUrl)) {
-      toast.error(
-        "Direct Figma import is not supported. Take a screenshot of your design or export the artboards as images, then use the Upload tab.",
-        { duration: 6000 },
-      );
+      toast.error(t("figmaNotSupported"), { duration: 6000 });
       return;
     }
 
@@ -85,7 +79,7 @@ function UrlTab({
       doCreate([res.url], "image");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to capture screenshot. Check console for details.");
+      toast.error(t("captureScreenshotFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -114,7 +108,7 @@ function UrlTab({
           </div>
 
           <div className="text-center">
-            <h3 className="text-gray-700 dark:text-zinc-200 font-medium">Screenshot from URL</h3>
+            <h3 className="text-gray-700 dark:text-zinc-200 font-medium">{t("urlTitle")}</h3>
           </div>
 
           <div className="w-full space-y-3">
@@ -132,9 +126,7 @@ function UrlTab({
             />
             {isFigmaUrl(referenceUrl) && (
               <p className="text-xs text-amber-600 dark:text-amber-400">
-                Direct Figma import is not supported. Take a screenshot of your
-                design or export the artboards as images, then use the Upload
-                tab.
+                {t("figmaHint")}
               </p>
             )}
             <OutputSettingsSection
@@ -172,16 +164,16 @@ function UrlTab({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     />
                   </svg>
-                  Capturing...
+                  {t("capturing")}
                 </span>
               ) : (
-                "Capture & Generate"
+                t("captureAndGenerate")
               )}
             </Button>
           </div>
 
           <p className="text-xs text-gray-400 dark:text-zinc-500 text-center">
-            Requires ScreenshotOne API key.
+            {t("requiresScreenshotOneKey")}
           </p>
         </div>
       </div>

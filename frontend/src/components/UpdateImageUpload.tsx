@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { toast } from "react-hot-toast";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { LuPlus } from "react-icons/lu";
+import { useI18n } from "../i18n";
 
 const MAX_UPDATE_IMAGES = 5;
 
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function UpdateImagePreview({ updateImages, setUpdateImages }: Props) {
+  const { t } = useI18n();
   const removeImage = (index: number) => {
     const newImages = updateImages.filter((_, i) => i !== index);
     setUpdateImages(newImages);
@@ -36,7 +38,7 @@ export function UpdateImagePreview({ updateImages, setUpdateImages }: Props) {
             <div className="flex h-14 w-14 items-center justify-center rounded-lg border border-gray-200 bg-white p-1 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
               <img
                 src={image}
-                alt={`Reference ${index + 1}`}
+                alt={t("referenceImage", { count: index + 1 })}
                 className="max-h-full max-w-full object-contain"
               />
             </div>
@@ -54,6 +56,7 @@ export function UpdateImagePreview({ updateImages, setUpdateImages }: Props) {
 }
 
 function UpdateImageUpload({ updateImages, setUpdateImages }: Props) {
+  const { t } = useI18n();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const remaining = Math.max(0, MAX_UPDATE_IMAGES - updateImages.length);
   const isAtLimit = remaining === 0;
@@ -61,9 +64,7 @@ function UpdateImageUpload({ updateImages, setUpdateImages }: Props) {
 
   const handleButtonClick = () => {
     if (isAtLimit) {
-      toast.error(
-        `You’ve reached the limit of ${MAX_UPDATE_IMAGES} reference images. Remove one to add another.`
-      );
+      toast.error(t("referenceImageLimitReached", { count: MAX_UPDATE_IMAGES }));
       return;
     }
     fileInputRef.current?.click();
@@ -74,9 +75,7 @@ function UpdateImageUpload({ updateImages, setUpdateImages }: Props) {
     if (files) {
       try {
         if (updateImages.length >= MAX_UPDATE_IMAGES) {
-          toast.error(
-            `You’ve reached the limit of ${MAX_UPDATE_IMAGES} reference images. Remove one to add another.`
-          );
+          toast.error(t("referenceImageLimitReached", { count: MAX_UPDATE_IMAGES }));
           return;
         }
 
@@ -84,9 +83,10 @@ function UpdateImageUpload({ updateImages, setUpdateImages }: Props) {
         let filesToAdd = Array.from(files);
         if (filesToAdd.length > remainingSlots) {
           toast.error(
-            `Only ${remainingSlots} more image${
-              remainingSlots === 1 ? "" : "s"
-            } will be added to stay within the ${MAX_UPDATE_IMAGES}-image limit.`
+            t("referenceOnlySomeAdded", {
+              count: remainingSlots,
+              max: MAX_UPDATE_IMAGES,
+            })
           );
           filesToAdd = filesToAdd.slice(0, remainingSlots);
         }
@@ -96,7 +96,7 @@ function UpdateImageUpload({ updateImages, setUpdateImages }: Props) {
         setUpdateImages([...updateImages, ...newImages]);
         e.target.value = "";
       } catch (error) {
-        toast.error("Error reading image files");
+        toast.error(t("readImageFilesError"));
         console.error("Error reading files:", error);
       }
     }
@@ -123,8 +123,8 @@ function UpdateImageUpload({ updateImages, setUpdateImages }: Props) {
         }`}
         title={
           isAtLimit
-            ? `Limit reached (${MAX_UPDATE_IMAGES})`
-            : "Add images"
+            ? t("addImageLimitTitle", { count: MAX_UPDATE_IMAGES })
+            : t("addImages")
         }
       >
         <LuPlus className="w-[18px] h-[18px]" />

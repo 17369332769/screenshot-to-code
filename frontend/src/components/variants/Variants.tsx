@@ -1,11 +1,12 @@
 import { useProjectStore } from "../../store/project-store";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useThrottle } from "../../hooks/useThrottle";
 import {
   CODE_GENERATION_MODEL_DESCRIPTIONS,
   CodeGenerationModel,
 } from "../../lib/models";
 import WorkingPulse from "../core/WorkingPulse";
+import { useI18n } from "../../i18n";
 
 const IFRAME_WIDTH = 1280;
 const IFRAME_HEIGHT = 550;
@@ -69,16 +70,20 @@ function VariantThumbnail({ code, isSelected }: VariantThumbnailProps) {
 }
 
 function Variants() {
+  const { t } = useI18n();
   const { head, commits, updateSelectedVariantIndex } = useProjectStore();
 
   const commit = head ? commits[head] : null;
   const variants = commit?.variants || [];
   const selectedVariantIndex = commit?.selectedVariantIndex || 0;
 
-  const handleVariantClick = (index: number) => {
-    if (index === selectedVariantIndex || !head) return;
-    updateSelectedVariantIndex(head, index);
-  };
+  const handleVariantClick = useCallback(
+    (index: number) => {
+      if (index === selectedVariantIndex || !head) return;
+      updateSelectedVariantIndex(head, index);
+    },
+    [head, selectedVariantIndex, updateSelectedVariantIndex]
+  );
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -101,7 +106,7 @@ function Variants() {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [variants.length, commit?.isCommitted, selectedVariantIndex, head]);
+  }, [variants.length, commit, handleVariantClick, head]);
 
   if (head === null || !commit) {
     return null;
@@ -112,7 +117,7 @@ function Variants() {
   }
 
   return (
-    <div className="pt-2 pb-1">
+    <div className="pb-1 pt-2">
       <div className="grid grid-cols-2 gap-2">
         {variants.map((variant, index) => {
           let statusColor = "bg-gray-300 dark:bg-gray-600";
@@ -122,10 +127,10 @@ function Variants() {
           return (
             <div
               key={index}
-              className={`w-full rounded cursor-pointer overflow-hidden ${
+              className={`w-full cursor-pointer overflow-hidden rounded-[1.1rem] ${
                 index === selectedVariantIndex
-                  ? "ring-2 ring-blue-400 dark:ring-blue-500"
-                  : "ring-1 ring-gray-200 dark:ring-gray-700 hover:ring-gray-300 dark:hover:ring-gray-600"
+                  ? "ring-2 ring-cyan-400 dark:ring-cyan-500"
+                  : "ring-1 ring-stone-200 dark:ring-gray-700 hover:ring-stone-300 dark:hover:ring-gray-600"
               }`}
               title={variant.model ? (CODE_GENERATION_MODEL_DESCRIPTIONS[variant.model as CodeGenerationModel]?.name || variant.model) : undefined}
               onClick={() => handleVariantClick(index)}
@@ -134,10 +139,10 @@ function Variants() {
                 code={variant.code}
                 isSelected={index === selectedVariantIndex}
               />
-              <div className="flex items-center px-2 py-1 bg-white dark:bg-zinc-900">
+              <div className="flex items-center bg-white/90 px-2 py-1.5 dark:bg-zinc-900">
                 <span className="inline-flex min-w-0 items-center text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                   <span className={`w-2 h-2 rounded-full mr-1.5 ${statusColor}`} />
-                  Option {index + 1}
+                  {t("option", { count: index + 1 })}
                   {index < 9 && (
                     <span className="text-xs text-gray-400 dark:text-gray-500 font-mono ml-1">
                       (⌥{index + 1})
@@ -149,7 +154,7 @@ function Variants() {
                     className="ml-auto shrink-0 inline-flex items-center"
                     role="status"
                     aria-live="polite"
-                    aria-label="Working"
+                    aria-label={t("working")}
                   >
                     <WorkingPulse />
                   </div>

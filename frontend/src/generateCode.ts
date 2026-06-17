@@ -5,11 +5,11 @@ import {
   USER_CLOSE_WEB_SOCKET_CODE,
 } from "./constants";
 import { FullGenerationSettings } from "./types";
+import { translateCurrent } from "./i18n";
 
-const ERROR_MESSAGE =
-  "Error generating code. Check the Developer Console AND the backend logs for details. Feel free to open a Github issue.";
+const ERROR_MESSAGE = () => translateCurrent("generationError");
 
-const CANCEL_MESSAGE = "Code generation cancelled";
+const CANCEL_MESSAGE = () => translateCurrent("generationCancelled");
 
 type WebSocketResponse = {
   type:
@@ -91,22 +91,22 @@ export function generateCode(
       callbacks.onToolResult(response.data, response.variantIndex, response.eventId);
     } else if (response.type === "error") {
       console.error("Error generating code", response.value);
-      toast.error(response.value || ERROR_MESSAGE);
+      toast.error(response.value || ERROR_MESSAGE());
     }
   });
 
   ws.addEventListener("close", (event) => {
     console.log("Connection closed", event.code, event.reason);
     if (event.code === USER_CLOSE_WEB_SOCKET_CODE) {
-      toast.success(CANCEL_MESSAGE);
+      toast.success(CANCEL_MESSAGE());
       callbacks.onCancel("user_cancelled");
     } else if (event.code === APP_ERROR_WEB_SOCKET_CODE) {
       console.error("Known server error", event);
-      callbacks.onCancel("request_failed", event.reason || ERROR_MESSAGE);
+      callbacks.onCancel("request_failed", event.reason || ERROR_MESSAGE());
     } else if (event.code !== 1000) {
       console.error("Unknown server or connection error", event);
-      toast.error(ERROR_MESSAGE);
-      callbacks.onCancel("connection_error", event.reason || ERROR_MESSAGE);
+      toast.error(ERROR_MESSAGE());
+      callbacks.onCancel("connection_error", event.reason || ERROR_MESSAGE());
     } else {
       callbacks.onComplete();
     }
@@ -114,6 +114,6 @@ export function generateCode(
 
   ws.addEventListener("error", (error) => {
     console.error("WebSocket error", error);
-    toast.error(ERROR_MESSAGE);
+    toast.error(ERROR_MESSAGE());
   });
 }

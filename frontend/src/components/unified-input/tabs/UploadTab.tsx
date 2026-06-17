@@ -8,6 +8,7 @@ import ScreenRecorder from "../../recording/ScreenRecorder";
 import OutputSettingsSection from "../../settings/OutputSettingsSection";
 import { DesignSystemSelectorProps } from "../../settings/DesignSystemSelector";
 import { Stack } from "../../../lib/stacks";
+import { useI18n } from "../../../i18n";
 
 function fileToDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -53,6 +54,7 @@ interface Props {
 }
 
 function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
+  const { t } = useI18n();
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [uploadedDataUrls, setUploadedDataUrls] = useState<string[]>([]);
   const [uploadedInputMode, setUploadedInputMode] = useState<
@@ -116,21 +118,17 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
       const hasExistingImages = files.length > 0 && uploadedInputMode === "image";
 
       if (incomingHasVideo && (acceptedFiles.length > 1 || hasExistingImages)) {
-        toast.error(
-          `Upload either one video or up to ${MAX_FILES} screenshots (not both).`
-        );
+        toast.error(t("uploadEitherVideoOrScreenshots", { count: MAX_FILES }));
         return;
       }
 
       if (uploadedInputMode === "video" && files.length > 0) {
-        toast.error("Remove the video to add images.");
+        toast.error(t("removeVideoToAddImages"));
         return;
       }
 
       if (!incomingHasVideo && files.length >= MAX_FILES) {
-        toast.error(
-          `You’ve reached the limit of ${MAX_FILES} screenshots. Remove one to add another.`
-        );
+        toast.error(t("screenshotLimitReached", { count: MAX_FILES }));
         return;
       }
 
@@ -138,9 +136,10 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
       if (!incomingHasVideo && files.length + acceptedFiles.length > MAX_FILES) {
         const remainingSlots = MAX_FILES - files.length;
         toast.error(
-          `Only ${remainingSlots} more screenshot${
-            remainingSlots === 1 ? "" : "s"
-          } will be added to stay within the ${MAX_FILES}-screenshot limit.`
+          t("screenshotOnlySomeAdded", {
+            count: remainingSlots,
+            max: MAX_FILES,
+          })
         );
         filesToAdd = acceptedFiles.slice(0, remainingSlots);
       }
@@ -173,11 +172,11 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
         setTimeout(() => textInputRef.current?.focus(), 100);
       } catch (error) {
         newFiles.forEach((file) => URL.revokeObjectURL(file.preview));
-        toast.error("Error reading files.");
+        toast.error(t("readFilesError"));
         console.error("Error reading files:", error);
       }
     },
-    [files, uploadedInputMode]
+    [files, t, uploadedInputMode]
   );
 
   const {
@@ -209,17 +208,17 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
       }
 
       if (firstError.code === "file-too-large") {
-        toast.error("One or more files exceed the 20MB limit.");
+        toast.error(t("fileTooLarge"));
         return;
       }
 
       if (firstError.code === "file-invalid-type") {
-        toast.error("Unsupported file type. Use PNG, JPG, MP4, MOV, or WebM.");
+        toast.error(t("unsupportedFileType"));
         return;
       }
 
       if (firstError.code === "too-many-files") {
-        toast.error(`You can upload up to ${MAX_FILES} screenshots.`);
+        toast.error(t("uploadUpToScreenshots", { count: MAX_FILES }));
         return;
       }
 
@@ -237,17 +236,17 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
 
   const dropzoneClassName = useMemo(() => {
     const base =
-      "flex flex-1 w-full min-h-[320px] flex-col items-center justify-center p-5 border-2 border-dashed rounded-xl bg-gray-50 dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 outline-none transition-all cursor-pointer";
+      "studio-surface flex flex-1 w-full min-h-[360px] flex-col items-center justify-center p-6 border-2 border-dashed text-gray-500 outline-none transition-all cursor-pointer dark:text-zinc-400";
     if (isFocused) {
-      return `${base} border-blue-500 bg-blue-50 dark:bg-blue-950/30`;
+      return `${base} border-cyan-500 bg-cyan-50/80 dark:bg-cyan-950/20`;
     }
     if (isDragAccept) {
-      return `${base} border-green-500 bg-green-50 dark:bg-green-950/30`;
+      return `${base} border-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/20`;
     }
     if (isDragReject) {
-      return `${base} border-red-500 bg-red-50 dark:bg-red-950/30`;
+      return `${base} border-red-500 bg-red-50/80 dark:bg-red-950/20`;
     }
-    return `${base} border-gray-200 dark:border-zinc-700`;
+    return `${base} border-stone-200/90 dark:border-zinc-800`;
   }, [isFocused, isDragAccept, isDragReject]);
 
   const handleScreenRecorderGenerate = (
@@ -284,10 +283,15 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
   return (
     <div className="flex flex-col items-center gap-6">
       {screenRecorderState === ScreenRecorderState.INITIAL && !hasUploadedFile && (
-        <div {...getRootProps({ className: dropzoneClassName })} data-testid="upload-dropzone">
+        <div
+          {...getRootProps({ className: `${dropzoneClassName} relative overflow-hidden` })}
+          data-testid="upload-dropzone"
+        >
           <input data-testid="upload-input" {...getInputProps()} />
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center">
+          <div className="absolute inset-x-10 top-0 h-24 bg-gradient-to-b from-amber-100/80 to-transparent blur-2xl dark:from-amber-500/10" />
+          <div className="absolute inset-y-10 right-10 w-28 rounded-full bg-cyan-100/60 blur-3xl dark:bg-cyan-500/10" />
+          <div className="relative flex flex-col items-center gap-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-slate-950 text-white shadow-lg dark:bg-white dark:text-slate-950">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="28"
@@ -298,7 +302,7 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-gray-400 dark:text-zinc-500"
+                className="text-current"
               >
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="17 8 12 3 7 8" />
@@ -306,19 +310,22 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
               </svg>
             </div>
             <div className="text-center">
-              <p className="text-gray-700 dark:text-zinc-200 font-medium">
-                Drop up to {MAX_FILES} screenshots or a single video
+              <p className="font-['Space_Grotesk'] text-2xl font-semibold tracking-[-0.03em] text-stone-900 dark:text-white">
+                {t("dropUiScreenshot")}
+              </p>
+              <p className="mt-2 max-w-md text-sm leading-7 text-stone-600 dark:text-zinc-300">
+                {t("uploadLimitDescription", { count: MAX_FILES })}
               </p>
             </div>
-            <p className="text-xs text-gray-400 dark:text-zinc-500 mt-2">
-              Supports PNG, JPG, MP4, MOV, WebM (max 20MB each, 30s video)
+            <p className="mt-1 text-xs uppercase tracking-[0.22em] text-stone-400 dark:text-zinc-500">
+              {t("uploadSupportTypes")}
             </p>
             <button
               type="button"
               onClick={open}
-              className="text-sm text-gray-600 dark:text-zinc-400 hover:text-gray-800 dark:hover:text-zinc-200 underline"
+              className="rounded-full bg-slate-950 px-5 py-2.5 text-sm font-medium text-white transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
             >
-              Browse files
+              {t("browseFiles")}
             </button>
           </div>
         </div>
@@ -328,16 +335,16 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
         <div className="flex flex-col items-center gap-4 w-full">
           <div className="relative w-full max-w-3xl">
             {uploadedInputMode === "video" ? (
-              <div className="relative rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-3">
+              <div className="studio-panel relative rounded-[1.5rem] p-3">
                 <video
                   src={files[0]?.preview}
-                  className="w-full h-auto max-h-[400px] object-contain rounded-md border border-gray-100 dark:border-zinc-700"
+                  className="w-full h-auto max-h-[400px] object-contain rounded-xl border border-stone-200/80 dark:border-zinc-700"
                   controls
                 />
                 <button
                   onClick={handleClear}
-                  className="absolute top-2 right-2 bg-white dark:bg-zinc-800 rounded-full p-1.5 shadow-md hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
-                  aria-label="Remove video"
+                  className="absolute top-2 right-2 rounded-full bg-white p-1.5 shadow-md transition-colors hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                  aria-label={t("removeVideo")}
                 >
                   <Cross2Icon className="h-4 w-4 text-gray-600 dark:text-zinc-300" />
                 </button>
@@ -345,33 +352,33 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
             ) : (
               <div
                 {...getRootProps({
-                  className: `relative rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4 ${
-                    isDragActive ? "ring-2 ring-blue-200 dark:ring-blue-800" : ""
+                  className: `studio-panel relative rounded-[1.6rem] p-4 ${
+                    isDragActive ? "ring-2 ring-cyan-200 dark:ring-cyan-800" : ""
                   }`,
                 })}
               >
                 <input {...getInputProps()} />
                 <div className="flex items-center justify-between text-xs uppercase tracking-wide text-gray-400 dark:text-zinc-500">
-                  <span>{`Uploaded Screenshots (${files.length}/${MAX_FILES})`}</span>
+                  <span>{t("uploadedScreenshots", { count: files.length, max: MAX_FILES })}</span>
                   <button
                     type="button"
                     onClick={handleClear}
                     className="text-xs text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200"
                   >
-                    Clear all
+                    {t("clearAll")}
                   </button>
                 </div>
                 <div className="mt-1 text-[11px] text-gray-400 dark:text-zinc-500">
                   {isAtLimit
-                    ? "Limit reached"
-                    : `${remainingSlots} remaining`}
+                    ? t("limitReached")
+                    : t("remaining", { count: remainingSlots })}
                 </div>
-                <div className="mt-3 rounded-md border border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 p-2 overflow-hidden">
-                  <div className="flex h-[280px] w-full items-center justify-center overflow-hidden rounded bg-white dark:bg-zinc-900">
+                <div className="studio-surface mt-3 overflow-hidden p-2">
+                  <div className="flex h-[280px] w-full items-center justify-center overflow-hidden rounded-xl bg-white dark:bg-zinc-900">
                     {files[selectedIndex] && (
                       <img
                         src={files[selectedIndex].preview}
-                        alt={`Uploaded screenshot ${selectedIndex + 1}`}
+                        alt={t("previewScreenshot", { count: selectedIndex + 1 })}
                         className="h-auto w-auto max-h-full max-w-full object-contain"
                       />
                     )}
@@ -383,16 +390,16 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
                       <button
                         type="button"
                         onClick={() => setSelectedIndex(index)}
-                        className={`h-14 w-14 rounded-md border overflow-hidden ${
+                        className={`h-14 w-14 overflow-hidden rounded-xl border ${
                           selectedIndex === index
-                            ? "border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800"
-                            : "border-gray-200 dark:border-zinc-700"
+                            ? "border-cyan-500 ring-2 ring-cyan-200 dark:ring-cyan-800"
+                            : "border-stone-200 dark:border-zinc-700"
                         }`}
-                        aria-label={`Preview screenshot ${index + 1}`}
+                        aria-label={t("previewScreenshot", { count: index + 1 })}
                       >
                         <img
                           src={file.preview}
-                          alt={`Thumbnail ${index + 1}`}
+                          alt={t("thumbnail", { count: index + 1 })}
                           className="h-full w-full object-cover"
                         />
                       </button>
@@ -400,7 +407,7 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
                         type="button"
                         onClick={() => handleRemoveImage(index)}
                         className="absolute -top-1 -right-1 h-4 w-4 bg-gray-800 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        aria-label={`Remove screenshot ${index + 1}`}
+                        aria-label={t("removeScreenshot", { count: index + 1 })}
                       >
                         <Cross2Icon className="h-2 w-2" />
                       </button>
@@ -411,29 +418,29 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
                     onClick={() => {
                       if (isAtLimit) {
                         toast.error(
-                          `You’ve reached the limit of ${MAX_FILES} screenshots. Remove one to add another.`
+                          t("screenshotLimitReached", { count: MAX_FILES })
                         );
                         return;
                       }
                       open();
                     }}
                     disabled={isAtLimit}
-                    className={`h-14 w-14 rounded-md border border-dashed flex items-center justify-center flex-shrink-0 ${
+                    className={`h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-dashed ${
                       isAtLimit
                         ? "border-gray-200 dark:border-zinc-700 text-gray-300 dark:text-zinc-600 cursor-not-allowed"
-                        : "border-gray-300 dark:border-zinc-600 text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200 hover:border-gray-400 dark:hover:border-zinc-500"
+                        : "border-stone-300 dark:border-zinc-600 text-gray-500 dark:text-zinc-400 hover:border-stone-500 hover:text-gray-700 dark:hover:border-zinc-500 dark:hover:text-zinc-200"
                     }`}
-                    aria-label="Add more screenshots"
+                    aria-label={t("addMoreScreenshots")}
                   >
                     <ImageIcon className="h-5 w-5" />
                   </button>
                 </div>
                 <div className="mt-2 text-xs text-gray-400 dark:text-zinc-500">
-                  Drag and drop to add more screenshots
+                  {t("dragToAddMore")}
                 </div>
                 {isDragActive && (
-                  <div className="absolute inset-0 bg-blue-50/80 dark:bg-blue-950/80 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-lg flex items-center justify-center pointer-events-none">
-                    <p className="text-blue-600 dark:text-blue-400 font-medium">Drop to add</p>
+                  <div className="absolute inset-0 flex items-center justify-center rounded-[1.6rem] border-2 border-dashed border-cyan-300 bg-cyan-50/80 pointer-events-none dark:border-cyan-700 dark:bg-cyan-950/60">
+                    <p className="font-medium text-cyan-600 dark:text-cyan-400">{t("dropToAdd")}</p>
                   </div>
                 )}
               </div>
@@ -448,7 +455,7 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
               }}
               className="text-sm text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200 underline"
             >
-              Add instructions (optional)
+              {t("addInstructionsOptional")}
             </button>
           ) : (
             <div className="w-full max-w-lg">
@@ -457,8 +464,8 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
                 value={textPrompt}
                 onChange={(e) => setTextPrompt(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Describe any specific requirements..."
-                className="w-full p-3 text-sm border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-zinc-500"
+                placeholder={t("uploadPromptPlaceholder")}
+                className="w-full resize-none rounded-[1.25rem] border border-stone-200 bg-white/90 p-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-cyan-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:ring-cyan-800"
                 rows={2}
               />
             </div>
@@ -475,13 +482,13 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
           <div className="flex flex-col items-center gap-1 w-full max-w-md">
             <Button
               onClick={handleGenerate}
-              className="w-full"
+              className="w-full rounded-full"
               size="lg"
               data-testid="upload-generate"
             >
-              Generate Code
+              {t("generateCode")}
             </Button>
-            <p className="text-xs text-gray-400 dark:text-zinc-500">Press Enter to generate</p>
+            <p className="text-xs text-gray-400 dark:text-zinc-500">{t("pressEnterToGenerate")}</p>
           </div>
         </div>
       )}
@@ -491,7 +498,7 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
           {screenRecorderState === ScreenRecorderState.INITIAL && (
             <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-zinc-400">
               <div className="h-px w-12 bg-gray-300 dark:bg-zinc-600" />
-              <span>or</span>
+              <span>{t("or")}</span>
               <div className="h-px w-12 bg-gray-300 dark:bg-zinc-600" />
             </div>
           )}

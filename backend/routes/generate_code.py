@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
 import traceback
 from typing import Callable, Awaitable
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, HTTPException, WebSocket
 import openai
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from config import (
@@ -59,6 +59,7 @@ from uploaded_assets import (
     infer_local_asset_base_url,
 )
 from agent.runner import Agent
+from routes.accounts import consume_generation_credit_for_user_id, get_authenticated_user
 from routes.model_choice_sets import (
     ALL_KEYS_MODELS_DEFAULT,
     ALL_KEYS_MODELS_TEXT_CREATE,
@@ -466,6 +467,26 @@ class ModelSelectionStage:
         return selected_models
 
 
+class HostedQuotaMiddleware(Middleware):
+    async def process(
+        self, context: PipelineContext, next_func: Callable[[], Awaitable[None]]
+    ) -> None:
+        if IS_PROD:
+            try:
+                user = get_authenticated_user(context.websocket)
+            except HTTPException as exc:
+                await context.throw_error(str(exc.detail))
+                return
+
+            try:
+                consume_generation_credit_for_user_id(user["id"])
+            except HTTPException as exc:
+                await context.throw_error(str(exc.detail))
+                return
+
+        await next_func()
+
+
 class PromptCreationStage:
     """Handles prompt assembly for code generation"""
 
@@ -824,6 +845,7 @@ async def stream_code(websocket: WebSocket):
     # Configure the pipeline
     pipeline.use(WebSocketSetupMiddleware())
     pipeline.use(ParameterExtractionMiddleware())
+    pipeline.use(HostedQuotaMiddleware())
     pipeline.use(StatusBroadcastMiddleware())
     pipeline.use(PromptCreationMiddleware())
     pipeline.use(CodeGenerationMiddleware())

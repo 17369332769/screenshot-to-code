@@ -1,10 +1,12 @@
 import { LuMousePointerClick, LuX } from "react-icons/lu";
 import { useAppStore } from "../../store/app-store";
+import { useI18n } from "../../i18n";
 
 // Select-and-edit toggle in the preview toolbar, next to the device/code
 // tabs — the "inspect element" spot users know from devtools. While select
 // mode is on it becomes an explicit exit button.
 export function SelectAndEditToolbarButton() {
+  const { t } = useI18n();
   const { inSelectAndEditMode, toggleInSelectAndEditMode } = useAppStore();
   return (
     <button
@@ -13,8 +15,8 @@ export function SelectAndEditToolbarButton() {
       data-testid="select-edit-toggle"
       title={
         inSelectAndEditMode
-          ? "Exit selection mode"
-          : "Select an element in the preview to target your edit"
+          ? t("exitSelectionMode")
+          : t("selectElementToTarget")
       }
       className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors border ${
         inSelectAndEditMode
@@ -25,12 +27,12 @@ export function SelectAndEditToolbarButton() {
       {inSelectAndEditMode ? (
         <>
           <LuX className="w-3.5 h-3.5" />
-          Exit select mode
+          {t("exitSelectMode")}
         </>
       ) : (
         <>
           <LuMousePointerClick className="w-3.5 h-3.5" />
-          Select & edit
+          {t("selectAndEdit")}
         </>
       )}
     </button>

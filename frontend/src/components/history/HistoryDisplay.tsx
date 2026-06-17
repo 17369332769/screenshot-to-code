@@ -2,6 +2,7 @@ import { renderHistory, RenderedHistoryItem } from "./utils";
 import { useProjectStore } from "../../store/project-store";
 import { BsChevronDown, BsChevronRight } from "react-icons/bs";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useI18n } from "../../i18n";
 
 function MediaThumbnail({
   item,
@@ -108,6 +109,7 @@ function ExpandedMedia({
 }
 
 export default function HistoryDisplay() {
+  const { t } = useI18n();
   const { commits, head, setHead } = useProjectStore();
   const [expandedHash, setExpandedHash] = useState<string | null>(null);
   const [autoPlayHash, setAutoPlayHash] = useState<string | null>(null);
@@ -148,8 +150,8 @@ export default function HistoryDisplay() {
             key={item.hash}
             className={`rounded-xl border transition-all ${
               isActive
-                ? "bg-white dark:bg-zinc-800 border-blue-200 dark:border-blue-800 shadow-sm"
-                : "bg-white dark:bg-zinc-900 border-gray-100 dark:border-zinc-800 hover:border-gray-200 dark:hover:border-zinc-700"
+                ? "border-cyan-200 bg-white/95 shadow-sm dark:border-cyan-900/60 dark:bg-zinc-900"
+                : "border-stone-200/80 bg-white/75 hover:border-stone-300 dark:border-zinc-800 dark:bg-zinc-950/70 dark:hover:border-zinc-700"
             }`}
           >
             <div
@@ -160,8 +162,8 @@ export default function HistoryDisplay() {
               <span
                 className={`shrink-0 flex items-center justify-center w-6 h-6 rounded-full text-[10px] font-semibold ${
                   isActive
-                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
-                    : "bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-gray-500"
+                    ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-300"
+                    : "bg-stone-100 text-gray-500 dark:bg-zinc-800 dark:text-gray-500"
                 }`}
               >
                 {versionNumber}
@@ -179,23 +181,27 @@ export default function HistoryDisplay() {
                   <span
                     className={`text-[10px] uppercase tracking-wider font-medium px-1.5 py-0.5 rounded ${
                       item.type === "Create"
-                        ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
+                        ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
                         : item.type === "Edit"
-                          ? "bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
-                          : "bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                          ? "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
+                          : "bg-stone-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
                     }`}
                   >
-                    {item.type}
+                    {item.type === "Create"
+                      ? t("createType")
+                      : item.type === "Edit"
+                        ? t("editType")
+                        : item.type}
                   </span>
                   {item.parentVersion !== null && (
                     <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                      from v{item.parentVersion}
+                      {t("fromVersion", { count: item.parentVersion })}
                     </span>
                   )}
                 </div>
                 <p
-                  className={`text-sm mt-0.5 line-clamp-2 ${
-                    isActive
+                    className={`text-sm mt-0.5 line-clamp-2 ${
+                      isActive
                       ? "font-medium text-gray-900 dark:text-white"
                       : "text-gray-600 dark:text-gray-400"
                   }`}
@@ -240,7 +246,7 @@ export default function HistoryDisplay() {
                 )}
                 {item.selectedElementTag && (
                   <p className="text-xs text-violet-500 dark:text-violet-400 mt-1">
-                    Target: <code className="font-mono text-[10px] bg-violet-100 dark:bg-violet-900/30 px-1 py-0.5 rounded">&lt;{item.selectedElementTag}&gt;</code>
+                    {t("target")} <code className="font-mono text-[10px] bg-violet-100 dark:bg-violet-900/30 px-1 py-0.5 rounded">&lt;{item.selectedElementTag}&gt;</code>
                   </p>
                 )}
                 <ExpandedMedia

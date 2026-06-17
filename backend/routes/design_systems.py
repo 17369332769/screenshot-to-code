@@ -10,6 +10,56 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
+DEFAULT_DESIGN_SYSTEM_ID = "precision-canvas"
+DEFAULT_DESIGN_SYSTEM_NAME = "Precision Canvas"
+DEFAULT_DESIGN_SYSTEM_CONTENT = """
+Create interfaces for a screenshot-to-code product with a precise creative-tool aesthetic.
+
+Brand direction:
+- Feel like a modern design lab or developer workbench, not a generic SaaS landing page.
+- Balance technical precision with editorial calm.
+- The result should feel trustworthy, sharp, and premium without looking flashy.
+
+Color:
+- Prefer warm off-white, graphite, ink, soft stone, and restrained accent colors.
+- Use accent colors sparingly for focus states, key actions, progress, and selected surfaces.
+- Avoid purple-heavy gradients and neon rainbow palettes.
+
+Typography:
+- Use bold, compact heading hierarchy with clear contrast against quieter body copy.
+- Favor a sophisticated sans-serif look with tight headline tracking and comfortable body spacing.
+- Avoid oversized marketing copy blocks that feel generic.
+
+Layout and composition:
+- Emphasize structured panels, workspaces, rails, canvases, inspectors, and staged content blocks.
+- Use asymmetric composition when it helps create visual hierarchy.
+- Let the page breathe with generous spacing and distinct section rhythm.
+- Avoid repeating identical card grids for every section.
+
+Components:
+- Prefer rounded-xl or rounded-2xl surfaces, thin borders, layered panels, and subtle shadow depth.
+- Buttons should feel intentional and tactile, not bubbly or toy-like.
+- Inputs, tabs, and upload areas should resemble professional tooling.
+- Showcase outputs inside framed canvases, browser shells, or mock workspaces.
+
+Motion and interaction:
+- Use restrained motion: soft fades, panel lift, shimmer only when it communicates work in progress.
+- Hover states should be crisp and minimal.
+- Avoid decorative animation that competes with the product.
+
+Content tone:
+- Be concise, product-focused, and concrete.
+- Describe transformation, iteration, output quality, and workflow speed.
+- Avoid vague hype language and filler marketing copy.
+
+Anti-patterns:
+- Do not generate cookie-cutter startup pages.
+- Do not rely on large gradient blobs as the main visual idea.
+- Do not make every section a centered headline above three identical cards.
+- Do not overuse emojis, glossy glassmorphism, or fake analytics widgets.
+- Do not make the UI feel like a crypto dashboard or consumer social app.
+""".strip()
+
 
 class DesignSystem(BaseModel):
     id: str
@@ -62,10 +112,23 @@ def parse_design_system(raw_item: Any) -> DesignSystem | None:
         return None
 
 
+def build_default_design_system(timestamp: str | None = None) -> DesignSystem:
+    created_at = timestamp or utc_timestamp()
+    return DesignSystem(
+        id=DEFAULT_DESIGN_SYSTEM_ID,
+        name=DEFAULT_DESIGN_SYSTEM_NAME,
+        content=DEFAULT_DESIGN_SYSTEM_CONTENT,
+        createdAt=created_at,
+        updatedAt=created_at,
+    )
+
+
 def read_design_systems() -> list[DesignSystem]:
     file_path = get_design_systems_file_path()
     if not file_path.exists():
-        return []
+        default_design_system = build_default_design_system()
+        write_design_systems([default_design_system])
+        return [default_design_system]
 
     try:
         raw_items = cast(list[Any], json.loads(file_path.read_text(encoding="utf-8")))

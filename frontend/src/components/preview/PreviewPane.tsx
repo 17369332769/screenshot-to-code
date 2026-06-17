@@ -21,6 +21,7 @@ import { extractHtml } from "./extractHtml";
 import PreviewComponent from "./PreviewComponent";
 import { downloadCode } from "./download";
 import { SelectAndEditToolbarButton } from "../select-and-edit/SelectAndEditControls";
+import { useI18n } from "../../i18n";
 
 function openInNewTab(code: string) {
   const newWindow = window.open("", "_blank");
@@ -37,6 +38,7 @@ interface Props {
 }
 
 function PreviewPane({ settings, onOpenVersions }: Props) {
+  const { t } = useI18n();
   const { appState } = useAppStore();
   const { inputMode, head, commits, setHead } = useProjectStore();
   const [activeTab, setActiveTab] = useState("desktop");
@@ -80,31 +82,31 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
         onValueChange={setActiveTab}
         className="flex-1 flex flex-col min-h-0"
       >
-        <div className="relative flex items-center justify-between px-4 py-2 shrink-0 border-b border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+        <div className="relative flex items-center justify-between border-b border-stone-200/80 bg-white/80 px-4 py-2 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/88 shrink-0">
           <div className="flex items-center gap-2">
             <TabsList>
-              <TabsTrigger value="desktop" title="Desktop" data-testid="tab-desktop">
+              <TabsTrigger value="desktop" title={t("desktop")} data-testid="tab-desktop">
                 <FaDesktop />
               </TabsTrigger>
-              <TabsTrigger value="mobile" title="Mobile" data-testid="tab-mobile">
+              <TabsTrigger value="mobile" title={t("mobile")} data-testid="tab-mobile">
                 <FaMobile />
               </TabsTrigger>
-              <TabsTrigger value="code" title="Code" data-testid="tab-code" className="gap-2">
+              <TabsTrigger value="code" title={t("code")} data-testid="tab-code" className="gap-2">
                 <FaCode />
-                Code
+                {t("code")}
               </TabsTrigger>
             </TabsList>
             {(activeTab === "desktop" || activeTab === "mobile") && (
               <div className="hidden sm:inline-flex items-center gap-2">
                 {activeTab === "desktop" && (
-                  <div className="inline-flex items-center rounded-lg bg-gray-100 p-1 dark:bg-zinc-800">
+                  <div className="inline-flex items-center rounded-xl border border-stone-200 bg-stone-100/80 p-1 dark:border-zinc-700 dark:bg-zinc-800">
                     <button
                       type="button"
                       onClick={() => setDesktopViewMode("fit")}
-                      title="Scale down to fit the screen"
+                      title={t("scaleDownToFit")}
                       className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
                         desktopViewMode === "fit"
-                          ? "bg-white text-gray-900 shadow-sm dark:bg-zinc-600 dark:text-zinc-100"
+                          ? "bg-stone-950 text-white shadow-sm dark:bg-white dark:text-stone-950"
                           : "text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-zinc-200"
                       }`}
                     >
@@ -118,10 +120,10 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
                     <button
                       type="button"
                       onClick={() => setDesktopViewMode("actual")}
-                      title="View at original size (100%)"
+                      title={t("originalSize")}
                       className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
                         desktopViewMode === "actual"
-                          ? "bg-white text-gray-900 shadow-sm dark:bg-zinc-600 dark:text-zinc-100"
+                          ? "bg-stone-950 text-white shadow-sm dark:bg-white dark:text-stone-950"
                           : "text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-zinc-200"
                       }`}
                     >
@@ -133,7 +135,7 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
                   onClick={() => openInNewTab(previewCode)}
                   variant="ghost"
                   size="icon"
-                  title="Open in New Tab"
+                  title={t("openInNewTab")}
                   className="h-8 w-8"
                 >
                   <LuExternalLink />
@@ -144,13 +146,13 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
 
           {/* Version navigation */}
           {totalVersions > 0 && (
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center justify-center gap-1 bg-gray-100/50 dark:bg-zinc-800/50 rounded-full p-1 border border-gray-200/50 dark:border-zinc-700/50 backdrop-blur-sm">
+            <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-1 rounded-full border border-stone-200/70 bg-white/70 p-1 backdrop-blur-sm dark:border-zinc-700/50 dark:bg-zinc-800/50 md:flex">
               <Button
                 onClick={() => canGoPrev && setHead(sortedCommits[currentVersionIndex - 1].hash)}
                 variant="ghost"
                 size="icon"
-                title="Previous version"
-                className={`h-6 w-6 rounded-full hover:bg-white dark:hover:bg-zinc-700 ${!canGoPrev ? "opacity-30 cursor-not-allowed" : ""}`}
+                title={t("previousVersion")}
+                className={`h-6 w-6 rounded-full hover:bg-stone-950 hover:text-white dark:hover:bg-white dark:hover:text-stone-950 ${!canGoPrev ? "opacity-30 cursor-not-allowed" : ""}`}
                 disabled={!canGoPrev}
               >
                 <LuChevronLeft className="w-3.5 h-3.5" />
@@ -158,14 +160,14 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
               <div
                 onClick={onOpenVersions}
                 className="flex items-center justify-center gap-2 px-1 cursor-pointer hover:opacity-70 transition-opacity w-32"
-                title="View all versions"
+                title={t("viewAllVersions")}
               >
                 <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 leading-none">
-                  Version {currentVersionIndex + 1}
+                  {t("versionNumber", { count: currentVersionIndex + 1 })}
                 </span>
                 {currentVersionIndex === totalVersions - 1 && (
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300 leading-none flex items-center h-4">
-                    Latest
+                  <span className="flex h-4 items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium leading-none text-amber-800 dark:bg-amber-500/15 dark:text-amber-200">
+                    {t("latest")}
                   </span>
                 )}
               </div>
@@ -173,8 +175,8 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
                 onClick={() => canGoNext && setHead(sortedCommits[currentVersionIndex + 1].hash)}
                 variant="ghost"
                 size="icon"
-                title="Next version"
-                className={`h-6 w-6 rounded-full hover:bg-white dark:hover:bg-zinc-700 ${!canGoNext ? "opacity-30 cursor-not-allowed" : ""}`}
+                title={t("nextVersion")}
+                className={`h-6 w-6 rounded-full hover:bg-stone-950 hover:text-white dark:hover:bg-white dark:hover:text-stone-950 ${!canGoNext ? "opacity-30 cursor-not-allowed" : ""}`}
                 disabled={!canGoNext}
               >
                 <LuChevronRight className="w-3.5 h-3.5" />
@@ -192,7 +194,7 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
                 onClick={() => downloadCode(previewCode)}
                 variant="ghost"
                 size="icon"
-                title="Download Code"
+                title={t("downloadCode")}
                 className="h-9 w-9"
                 data-testid="download-code"
               >
@@ -212,7 +214,7 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
               }}
               variant="ghost"
               size="icon"
-              title="Refresh Preview"
+              title={t("refreshPreview")}
               className="h-9 w-9"
             >
               <LuRefreshCw />

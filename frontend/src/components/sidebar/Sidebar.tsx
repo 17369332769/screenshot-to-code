@@ -16,6 +16,7 @@ import { CodeGenerationModel } from "../../lib/models";
 import DesignSystemSelector, {
   DesignSystemSelectorProps,
 } from "../settings/DesignSystemSelector";
+import { useI18n } from "../../i18n";
 
 interface SidebarProps {
   doUpdate: (instruction: string) => void;
@@ -34,22 +35,9 @@ function extractTagName(html: string): string {
 
 function summarizeLatestChange(commit: Commit | null): string | null {
   if (!commit) return null;
-  if (commit.type === "code_create") return "Imported existing code.";
-
-  const text = commit.inputs.text.trim();
+  const text = commit.type !== "code_create" ? commit.inputs.text.trim() : "";
   if (text.length > 0) return text;
-
-  if (commit.type === "ai_create") {
-    return "Create";
-  }
-
-  if (commit.inputs.images.length > 1) {
-    return `Updated with ${commit.inputs.images.length} reference images.`;
-  }
-  if (commit.inputs.images.length === 1) {
-    return "Updated with one reference image.";
-  }
-  return "Updated code.";
+  return null;
 }
 
 function getSelectedElementTag(commit: Commit | null): string | null {
@@ -73,6 +61,7 @@ function Sidebar({
   onOpenVersions,
   designSystem,
 }: SidebarProps) {
+  const { t } = useI18n();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const middlePaneRef = useRef<HTMLDivElement>(null);
   const [isErrorExpanded, setIsErrorExpanded] = useState(false);
@@ -119,7 +108,7 @@ function Sidebar({
       try {
         if (updateImages.length >= MAX_UPDATE_IMAGES) {
           toast.error(
-            `You’ve reached the limit of ${MAX_UPDATE_IMAGES} reference images. Remove one to add another.`
+            t("referenceImageLimitReached", { count: MAX_UPDATE_IMAGES })
           );
           return;
         }
@@ -128,9 +117,10 @@ function Sidebar({
         let filesToAdd = files;
         if (filesToAdd.length > remainingSlots) {
           toast.error(
-            `Only ${remainingSlots} more image${
-              remainingSlots === 1 ? "" : "s"
-            } will be added to stay within the ${MAX_UPDATE_IMAGES}-image limit.`
+            t("referenceOnlySomeAdded", {
+              count: remainingSlots,
+              max: MAX_UPDATE_IMAGES,
+            })
           );
           filesToAdd = filesToAdd.slice(0, remainingSlots);
         }
@@ -142,13 +132,27 @@ function Sidebar({
         console.error("Error reading files:", error);
       }
     },
-    [updateImages, setUpdateImages]
+    [t, updateImages, setUpdateImages]
   );
 
   const { head, commits, latestCommitHash, setHead } = useProjectStore();
 
   const currentCommit = head ? commits[head] : null;
-  const latestChangeSummary = summarizeLatestChange(currentCommit);
+  const latestChangeSummary =
+    summarizeLatestChange(currentCommit) ??
+    (currentCommit?.type === "code_create"
+      ? t("importedExistingCode")
+      : currentCommit?.type === "ai_create"
+        ? t("createSummary")
+        : currentCommit?.inputs.images.length && currentCommit.inputs.images.length > 1
+          ? t("updatedWithReferenceImages", {
+              count: currentCommit.inputs.images.length,
+            })
+          : currentCommit?.inputs.images.length === 1
+            ? t("updatedWithOneReferenceImage")
+            : currentCommit
+              ? t("updatedCode")
+              : null);
   const selectedElementTag = getSelectedElementTag(currentCommit);
   const latestChangeImages =
     currentCommit && currentCommit.type !== "code_create"
@@ -276,21 +280,21 @@ function Sidebar({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="shrink-0 border-b border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2">
+      <div className="shrink-0 border-b border-stone-200/80 bg-white/80 px-4 py-2 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/88">
         <Variants />
       </div>
 
       {/* Scrollable content */}
       <div
         ref={middlePaneRef}
-        className="flex-1 min-h-0 overflow-y-auto sidebar-scrollbar-stable px-6 pt-4"
+        className="sidebar-scrollbar-stable flex-1 min-h-0 overflow-y-auto px-5 pt-4"
       >
         {latestChangeSummary && (
           <div className="mb-4 flex flex-col items-end">
-            <div className="inline-block max-w-[85%] rounded-2xl rounded-br-md bg-violet-100 px-4 py-2.5 dark:bg-violet-900/30">
+            <div className="studio-panel inline-block max-w-[90%] rounded-[1.35rem] px-4 py-3">
               <p
                 ref={promptTextRef}
-                className={`text-[13px] text-violet-950 dark:text-violet-100 break-words whitespace-pre-wrap ${
+                className={`break-words whitespace-pre-wrap text-[13px] text-stone-800 dark:text-zinc-100 ${
                   !isPromptExpanded ? "line-clamp-[10]" : ""
                 }`}
               >
@@ -298,9 +302,9 @@ function Sidebar({
               </p>
               {selectedElementTag && (
                 <div className="mt-1.5 flex items-center gap-1.5">
-                  <LuMousePointerClick className="w-3 h-3 text-violet-500 dark:text-violet-400" />
-                  <span className="text-[11px] text-violet-600 dark:text-violet-300">
-                    Selected: <code className="font-mono text-[10px] bg-violet-200/60 dark:bg-violet-800/50 px-1 py-0.5 rounded">&lt;{selectedElementTag}&gt;</code>
+                  <LuMousePointerClick className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />
+                  <span className="text-[11px] text-cyan-700 dark:text-cyan-300">
+                    {t("selected")} <code className="rounded bg-cyan-100 px-1 py-0.5 font-mono text-[10px] dark:bg-cyan-900/40">&lt;{selectedElementTag}&gt;</code>
                   </span>
                 </div>
               )}
@@ -308,9 +312,9 @@ function Sidebar({
                 <div className="flex justify-end mt-1.5">
                   <button
                     onClick={() => setIsPromptExpanded(!isPromptExpanded)}
-                    className="text-[11px] font-medium text-gray-600 bg-white/70 hover:bg-white dark:text-gray-300 dark:bg-zinc-800/70 dark:hover:bg-zinc-800 px-2 py-0.5 rounded-full transition-colors shadow-sm"
+                    className="rounded-full bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-gray-600 shadow-sm transition-colors hover:bg-white dark:bg-zinc-800/70 dark:text-gray-300 dark:hover:bg-zinc-800"
                   >
-                    {isPromptExpanded ? "less" : "more"}
+                    {isPromptExpanded ? t("less") : t("more")}
                   </button>
                 </div>
               )}
@@ -321,11 +325,11 @@ function Sidebar({
                     <button
                       key={`${image.slice(0, 40)}-${index}`}
                       onClick={() => setLightboxImage(image)}
-                      className="shrink-0 cursor-zoom-in rounded-lg border border-gray-200 bg-white p-1 dark:border-zinc-700 dark:bg-zinc-900 hover:border-violet-300 dark:hover:border-violet-500 transition-colors"
+                      className="shrink-0 cursor-zoom-in rounded-xl border border-stone-200 bg-white p-1 transition-colors hover:border-cyan-300 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-cyan-500"
                     >
                       <img
                         src={image}
-                        alt={`Reference ${index + 1}`}
+                        alt={t("referenceImage", { count: index + 1 })}
                         className="h-24 w-24 object-contain"
                         loading="lazy"
                       />
@@ -350,14 +354,16 @@ function Sidebar({
         )}
 
         {showWorkingIndicator && (
-          <div className="working-indicator-bg mb-3 rounded-xl border border-violet-200 dark:border-violet-800 px-3 py-2 transition-all duration-500">
+          <div className="working-indicator-bg mb-3 rounded-[1.2rem] border border-cyan-200 px-3 py-2 transition-all duration-500 dark:border-cyan-900/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <WorkingPulse />
-                <span>Working...</span>
+                <span>{t("working")}</span>
               </div>
               <div className="text-xs font-semibold text-gray-700 dark:text-gray-200">
-                Time so far {elapsedSeconds ? `${elapsedSeconds}s` : "--"}
+                {t("timeSoFar", {
+                  time: elapsedSeconds ? `${elapsedSeconds}s` : "--",
+                })}
               </div>
             </div>
           </div>
@@ -370,30 +376,30 @@ function Sidebar({
           !isSelectedVariantError &&
           isSlowGeminiModel(selectedVariant?.model) && (
           <div className="mb-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
-            Slow, high quality model. May take 5-10 mins on some images/videos.
+            {t("slowGeminiNotice")}
           </div>
         )}
 
         {isViewingOlderVersion && currentVersionNumber !== null ? (
           <div className="mb-4 flex flex-col items-center py-6">
             <p className="text-2xl font-semibold text-gray-900 dark:text-zinc-100">
-              Version {currentVersionNumber}
+              {t("versionNumber", { count: currentVersionNumber })}
             </p>
             <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
-              You are viewing an older version
+              {t("viewingOlderVersion")}
             </p>
             <div className="mt-4 flex gap-2">
               <button
                 onClick={onOpenVersions}
                 className="rounded-lg border border-gray-300 dark:border-zinc-600 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
               >
-                All versions
+                {t("allVersions")}
               </button>
               <button
                 onClick={() => latestCommitHash && setHead(latestCommitHash)}
                 className="rounded-lg bg-gray-900 dark:bg-white px-4 py-2 text-sm font-medium text-white dark:text-black hover:bg-black dark:hover:bg-gray-200 transition-colors"
               >
-                View latest
+                {t("viewLatest")}
               </button>
             </div>
           </div>
@@ -416,10 +422,10 @@ function Sidebar({
           <div className="flex justify-end mb-3">
             <button
               onClick={regenerate}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+              className="flex items-center gap-1.5 rounded-full border border-stone-300 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-stone-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-zinc-800"
             >
               <LuRefreshCw className="w-3.5 h-3.5" />
-              Retry
+              {t("retry")}
             </button>
           </div>
         )}
@@ -431,17 +437,17 @@ function Sidebar({
               onClick={cancelCodeGeneration}
               className="w-full dark:text-white dark:bg-gray-700"
             >
-              Cancel All Generations
+              {t("cancelAllGenerations")}
             </Button>
           </div>
         )}
 
         {/* Show error message when selected option has an error */}
         {isSelectedVariantError && (
-          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-md p-3 mb-2">
+          <div className="mb-2 rounded-[1.1rem] border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950/30">
             <div className="text-red-800 dark:text-red-200 text-sm">
-              <div className="font-medium mb-1">
-                This option failed to generate because
+                <div className="font-medium mb-1">
+                {t("optionFailedBecause")}
               </div>
               {selectedVariantErrorMessage && (
                 <div className="mb-2">
@@ -455,15 +461,15 @@ function Sidebar({
                       onClick={() => setIsErrorExpanded(!isErrorExpanded)}
                       className="text-red-600 dark:text-red-400 text-xs underline mt-1 hover:text-red-800 dark:hover:text-red-300"
                     >
-                      {isErrorExpanded ? "Show less" : "Show more"}
+                      {isErrorExpanded ? t("showLess") : t("showMore")}
                     </button>
                   )}
                 </div>
               )}
               <div>
                 {isFirstGeneration
-                  ? "Click Retry to run the create request again."
-                  : "Switch to another option above to make updates."}
+                  ? t("retryCreateRequest")
+                  : t("switchOptionForUpdates")}
               </div>
             </div>
           </div>
@@ -474,7 +480,7 @@ function Sidebar({
       {(appState === AppState.CODE_READY || isSelectedVariantComplete) &&
         !isSelectedVariantError && (
           <div
-            className="shrink-0 border-t border-gray-200 bg-gray-50 dark:border-zinc-800 dark:bg-zinc-900 px-4 py-4"
+            className="shrink-0 border-t border-stone-200/80 bg-white/80 px-4 py-4 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/88"
             onDragEnter={() => setIsDragging(true)}
             onDragLeave={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) {
@@ -488,38 +494,38 @@ function Sidebar({
             {inSelectAndEditMode && (
               <div className="mb-2">
                 {selectedElement ? (
-                  <div className="flex items-center justify-between rounded-xl border border-violet-300 dark:border-violet-600 bg-violet-50 dark:bg-violet-900/20 px-3 py-2">
+                  <div className="flex items-center justify-between rounded-[1rem] border border-cyan-300 bg-cyan-50 px-3 py-2 dark:border-cyan-600 dark:bg-cyan-950/20">
                     <div className="flex items-center gap-2 min-w-0">
-                      <LuMousePointerClick className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400 shrink-0" />
-                      <span className="text-sm text-violet-700 dark:text-violet-300 truncate">
-                        Selected: <code className="font-mono text-xs bg-violet-100 dark:bg-violet-800/50 px-1.5 py-0.5 rounded">&lt;{selectedElement.tagName.toLowerCase()}&gt;</code>
+                      <LuMousePointerClick className="h-3.5 w-3.5 shrink-0 text-cyan-600 dark:text-cyan-400" />
+                      <span className="truncate text-sm text-cyan-700 dark:text-cyan-300">
+                        {t("selected")} <code className="rounded bg-cyan-100 px-1.5 py-0.5 font-mono text-xs dark:bg-cyan-800/50">&lt;{selectedElement.tagName.toLowerCase()}&gt;</code>
                       </span>
                     </div>
                     <button
                       onClick={() => setSelectedElement(null)}
                       className="shrink-0 ml-3 p-0.5 text-violet-400 hover:text-violet-700 dark:hover:text-violet-200 transition-colors"
-                      title="Clear selection"
+                      title={t("exit")}
                     >
                       <LuX className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 px-3 py-2">
+                  <div className="flex items-center justify-between rounded-[1rem] border border-cyan-200 bg-cyan-50 px-3 py-2 dark:border-cyan-700 dark:bg-cyan-950/20">
                     <div className="flex items-center gap-2">
-                      <LuMousePointerClick className="w-3.5 h-3.5 text-violet-500 dark:text-violet-400 shrink-0" />
-                      <span className="text-sm font-medium text-violet-700 dark:text-violet-300">Click an element to edit it</span>
+                      <LuMousePointerClick className="h-3.5 w-3.5 shrink-0 text-cyan-500 dark:text-cyan-400" />
+                      <span className="text-sm font-medium text-cyan-700 dark:text-cyan-300">{t("clickElementToEditIt")}</span>
                     </div>
                     <button
                       onClick={toggleInSelectAndEditMode}
                       className="shrink-0 ml-3 text-sm text-violet-500 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-200 transition-colors"
                     >
-                      Exit
+                      {t("exit")}
                     </button>
                   </div>
                 )}
               </div>
             )}
-            <div className="relative w-full overflow-hidden rounded-2xl border-2 border-violet-300 bg-white transition-all focus-within:border-violet-500 dark:border-violet-500/50 dark:bg-zinc-900 dark:focus-within:border-violet-400">
+            <div className="relative w-full overflow-hidden rounded-[1.5rem] border-2 border-stone-200 bg-white/95 transition-all focus-within:border-cyan-400 dark:border-zinc-700 dark:bg-zinc-900 dark:focus-within:border-cyan-500">
               <UpdateImagePreview
                 updateImages={updateImages}
                 setUpdateImages={setUpdateImages}
@@ -528,8 +534,10 @@ function Sidebar({
                 ref={textareaRef}
                 placeholder={
                   inSelectAndEditMode && selectedElement
-                    ? `Describe changes for the selected <${selectedElement.tagName.toLowerCase()}> element...`
-                    : "Tell the AI what to change..."
+                    ? t("updatePromptForElement", {
+                        tag: selectedElement.tagName.toLowerCase(),
+                      })
+                    : t("tellAiWhatToChange")
                 }
                 onChange={(e) => {
                   setUpdateInstruction(e.target.value);
@@ -544,7 +552,7 @@ function Sidebar({
                 value={updateInstruction}
                 data-testid="update-input"
                 rows={1}
-                className="max-h-40 w-full resize-none border-0 bg-transparent px-4 pt-4 pb-6 text-[15px] leading-6 text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                className="max-h-40 w-full resize-none border-0 bg-transparent px-4 pb-6 pt-4 text-[15px] leading-6 text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
               <div className="flex items-center justify-between px-3 pb-3">
                 <div className="flex items-center gap-1">
@@ -557,10 +565,10 @@ function Sidebar({
                     data-testid="select-edit-toggle-prompt"
                     className={`rounded-lg p-2 transition-colors ${
                       inSelectAndEditMode
-                        ? "bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400"
+                        ? "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400"
                         : "text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
                     }`}
-                    title={inSelectAndEditMode ? "Exit selection mode" : "Select an element in the preview to target your edit"}
+                    title={inSelectAndEditMode ? t("exitSelectionMode") : t("selectElementToTarget")}
                   >
                     <LuMousePointerClick className="w-[18px] h-[18px]" />
                   </button>
@@ -571,18 +579,18 @@ function Sidebar({
                   disabled={!updateInstruction.trim()}
                   className={`rounded-xl p-2 transition-colors update-btn ${
                     updateInstruction.trim()
-                      ? "bg-violet-600 text-white hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-400"
+                      ? "bg-slate-950 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-stone-200"
                       : "cursor-not-allowed bg-gray-200 text-gray-400 dark:bg-zinc-700 dark:text-zinc-500"
                   }`}
-                  title="Send"
+                  title={t("send")}
                 >
                   <LuArrowUp className="w-[18px] h-[18px]" strokeWidth={2.5} />
                 </button>
               </div>
 
               {isDragging && (
-                <div className="absolute inset-0 bg-blue-50/90 dark:bg-gray-800/90 border-2 border-dashed border-blue-400 dark:border-blue-600 rounded-xl flex items-center justify-center pointer-events-none z-10">
-                  <p className="text-blue-600 dark:text-blue-400 font-medium">Drop images here</p>
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[1.5rem] border-2 border-dashed border-cyan-400 bg-cyan-50/90 pointer-events-none dark:border-cyan-600 dark:bg-gray-800/90">
+                  <p className="font-medium text-cyan-600 dark:text-cyan-400">{t("dropImagesHere")}</p>
                 </div>
               )}
             </div>

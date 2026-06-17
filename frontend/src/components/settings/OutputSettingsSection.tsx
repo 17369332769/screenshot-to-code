@@ -11,6 +11,7 @@ import StackLabel from "../core/StackLabel";
 import DesignSystemSelector, {
   DesignSystemSelectorProps,
 } from "./DesignSystemSelector";
+import { useI18n } from "../../i18n";
 
 interface Props {
   stack: Stack | undefined;
@@ -23,14 +24,19 @@ interface Props {
 function OutputSettingsSection({
   stack,
   setStack,
-  label = "Stack:",
+  label,
   shouldDisableUpdates = false,
   designSystem,
 }: Props) {
+  const { t } = useI18n();
+  const resolvedLabel = label ?? t("outputStack");
+
   return (
-    <div className="flex flex-col gap-y-2 justify-between text-sm">
-      <div className="grid grid-cols-3 items-center gap-4">
-        <span>{label}</span>
+    <div className="flex flex-col gap-y-3 justify-between text-sm">
+      <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-3 sm:gap-4">
+        <span className="font-medium text-stone-700 dark:text-zinc-300">
+          {resolvedLabel}
+        </span>
         <Select
           value={stack ?? ""}
           onValueChange={(value: string) => setStack(value as Stack)}
@@ -41,7 +47,7 @@ function OutputSettingsSection({
             id="output-settings-js"
             data-testid="stack-select"
           >
-            <SelectValue placeholder="Select a stack" />
+            <SelectValue placeholder={t("selectStack")} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>

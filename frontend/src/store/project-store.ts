@@ -80,6 +80,14 @@ interface ProjectStore {
   executionConsoles: { [key: number]: string[] };
   appendExecutionConsole: (variantIndex: number, line: string) => void;
   resetExecutionConsoles: () => void;
+  hydrateProjectSnapshot: (snapshot: {
+    inputMode: "image" | "video" | "text";
+    referenceImages: string[];
+    initialPrompt: string;
+    commits: Record<string, Commit>;
+    head: CommitHash | null;
+    latestCommitHash: CommitHash | null;
+  }) => void;
 }
 
 export const useProjectStore = create<ProjectStore>((set) => ({
@@ -455,4 +463,14 @@ export const useProjectStore = create<ProjectStore>((set) => ({
       },
     })),
   resetExecutionConsoles: () => set({ executionConsoles: {} }),
+  hydrateProjectSnapshot: (snapshot) =>
+    set({
+      inputMode: snapshot.inputMode,
+      referenceImages: snapshot.referenceImages,
+      initialPrompt: snapshot.initialPrompt,
+      commits: snapshot.commits,
+      head: snapshot.head,
+      latestCommitHash: snapshot.latestCommitHash,
+      executionConsoles: {},
+    }),
 }));
