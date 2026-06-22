@@ -1,21 +1,24 @@
 services:
   - type: web
-    name: screenshot-to-code-backend
+    name: screenshot-to-code-backend-py310
     runtime: python
-    rootDir: backend
-    plan: starter
-    buildCommand: uvx poetry install
-    startCommand: uvx poetry run uvicorn main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    buildCommand: cd backend && poetry install --no-interaction --no-ansi
+    startCommand: cd backend && poetry run uvicorn main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/healthz
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.20
+      - key: POETRY_VERSION
+        value: 2.3.2
       - key: IS_PROD
         value: "true"
       - key: ALLOWED_CORS_ORIGINS
         sync: false
       - key: SCREENSHOT_TO_CODE_DATA_DIR
-        value: /var/data/screenshot-to-code
+        value: /tmp/screenshot-to-code
       - key: LOCAL_ASSET_DIR
-        value: /var/data/screenshot-to-code/local-assets
+        value: /tmp/screenshot-to-code/local-assets
       - key: OPENAI_API_KEY
         sync: false
       - key: ANTHROPIC_API_KEY
@@ -40,18 +43,13 @@ services:
         value: "false"
       - key: PROMPT_REPORTS_ENABLED
         value: "false"
-    disk:
-      name: screenshot-to-code-data
-      mountPath: /var/data/screenshot-to-code
-      sizeGB: 5
 
   - type: web
     name: screenshot-to-code-frontend
     runtime: static
-    rootDir: frontend
-    buildCommand: pnpm install --frozen-lockfile && pnpm build-hosted
-    staticPublishPath: dist
-    pullRequestPreviewsEnabled: true
+    buildCommand: cd frontend && pnpm install --frozen-lockfile && pnpm build-hosted
+    staticPublishPath: frontend/dist
+    pullRequestPreviewsEnabled: false
     envVars:
       - key: VITE_HTTP_BACKEND_URL
         sync: false

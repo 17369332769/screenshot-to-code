@@ -1,244 +1,104 @@
 # screenshot-to-code Render 部署文档
 
-本文说明如何把当前仓库的前端和后端都部署到 `Render`，并解释为什么这套方式适合当前项目。
+本文基于当前仓库和已经跑通的 Render 线上部署整理，目标是把前端和后端都部署到 Render，并说明这次实际验证过的配置。
 
-适用范围：
-
-- 前端部署到 `Render Static Site`
-- 后端部署到 `Render Web Service`
-- 前后端都在 `Render` 上托管
-
-配套蓝图文件已经加入仓库：
+配套蓝图文件：
 
 - [render.yaml](/Users/czy/Documents/screenshot-to-code/render.yaml)
 
-## 1. 方案结论
+当前已跑通的线上地址：
 
-这个项目当前最适合的 Render 方案是：
+- 前端：[https://screenshot-to-code-frontend-9hne.onrender.com](https://screenshot-to-code-frontend-9hne.onrender.com)
+- 后端：[https://screenshot-to-code-backend-py310.onrender.com](https://screenshot-to-code-backend-py310.onrender.com)
+
+## 1. 部署结论
+
+这个项目当前最合适、也已经验证可用的 Render 方案是：
 
 - 前端：`Static Site`
 - 后端：`Web Service`
-- 后端额外挂一个 `Persistent Disk`
+- 同一个 GitHub 仓库，两个 Render 服务
 
-原因：
+原因很直接：
 
-- 前端是 `React + Vite`，构建后是静态资源
-- 后端是 `FastAPI`
-- 后端依赖 `WebSocket /generate-code`
-- 后端会把项目数据、设计系统和本地资源写到磁盘
+- `frontend/` 是 `Vite` 静态构建产物
+- `backend/` 是常驻运行的 `FastAPI + uvicorn`
+- 后端需要 HTTP API 和 WebSocket
+- 前端和后端都放在 Render 上，但仍然应该按服务职责拆开
 
-所以它不是“纯静态站”，也不是“纯 serverless 函数”，而是标准的“静态前端 + 常驻后端服务”。
+这不是“分平台部署”，而是“同平台内拆成两个最匹配的 Render 服务”。
 
-## 2. 仓库和服务划分
+## 2. 这次实际跑通的配置
 
-### 前端
+### 前端服务
 
-目录：
-
-- `frontend/`
-
-运行特点：
-
-- 用 `Vite` 构建
-- 通过环境变量读取后端地址
-- 使用 `BrowserRouter`
-
-相关配置：
-
-- [frontend/package.json](/Users/czy/Documents/screenshot-to-code/frontend/package.json)
-- [frontend/src/config.ts](/Users/czy/Documents/screenshot-to-code/frontend/src/config.ts)
-- [frontend/src/main.tsx](/Users/czy/Documents/screenshot-to-code/frontend/src/main.tsx)
-
-### 后端
-
-目录：
-
-- `backend/`
-
-运行特点：
-
-- `FastAPI + uvicorn`
-- 提供 HTTP API
-- 提供 WebSocket
-- 本地文件持久化
-
-相关配置：
-
-- [backend/main.py](/Users/czy/Documents/screenshot-to-code/backend/main.py)
-- [backend/config.py](/Users/czy/Documents/screenshot-to-code/backend/config.py)
-- [backend/routes/generate_code.py](/Users/czy/Documents/screenshot-to-code/backend/routes/generate_code.py)
-- [backend/routes/accounts.py](/Users/czy/Documents/screenshot-to-code/backend/routes/accounts.py)
-- [backend/routes/design_systems.py](/Users/czy/Documents/screenshot-to-code/backend/routes/design_systems.py)
-- [backend/uploaded_assets/store.py](/Users/czy/Documents/screenshot-to-code/backend/uploaded_assets/store.py)
-
-## 3. Render 上为什么要分成两个服务
-
-虽然你说的是“都部署到 Render”，但在 Render 里仍然建议拆成两个服务：
-
-1. 一个 `Static Site`
-2. 一个 `Web Service`
-
-这不是“分平台部署”，而是“同平台内按职责拆服务”。
-
-这样做的好处：
-
-- 前端静态资源用最适合的托管方式
-- 后端保留常驻服务能力
-- 前端和后端可以独立发布
-- 后端挂磁盘更自然
-- 配置更符合 Render 的产品模型
-
-## 4. 部署前准备
-
-### 4.1 你需要准备什么
-
-- 一个 `Render` 账号
-- 仓库已推送到 GitHub
-- 至少一个可用的模型 Key
-
-至少准备以下 Key 中的一个：
-
-- `OPENAI_API_KEY`
-- `ANTHROPIC_API_KEY`
-- `GEMINI_API_KEY`
-
-没有任何模型 Key 时：
-
-- 后端虽然能启动
-- 但 `/api/readyz` 会返回 `not_ready`
-- 实际生成代码功能不可用
-
-### 4.2 后端持久化是必须的
-
-当前项目会在本地写这些内容：
-
-- `users.json`
-- `projects.json`
-- `design-systems.json`
-- `local-assets/*`
-
-所以后端一定要挂 `Persistent Disk`。
-
-## 5. 推荐的 Render 服务结构
-
-建议使用两个服务：
-
-### 服务 1：后端
-
-- Service type：`Web Service`
-- Name：`screenshot-to-code-backend`
-- Root Directory：`backend`
-
-### 服务 2：前端
-
-- Service type：`Static Site`
-- Name：`screenshot-to-code-frontend`
-- Root Directory：`frontend`
-
-## 6. 方式一：用仓库里的 render.yaml
-
-仓库已经新增了：
-
-- [render.yaml](/Users/czy/Documents/screenshot-to-code/render.yaml)
-
-它定义了：
-
-- 一个后端 `Web Service`
-- 一个前端 `Static Site`
-- 后端健康检查
-- 后端持久化磁盘
-- 前端 SPA 重写规则
-- 必要的环境变量占位
-
-你可以在 Render 控制台用蓝图方式导入。
-
-### 6.1 蓝图大致包含什么
-
-后端：
-
-- `runtime: python`
-- `rootDir: backend`
-- `buildCommand: uvx poetry install`
-- `startCommand: uvx poetry run uvicorn main:app --host 0.0.0.0 --port $PORT`
-- `healthCheckPath: /api/healthz`
-- `disk: /var/data/screenshot-to-code`
-
-前端：
-
-- `runtime: static`
-- `rootDir: frontend`
-- `buildCommand: pnpm install --frozen-lockfile && pnpm build-hosted`
-- `staticPublishPath: dist`
-- SPA fallback rewrite 到 `/index.html`
-
-## 7. 方式二：在 Render 控制台手动创建
-
-如果你不想直接用蓝图，也可以手动创建。
-
-### 7.1 创建后端 Web Service
-
-在 Render 控制台：
-
-1. 打开 [https://dashboard.render.com/](https://dashboard.render.com/)
-2. 点击 `New`
-3. 选择 `Web Service`
-4. 连接 GitHub 仓库
-5. 选择仓库：`screenshot-to-code`
-
-然后填写：
-
-- `Name`: `screenshot-to-code-backend`
-- `Root Directory`: `backend`
-- `Runtime`: `Python`
-- `Branch`: 你要部署的分支
-- `Build Command`:
+- Render 类型：`Static Site`
+- 名称：`screenshot-to-code-frontend`
+- URL：`https://screenshot-to-code-frontend-9hne.onrender.com`
+- Build Command：
 
 ```bash
-uvx poetry install
+cd frontend && pnpm install --frozen-lockfile && pnpm build-hosted
 ```
 
-- `Start Command`:
-
-```bash
-uvx poetry run uvicorn main:app --host 0.0.0.0 --port $PORT
-```
-
-- `Health Check Path`:
+- Publish Directory：
 
 ```text
-/api/healthz
+frontend/dist
 ```
 
-### 7.2 给后端添加磁盘
-
-在后端服务配置里添加 `Persistent Disk`：
-
-- `Mount Path`:
-
-```text
-/var/data/screenshot-to-code
-```
-
-- `Size`: 建议先 `5 GB`
-
-### 7.3 后端环境变量
-
-至少配置这些：
+前端环境变量：
 
 ```bash
-IS_PROD=true
-ALLOWED_CORS_ORIGINS=https://screenshot-to-code-frontend.onrender.com
-SCREENSHOT_TO_CODE_DATA_DIR=/var/data/screenshot-to-code
-LOCAL_ASSET_DIR=/var/data/screenshot-to-code/local-assets
-
-OPENAI_API_KEY=...
-ANTHROPIC_API_KEY=...
-GEMINI_API_KEY=...
+VITE_HTTP_BACKEND_URL=https://screenshot-to-code-backend-py310.onrender.com
+VITE_WS_BACKEND_URL=wss://screenshot-to-code-backend-py310.onrender.com
+VITE_IS_DEPLOYED=true
 ```
 
 可选：
 
 ```bash
+VITE_PICO_BACKEND_FORM_SECRET=
+```
+
+### 后端服务
+
+- Render 类型：`Web Service`
+- 名称：`screenshot-to-code-backend-py310`
+- URL：`https://screenshot-to-code-backend-py310.onrender.com`
+- Runtime：`Python`
+- Plan：`free`
+- Region：`Singapore`
+
+Build Command：
+
+```bash
+cd backend && poetry install --no-interaction --no-ansi
+```
+
+Start Command：
+
+```bash
+cd backend && poetry run uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+后端环境变量：
+
+```bash
+PYTHON_VERSION=3.10.20
+POETRY_VERSION=2.3.2
+IS_PROD=true
+ALLOWED_CORS_ORIGINS=https://screenshot-to-code-frontend-9hne.onrender.com
+SCREENSHOT_TO_CODE_DATA_DIR=/tmp/screenshot-to-code
+LOCAL_ASSET_DIR=/tmp/screenshot-to-code/local-assets
+```
+
+模型和三方服务相关变量按需填写：
+
+```bash
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+GEMINI_API_KEY=
 OPENAI_BASE_URL=
 QUICKROUTER_IMAGE_API_KEY=
 QUICKROUTER_IMAGE_BASE_URL=https://api.quickrouter.ai/v1
@@ -250,195 +110,248 @@ IS_DEBUG_ENABLED=false
 PROMPT_REPORTS_ENABLED=false
 ```
 
-说明：
+## 3. 这次踩过的几个关键坑
 
-- `ALLOWED_CORS_ORIGINS` 必须填前端域名，不是后端域名
-- 三个模型 Key 不必全填，但至少一个要有效
-- `SCREENSHOT_TO_CODE_DATA_DIR` 用来存 JSON 数据
-- `LOCAL_ASSET_DIR` 用来存保留的上传资源
+### 3.1 Render 上不能照搬本地的 `uvx poetry`
 
-### 7.4 创建前端 Static Site
+本地仓库根据开发机环境，推荐用：
 
-在 Render 控制台：
+```bash
+uvx poetry run ...
+```
+
+但 Render 的构建环境里没有 `uvx`，直接这样写会失败。
+
+所以在 Render 上，已经验证可用的是直接使用：
+
+```bash
+poetry install --no-interaction --no-ansi
+poetry run uvicorn ...
+```
+
+再通过环境变量固定 Poetry 版本：
+
+```bash
+POETRY_VERSION=2.3.2
+```
+
+### 3.2 必须固定 Python 3.10
+
+项目后端在本地是 Poetry 管理，目标版本是 Python 3.10+。这次在 Render 上如果不显式固定版本，曾落到较新的 Python 3.14，导致依赖安装和构建行为不稳定。
+
+已经验证可用的配置是：
+
+```bash
+PYTHON_VERSION=3.10.20
+```
+
+### 3.3 免费版不能直接写 `/var/data`
+
+项目原先更像“有持久盘”的部署思路，但这次实际跑通的是 Render 免费版 `Web Service`。免费版这里没有给我们当前服务直接可写的持久挂载目录，因此写 `/var/data` 会触发权限错误。
+
+这次真正可用的解决方式是改成：
+
+```bash
+SCREENSHOT_TO_CODE_DATA_DIR=/tmp/screenshot-to-code
+LOCAL_ASSET_DIR=/tmp/screenshot-to-code/local-assets
+```
+
+这代表：
+
+- 服务可以正常运行
+- `/api/healthz` 和 `/api/readyz` 可以通过
+- 但数据是临时的
+- 服务重启、重建或迁移后，这些文件可能消失
+
+## 4. 免费版与生产版的区别
+
+当前仓库里的 `render.yaml` 对齐的是“已经验证可跑通的免费版配置”，适合：
+
+- 先把站点跑起来
+- 先验证产品流程
+- 先对外演示
+
+但它不是最稳妥的生产持久化方案，因为后端文件落在 `/tmp`，属于临时存储。
+
+如果你后面要做更稳定的正式环境，建议升级成带持久盘的方案，或者把本地文件存储迁移出去，例如：
+
+- 用户和项目元数据迁到数据库
+- 上传资源迁到对象存储
+
+## 5. 为什么在 Render 里仍然要拆前后端
+
+虽然两边都部署在 Render，但还是建议拆成两个服务：
+
+- 前端是静态资源，最适合 `Static Site`
+- 后端要常驻运行，最适合 `Web Service`
+- 前端和后端可以独立重新部署
+- 前端只负责构建和托管静态文件
+- 后端单独管理环境变量、运行时和日志
+
+所以“都部署到 Render”并不等于“合并成一个服务”。
+
+## 6. 用仓库里的 `render.yaml` 部署
+
+仓库里已经提供：
+
+- [render.yaml](/Users/czy/Documents/screenshot-to-code/render.yaml)
+
+这个蓝图现在对齐的是实际可用配置，包含：
+
+- 一个 Python 后端 `Web Service`
+- 一个前端 `Static Site`
+- 前端 SPA 重写规则
+- 后端 Python / Poetry 版本固定
+- 后端临时存储目录配置
+- 必要环境变量占位
+
+使用方式：
+
+1. 把仓库推到 GitHub
+2. 登录 [Render Dashboard](https://dashboard.render.com/)
+3. 选择 `New` -> `Blueprint`
+4. 选择这个仓库
+5. Render 读取仓库根目录下的 `render.yaml`
+6. 补全 `sync: false` 的环境变量
+7. 创建服务并等待构建完成
+
+## 7. 在 Render 控制台手动创建
+
+如果你不想直接用蓝图，也可以手动配。
+
+### 7.1 创建后端
+
+1. 打开 [Render Dashboard](https://dashboard.render.com/)
+2. 点击 `New`
+3. 选择 `Web Service`
+4. 连接 GitHub 仓库
+5. 选择当前仓库
+
+填写：
+
+- `Name`: `screenshot-to-code-backend-py310`
+- `Branch`: `main`
+- `Runtime`: `Python`
+- `Build Command`: `cd backend && poetry install --no-interaction --no-ansi`
+- `Start Command`: `cd backend && poetry run uvicorn main:app --host 0.0.0.0 --port $PORT`
+
+然后添加环境变量：
+
+```bash
+PYTHON_VERSION=3.10.20
+POETRY_VERSION=2.3.2
+IS_PROD=true
+ALLOWED_CORS_ORIGINS=https://你的前端域名.onrender.com
+SCREENSHOT_TO_CODE_DATA_DIR=/tmp/screenshot-to-code
+LOCAL_ASSET_DIR=/tmp/screenshot-to-code/local-assets
+```
+
+再补上至少一个可用模型 Key：
+
+```bash
+OPENAI_API_KEY=...
+```
+
+没有任何模型 Key 时：
+
+- 服务能启动
+- 但 `/api/readyz` 不会处于可用状态
+- 生成代码功能无法正常使用
+
+### 7.2 创建前端
 
 1. 点击 `New`
 2. 选择 `Static Site`
 3. 连接同一个 GitHub 仓库
-4. 选择仓库：`screenshot-to-code`
+4. 选择当前仓库
 
 填写：
 
 - `Name`: `screenshot-to-code-frontend`
-- `Root Directory`: `frontend`
-- `Build Command`:
+- `Build Command`: `cd frontend && pnpm install --frozen-lockfile && pnpm build-hosted`
+- `Publish Directory`: `frontend/dist`
+
+环境变量：
 
 ```bash
-pnpm install --frozen-lockfile && pnpm build-hosted
-```
-
-- `Publish Directory`:
-
-```text
-dist
-```
-
-### 7.5 前端环境变量
-
-创建后端服务成功后，会得到后端域名，例如：
-
-```text
-https://screenshot-to-code-backend.onrender.com
-```
-
-前端环境变量应填：
-
-```bash
-VITE_HTTP_BACKEND_URL=https://screenshot-to-code-backend.onrender.com
-VITE_WS_BACKEND_URL=wss://screenshot-to-code-backend.onrender.com
+VITE_HTTP_BACKEND_URL=https://你的后端域名.onrender.com
+VITE_WS_BACKEND_URL=wss://你的后端域名.onrender.com
 VITE_IS_DEPLOYED=true
 ```
 
-可选：
+### 7.3 SPA 回退
 
-```bash
-VITE_PICO_BACKEND_FORM_SECRET=
-```
+前端使用 `BrowserRouter`，所以 Render 需要把未知路径回退到 `/index.html`。仓库里的 `render.yaml` 已经包含这条 rewrite 规则。
 
-这个变量只用于前端订阅表单；如果你不用该功能，可以留空。
+如果你是手动建站，也需要在 Static Site 里配置等价规则，否则刷新类似 `/evals` 这类前端路由时可能 404。
 
-## 8. 为什么前端要加 SPA 回退
+## 8. 上线后的检查方法
 
-前端使用的是 `BrowserRouter`：
-
-- [frontend/src/main.tsx](/Users/czy/Documents/screenshot-to-code/frontend/src/main.tsx)
-
-这意味着像这些路径：
-
-- `/evals`
-- `/evals/single`
-- `/evals/pairwise`
-- `/evals/best-of-n`
-- `/evals/run`
-- `/evals/openai-input-compare`
-- `/evals/prompt-reports`
-
-如果直接刷新页面，静态托管平台可能会返回 404。
-
-所以在 `render.yaml` 里我已经加了：
-
-- 把所有未知路径 rewrite 到 `/index.html`
-
-这样前端路由刷新时不会炸掉。
-
-## 9. 后端上线后的检查方法
-
-### 9.1 基础健康检查
-
-打开：
+后端健康检查：
 
 ```text
 https://你的后端域名/api/healthz
 ```
 
-应返回：
+期望响应：
 
 ```json
 {"status":"ok"}
 ```
 
-### 9.2 模型就绪检查
-
-打开：
+后端就绪检查：
 
 ```text
 https://你的后端域名/api/readyz
 ```
 
-如果至少一个模型 Key 有效，应该返回：
+如果至少一个模型 Key 有效，应该能返回可用状态。
 
-- `status: "ready"`
+这次线上实际验证结果：
 
-### 9.3 WebSocket 检查
+- `https://screenshot-to-code-backend-py310.onrender.com/api/healthz` 返回 `{"status":"ok"}`
+- `https://screenshot-to-code-backend-py310.onrender.com/api/readyz` 返回 `ready`
 
-前端正常开始生成代码，说明浏览器可以连接：
+前端访问检查：
 
-```text
-wss://你的后端域名/generate-code
-```
+- 打开前端首页
+- 发起一次生成请求
+- 确认浏览器能成功连接后端 WebSocket
 
-### 9.4 资源持久化检查
+## 9. 当前部署的已知限制
 
-执行一次生成并保存后，重启后端服务，再确认这些内容还在：
+### 9.1 后端数据不是持久化的
 
-- 历史项目
-- 设计系统
+当前免费版方案把数据写在 `/tmp`，因此这些内容都可能在服务重启后消失：
+
+- 用户数据 JSON
+- 项目数据 JSON
+- 设计系统数据
 - 本地上传资源
 
-## 10. 自定义域名建议
+### 9.2 Cookie / 登录能力最好单独复查
 
-你后续可以在 Render 上绑定自定义域名，例如：
+如果你后面要正式启用账户登录，建议复查生产环境 Cookie 行为，尤其是：
 
-- 前端：`app.example.com`
-- 后端：`api.example.com`
+- `secure`
+- `samesite`
+- 前后端域名分离时的跨站行为
 
-绑定自定义域名后，把环境变量改成：
-
-前端：
-
-```bash
-VITE_HTTP_BACKEND_URL=https://api.example.com
-VITE_WS_BACKEND_URL=wss://api.example.com
-VITE_IS_DEPLOYED=true
-```
-
-后端：
-
-```bash
-ALLOWED_CORS_ORIGINS=https://app.example.com
-```
-
-## 11. 当前项目在 Render 上的已知风险
-
-### 11.1 账户 Cookie 配置较偏本地开发
-
-当前登录接口代码里设置的是：
-
-- `secure=False`
-
-位置：
+相关代码位置：
 
 - [backend/routes/accounts.py](/Users/czy/Documents/screenshot-to-code/backend/routes/accounts.py)
 
-这意味着：
+### 9.3 前端 lint 当前有仓库既有问题
 
-- 本地开发没问题
-- 正式 HTTPS 环境下，如果你要启用登录能力，最好再复查 Cookie 行为
-
-建议上线前重点检查：
-
-- Cookie 是否应该改成 `secure=True`
-- `samesite` 是否符合你的前后端域名关系
-
-### 11.2 文件存储仍然是单机模型
-
-虽然 Render 持久化盘能满足当前项目，但它仍然是“单机本地存储”的思路。
-
-这意味着：
-
-- 更适合单实例或低复杂度部署
-- 如果以后要横向扩多实例，需要迁移到数据库和对象存储
-
-### 11.3 前端 lint 目前有仓库现存问题
-
-本次整理文档时，我重新跑过检查：
+这次整理部署文档前后，我重新验证过：
 
 - 后端测试通过
-- 后端 pyright 无错误
-- 前端 lint 失败，但失败项来自仓库现存 TS/ESLint 问题，不是本次新增文档造成的
+- 后端 `pyright` 通过
+- 前端 `pnpm lint` 失败，但属于仓库已有问题，不是这次 Render 配置修改引入的
 
-## 12. 本地验证命令
+## 10. 本地对照验证命令
 
-### 12.1 后端
+后端：
 
 ```bash
 cd backend
@@ -452,7 +365,7 @@ OPENAI_API_KEY=your-key \
 uvx poetry run uvicorn main:app --host 0.0.0.0 --port 7001
 ```
 
-### 12.2 前端
+前端：
 
 ```bash
 cd frontend
@@ -464,22 +377,22 @@ pnpm build-hosted
 pnpm preview --host 0.0.0.0
 ```
 
-## 13. 最终建议
+## 11. 清理失败服务
 
-对这个项目来说，“前后端都放 Render” 是完全合理的，而且是当前最省事的一条路。
+这次部署过程中创建过两个失败的后端服务：
 
-推荐你按这个顺序做：
+- `screenshot-to-code-backend`
+- `screenshot-to-code-backend-app`
 
-1. 创建后端 `Web Service`
-2. 挂持久化磁盘
-3. 配后端环境变量和模型 Key
-4. 部署前端 `Static Site`
-5. 配前端环境变量指向后端域名
-6. 用 `/api/healthz` 和 `/api/readyz` 验证
+我已经确认当前可用的 Render MCP 只有创建、更新、查服务、查部署等能力，没有“删除服务”的 MCP 工具。
 
-如果你后面想把实际部署流程彻底自动化，可以继续在这个仓库基础上增加：
+如果你要清理它们，需要在 Render 控制台手动删除：
 
-- Render Blueprint 全量配置
-- 自定义域名说明
-- 上线后的 Cookie 调整
-- 外部数据库 / 对象存储改造
+1. 打开对应服务页面
+2. 进入 `Settings`
+3. 选择 `Delete Service`
+
+当前保留的正式服务建议是：
+
+- 前端：`screenshot-to-code-frontend`
+- 后端：`screenshot-to-code-backend-py310`
