@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /evals
+
+Sitemap: https://screenshottocode.com/sitemap.xml

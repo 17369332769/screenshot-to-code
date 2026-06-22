@@ -6,6 +6,7 @@ import {
   DesignSystemPayload,
 } from "../lib/design-systems";
 import { DesignSystem } from "../types";
+import { IS_RUNNING_ON_CLOUD } from "../config";
 
 export function useDesignSystems(
   client: DesignSystemsClient = defaultDesignSystemsClient
@@ -19,7 +20,9 @@ export function useDesignSystems(
       setDesignSystems(await client.fetchDesignSystems());
     } catch (error) {
       console.error("Failed to load design systems", error);
-      toast.error("Could not load design systems from the backend.");
+      if (IS_RUNNING_ON_CLOUD) {
+        toast.error("Could not load design systems from the backend.");
+      }
     } finally {
       setIsLoading(false);
     }

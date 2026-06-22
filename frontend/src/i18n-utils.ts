@@ -97,6 +97,15 @@ const translations = {
     workflowMapTitle: "A tighter loop from idea to iteration",
     workflowMapDescription:
       "The homepage should explain what users can do next, not just what the model can output once.",
+    heroEditorialTitle: "Designed to feel like a working studio, not a throwaway demo",
+    heroEditorialDescription:
+      "A stronger first impression comes from showing craft, workflow, and restraint at the same time.",
+    heroChecklist1:
+      "Start from screenshots, URLs, prompts, or existing code without changing your process first.",
+    heroChecklist2:
+      "Get a live front-end draft quickly, then keep refining it instead of restarting from scratch.",
+    heroChecklist3:
+      "Move from inspiration to something presentable enough for product review, client feedback, or an MVP push.",
     localWorkspaceTitle: "A strong local workspace still deserves a strong homepage",
     localWorkspaceDescription:
       "Even when everything runs locally, the experience should communicate flexibility, workflow depth, and a believable path from draft to usable output.",
@@ -522,6 +531,15 @@ const translations = {
     workflowMapTitle: "把想法变成迭代闭环，而不是一次性输出",
     workflowMapDescription:
       "首页不该只说模型能生成什么，还应该让用户清楚知道下一步怎么继续推进。",
+    heroEditorialTitle: "它应该像一个认真工作的工作室，而不是临时拼出来的演示页",
+    heroEditorialDescription:
+      "更成熟的第一印象，来自于工艺感、工作流表达和克制感同时成立。",
+    heroChecklist1:
+      "可以从截图、URL、提示词或现有代码开始，而不必先改变你的工作方式。",
+    heroChecklist2:
+      "先快速拿到一个可预览前端，再在这个基础上持续细化，而不是反复从头开始。",
+    heroChecklist3:
+      "更快把灵感推进成适合产品评审、客户反馈或 MVP 冲刺的可展示版本。",
     localWorkspaceTitle: "就算是本地工作区，也值得拥有成熟的网站体验",
     localWorkspaceDescription:
       "即使所有能力都在本地运行，产品表达仍然应该传达出灵活性、工作流深度，以及从初稿走向可用结果的可信路径。",

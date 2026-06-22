@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { ScreenRecorderState } from "../../types";
 import { blobToBase64DataUrl } from "./utils";
-import fixWebmDuration from "webm-duration-fix";
 import toast from "react-hot-toast";
 import OutputSettingsSection from "../settings/OutputSettingsSection";
 import { DesignSystemSelectorProps } from "../settings/DesignSystemSelector";
@@ -61,6 +60,7 @@ function ScreenRecorder({
       // When media recorder is stopped, create a data URL
       mediaRecorder.onstop = async () => {
         // TODO: Do I need to fix duration if it's not a webm?
+        const { default: fixWebmDuration } = await import("webm-duration-fix");
         const completeBlob = await fixWebmDuration(
           new Blob(chunks, {
             type: options.mimeType,

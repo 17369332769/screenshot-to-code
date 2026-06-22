@@ -1,7 +1,6 @@
-import React from "react";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { DesignSystem, Settings } from "../../types";
 import { Stack } from "../../lib/stacks";
-import UnifiedInputPane from "../unified-input/UnifiedInputPane";
 import AccountPanel from "../account/AccountPanel";
 import { IS_RUNNING_ON_CLOUD } from "../../config";
 import { useI18n } from "../../i18n";
@@ -11,6 +10,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+
+const UnifiedInputPane = lazy(() => import("../unified-input/UnifiedInputPane"));
 
 interface Props {
   doCreate: (
@@ -38,6 +39,8 @@ const StartPane: React.FC<Props> = ({
   onManageDesignSystems,
 }) => {
   const { t } = useI18n();
+  const generatorSectionRef = useRef<HTMLElement | null>(null);
+  const [shouldLoadGenerator, setShouldLoadGenerator] = useState(false);
   const startModes = [
     {
       label: t("uploadTab"),
@@ -65,14 +68,46 @@ const StartPane: React.FC<Props> = ({
     },
   ];
 
+  useEffect(() => {
+    if (shouldLoadGenerator) {
+      return;
+    }
+
+    const target = generatorSectionRef.current;
+    if (!target) {
+      return;
+    }
+
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setShouldLoadGenerator(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldLoadGenerator(true);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: "280px 0px",
+      }
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [shouldLoadGenerator]);
+
   return (
     <div className="relative overflow-hidden">
       <div className="landing-orb landing-orb-left" />
       <div className="landing-orb landing-orb-right" />
+      <div className="landing-grid" />
 
       <section className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24 lg:pt-12">
         <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-start">
-          <div className="max-w-3xl pt-2">
+          <div className="max-w-3xl pt-2 lg:pt-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-stone-300/70 bg-white/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.24em] text-stone-700 shadow-sm backdrop-blur dark:border-stone-700 dark:bg-zinc-900/70 dark:text-stone-200">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               {t("imageToCodeWebsite")}
@@ -118,11 +153,26 @@ const StartPane: React.FC<Props> = ({
               />
               <Metric label={t("bestFor")} value={t("bestForValue")} />
             </div>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-[1.1fr_0.9fr]">
+              <EditorialStrip
+                eyebrow={t("workflowMapEyebrow")}
+                title={t("heroEditorialTitle")}
+                description={t("heroEditorialDescription")}
+              />
+              <CompactChecklist
+                items={[
+                  t("heroChecklist1"),
+                  t("heroChecklist2"),
+                  t("heroChecklist3"),
+                ]}
+              />
+            </div>
           </div>
 
-          <div className="relative pt-2">
+          <div className="relative pt-2 lg:pt-0">
             <div className="absolute inset-x-8 inset-y-10 -z-10 rounded-[2rem] bg-gradient-to-br from-amber-200/35 via-white to-cyan-200/40 blur-3xl dark:from-amber-500/10 dark:via-zinc-950 dark:to-cyan-500/10" />
-            <div className="studio-panel p-4">
+            <div className="studio-panel overflow-hidden p-4">
               <div className="rounded-[1.7rem] border border-slate-800/90 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.18),transparent_32%),linear-gradient(180deg,#0f172a,#111827)] p-5 text-stone-50 dark:border-zinc-800">
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -217,7 +267,7 @@ const StartPane: React.FC<Props> = ({
 
         <section className="mt-10">
           <div className="studio-panel rounded-[2rem] px-5 py-5 sm:px-6 sm:py-6">
-            <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+            <div className="grid gap-6 lg:grid-cols-[0.74fr_1.26fr] lg:items-center">
               <div>
                 <p className="editorial-kicker">
                   {t("waysToStart")}
@@ -260,7 +310,11 @@ const StartPane: React.FC<Props> = ({
           </div>
         </section>
 
-        <section id="generator" className="mt-14 scroll-mt-28 lg:mt-16">
+        <section
+          id="generator"
+          ref={generatorSectionRef}
+          className="section-divider mt-14 scroll-mt-28 lg:mt-16"
+        >
           <div className="studio-panel mx-auto max-w-6xl rounded-[2.2rem] p-4 sm:p-6 lg:p-8">
             <div className="mb-6 grid gap-5 border-b border-stone-200/80 pb-6 dark:border-zinc-800 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
               <div>
@@ -290,26 +344,32 @@ const StartPane: React.FC<Props> = ({
               </div>
             </div>
 
-            <UnifiedInputPane
-              doCreate={doCreate}
-              doCreateFromText={doCreateFromText}
-              importFromCode={importFromCode}
-              settings={settings}
-              setSettings={setSettings}
-              designSystems={designSystems}
-              onAddNewDesignSystem={onAddNewDesignSystem}
-              onManageDesignSystems={onManageDesignSystems}
-            />
+            {shouldLoadGenerator ? (
+              <Suspense fallback={<GeneratorFallback />}>
+                <UnifiedInputPane
+                  doCreate={doCreate}
+                  doCreateFromText={doCreateFromText}
+                  importFromCode={importFromCode}
+                  settings={settings}
+                  setSettings={setSettings}
+                  designSystems={designSystems}
+                  onAddNewDesignSystem={onAddNewDesignSystem}
+                  onManageDesignSystems={onManageDesignSystems}
+                />
+              </Suspense>
+            ) : (
+              <GeneratorFallback />
+            )}
           </div>
         </section>
 
         <section
           id="how-it-works"
-          className="mt-14 scroll-mt-28 lg:mt-16"
+          className="section-divider mt-14 scroll-mt-28 lg:mt-16"
         >
-          <div className="grid gap-4 lg:grid-cols-[0.92fr_1.08fr]">
+          <div className="grid gap-4 lg:grid-cols-[0.86fr_1.14fr]">
             <div className="space-y-4">
-              <div className="studio-panel rounded-[1.95rem] p-6 lg:p-7">
+              <div className="studio-panel overflow-hidden rounded-[1.95rem] p-6 lg:p-7">
                 <p className="editorial-kicker">
                   {t("builtForRealWork")}
                 </p>
@@ -319,6 +379,11 @@ const StartPane: React.FC<Props> = ({
                 <p className="mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
                   {t("workflowDescription")}
                 </p>
+                <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                  <InlineMiniMetric value="01" label={t("uploadTab")} />
+                  <InlineMiniMetric value="02" label={t("livePreview")} />
+                  <InlineMiniMetric value="03" label={t("editableOutput")} />
+                </div>
               </div>
 
               <FeatureCard
@@ -344,7 +409,7 @@ const StartPane: React.FC<Props> = ({
               )}
             </div>
 
-            <div className="studio-panel rounded-[1.95rem] p-5 sm:p-6 lg:p-8">
+            <div className="studio-panel overflow-hidden rounded-[1.95rem] p-5 sm:p-6 lg:p-8">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <p className="editorial-kicker">
@@ -395,7 +460,10 @@ const StartPane: React.FC<Props> = ({
           </div>
         </section>
 
-        <section id="cases" className="mt-14 scroll-mt-28 lg:mt-20">
+        <section
+          id="cases"
+          className="section-divider mt-14 scroll-mt-28 lg:mt-20"
+        >
           <div className="flex flex-col gap-3 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
               {t("beforeAfter")}
@@ -415,6 +483,8 @@ const StartPane: React.FC<Props> = ({
               resultLabel={t("afterOutput")}
               sourceDescription={t("showcaseLandingPageSource")}
               resultDescription={t("showcaseLandingPageResult")}
+              sourceImg="/showcases/landing-page-sketch.png"
+              resultImg="/showcases/landing-page-output.png"
             />
             <ShowcaseCard
               title={t("showcaseDashboard")}
@@ -422,6 +492,8 @@ const StartPane: React.FC<Props> = ({
               resultLabel={t("afterOutput")}
               sourceDescription={t("showcaseDashboardSource")}
               resultDescription={t("showcaseDashboardResult")}
+              sourceImg="/showcases/dashboard-sketch.png"
+              resultImg="/showcases/dashboard-output.png"
             />
             <ShowcaseCard
               title={t("showcaseMobileApp")}
@@ -429,11 +501,13 @@ const StartPane: React.FC<Props> = ({
               resultLabel={t("afterOutput")}
               sourceDescription={t("showcaseMobileAppSource")}
               resultDescription={t("showcaseMobileAppResult")}
+              sourceImg="/showcases/mobile-app-sketch.png"
+              resultImg="/showcases/mobile-app-output.png"
             />
           </div>
         </section>
 
-        <section className="mt-14 lg:mt-20">
+        <section className="section-divider mt-14 lg:mt-20">
           <div className="flex flex-col gap-3 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
               {t("builtForRealWork")}
@@ -465,7 +539,42 @@ const StartPane: React.FC<Props> = ({
           </div>
         </section>
 
-        <section className="mt-14 lg:mt-20">
+        <section className="section-divider mt-14 lg:mt-20">
+          <div className="flex flex-col gap-3 text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
+              Search paths
+            </p>
+            <h2 className="text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
+              Explore the workflows people are already searching for.
+            </h2>
+            <p className="mx-auto max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+              These pages focus on the most common ways teams describe this product category, from React output to HTML rebuilds and Figma-to-code handoff.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
+            <SeoPathCard
+              eyebrow="React output"
+              title="Screenshot to React"
+              description="For teams who want UI screenshots translated into editable React front-end drafts they can keep refining."
+              href="/screenshot-to-react"
+            />
+            <SeoPathCard
+              eyebrow="HTML output"
+              title="Website Screenshot to HTML"
+              description="For landing pages, static rebuilds, and quick website teardowns that start from visual references."
+              href="/website-screenshot-to-html"
+            />
+            <SeoPathCard
+              eyebrow="Design handoff"
+              title="Figma Screenshot to Code"
+              description="For product and design teams using exported Figma frames as the starting point for front-end generation."
+              href="/figma-screenshot-to-code"
+            />
+          </div>
+        </section>
+
+        <section className="section-divider mt-14 lg:mt-20">
           <div className="flex flex-col gap-3 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
               {t("testimonials")}
@@ -497,7 +606,7 @@ const StartPane: React.FC<Props> = ({
           </div>
         </section>
 
-        <section className="mt-14 lg:mt-20">
+        <section className="section-divider mt-14 lg:mt-20">
           <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="rounded-[2rem] border border-stone-200/80 bg-white/90 p-6 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/85 lg:p-8">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
@@ -549,7 +658,10 @@ const StartPane: React.FC<Props> = ({
           </div>
         </section>
 
-        <section id="pricing" className="mt-14 scroll-mt-28 lg:mt-20">
+        <section
+          id="pricing"
+          className="section-divider mt-14 scroll-mt-28 lg:mt-20"
+        >
           <div className="flex flex-col gap-3 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
               {t("pricing")}
@@ -603,7 +715,10 @@ const StartPane: React.FC<Props> = ({
           </div>
         </section>
 
-        <section id="faq" className="mt-14 scroll-mt-28 lg:mt-20">
+        <section
+          id="faq"
+          className="section-divider mt-14 scroll-mt-28 lg:mt-20"
+        >
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
@@ -644,7 +759,7 @@ const StartPane: React.FC<Props> = ({
           </div>
         </section>
 
-        <section className="mt-14 lg:mt-20">
+        <section className="section-divider mt-14 lg:mt-20">
           <div className="rounded-[2.2rem] border border-stone-200/80 bg-gradient-to-br from-stone-950 via-stone-900 to-emerald-950 p-8 text-white shadow-[0_24px_80px_rgba(28,25,23,0.2)] lg:p-10">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
@@ -701,6 +816,18 @@ const StartPane: React.FC<Props> = ({
                   { href: "#faq", label: t("navFaq") },
                   { href: "#how-it-works", label: t("seeHowItWorks") },
                   { href: "#generator", label: t("launchGenerator") },
+                  {
+                    href: "/screenshot-to-react",
+                    label: "Screenshot to React",
+                  },
+                  {
+                    href: "/website-screenshot-to-html",
+                    label: "Website Screenshot to HTML",
+                  },
+                  {
+                    href: "/figma-screenshot-to-code",
+                    label: "Figma Screenshot to Code",
+                  },
                 ]}
               />
               <FooterColumn
@@ -742,6 +869,50 @@ function StartModeCard({
   );
 }
 
+function EditorialStrip({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="studio-panel rounded-[1.55rem] px-5 py-4">
+      <div className="editorial-kicker">
+        {eyebrow}
+      </div>
+      <div className="mt-2 font-['Space_Grotesk'] text-xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white">
+        {title}
+      </div>
+      <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-zinc-300">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+function CompactChecklist({ items }: { items: string[] }) {
+  return (
+    <div className="studio-panel rounded-[1.55rem] px-5 py-4">
+      <div className="space-y-3">
+        {items.map((item) => (
+          <div
+            key={item}
+            className="flex items-start gap-3 rounded-2xl border border-stone-200/80 bg-white/70 px-3 py-3 dark:border-zinc-800 dark:bg-zinc-950/70"
+          >
+            <span className="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500" />
+            <span className="text-sm leading-6 text-stone-700 dark:text-zinc-200">
+              {item}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="studio-panel rounded-[1.5rem] px-4 py-4">
@@ -750,6 +921,44 @@ function Metric({ label, value }: { label: string; value: string }) {
       </div>
       <div className="mt-2 font-['Space_Grotesk'] text-sm font-semibold text-stone-900 dark:text-white">
         {value}
+      </div>
+    </div>
+  );
+}
+
+function InlineMiniMetric({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="rounded-[1.3rem] border border-stone-200/80 bg-stone-50/90 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/70">
+      <div className="font-['Space_Grotesk'] text-xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white">
+        {value}
+      </div>
+      <div className="mt-1 text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-zinc-400">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function GeneratorFallback() {
+  return (
+    <div className="rounded-[1.8rem] border border-stone-200/80 bg-white/70 p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/70">
+      <div className="grid gap-3 sm:grid-cols-4">
+        {["Upload", "URL", "Text", "Import"].map((label) => (
+          <div
+            key={label}
+            className="rounded-xl border border-stone-200/80 bg-stone-50/80 px-4 py-4 text-center text-sm font-medium text-stone-500 dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-400"
+          >
+            {label}
+          </div>
+        ))}
+      </div>
+      <div className="mt-5 rounded-[1.5rem] border border-dashed border-stone-300/90 bg-stone-50/80 px-6 py-14 text-center dark:border-zinc-700 dark:bg-zinc-900/60">
+        <div className="text-sm font-medium text-stone-600 dark:text-zinc-300">
+          Loading generator...
+        </div>
+        <p className="mt-2 text-sm leading-6 text-stone-500 dark:text-zinc-400">
+          The interactive workspace loads as you reach this section so the homepage can stay lighter above the fold.
+        </p>
       </div>
     </div>
   );
@@ -917,12 +1126,16 @@ function ShowcaseCard({
   resultLabel,
   sourceDescription,
   resultDescription,
+  sourceImg,
+  resultImg,
 }: {
   title: string;
   sourceLabel: string;
   resultLabel: string;
   sourceDescription: string;
   resultDescription: string;
+  sourceImg?: string;
+  resultImg?: string;
 }) {
   return (
     <div className="studio-panel rounded-[1.9rem] p-5">
@@ -930,20 +1143,48 @@ function ShowcaseCard({
         {title}
       </h3>
       <div className="mt-5 grid gap-3">
-        <div className="studio-surface border-dashed p-4">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-zinc-500">
+        <div className="studio-surface border-dashed p-4 overflow-hidden">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-zinc-500 mb-2">
             {sourceLabel}
           </div>
-          <div className="mt-3 h-28 rounded-xl bg-[linear-gradient(135deg,#f5f5f4,#e7e5e4)] dark:bg-[linear-gradient(135deg,#27272a,#18181b)]" />
+          {sourceImg ? (
+            <div className="aspect-square w-full rounded-xl overflow-hidden border border-stone-200 dark:border-zinc-800">
+              <img
+                src={sourceImg}
+                alt={sourceLabel}
+                width={1024}
+                height={1024}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-top"
+              />
+            </div>
+          ) : (
+            <div className="mt-1 h-28 rounded-xl bg-[linear-gradient(135deg,#f5f5f4,#e7e5e4)] dark:bg-[linear-gradient(135deg,#27272a,#18181b)]" />
+          )}
           <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-zinc-300">
             {sourceDescription}
           </p>
         </div>
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/20">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-400">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/20 overflow-hidden">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-400 mb-2">
             {resultLabel}
           </div>
-          <div className="mt-3 h-28 rounded-xl bg-[linear-gradient(135deg,#d1fae5,#a7f3d0)] dark:bg-[linear-gradient(135deg,#14532d,#052e16)]" />
+          {resultImg ? (
+            <div className="aspect-square w-full rounded-xl overflow-hidden border border-emerald-200/50 dark:border-emerald-800/30">
+              <img
+                src={resultImg}
+                alt={resultLabel}
+                width={1024}
+                height={1024}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-top"
+              />
+            </div>
+          ) : (
+            <div className="mt-1 h-28 rounded-xl bg-[linear-gradient(135deg,#d1fae5,#a7f3d0)] dark:bg-[linear-gradient(135deg,#14532d,#052e16)]" />
+          )}
           <p className="mt-2 text-sm leading-6 text-stone-700 dark:text-zinc-200">
             {resultDescription}
           </p>
@@ -1094,10 +1335,50 @@ function FaqItem({
   );
 }
 
+function SeoPathCard({
+  eyebrow,
+  title,
+  description,
+  href,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  href: string;
+}) {
+  return (
+    <a
+      href={href}
+      className="studio-panel block rounded-[1.9rem] p-5 transition-transform hover:-translate-y-1"
+    >
+      <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-zinc-500">
+        {eyebrow}
+      </div>
+      <h3 className="mt-3 font-['Space_Grotesk'] text-2xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white">
+        {title}
+      </h3>
+      <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300">
+        {description}
+      </p>
+      <div className="mt-5 text-sm font-semibold text-cyan-700 dark:text-cyan-300">
+        Read this workflow
+      </div>
+    </a>
+  );
+}
+
 function LogoItem({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="flex items-center justify-center rounded-2xl bg-stone-50 px-4 py-4 dark:bg-zinc-900">
-      <img src={src} alt={alt} className="h-8 w-auto object-contain" />
+      <img
+        src={src}
+        alt={alt}
+        width={160}
+        height={52}
+        loading="lazy"
+        decoding="async"
+        className="h-8 w-auto object-contain"
+      />
     </div>
   );
 }

@@ -4,6 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon/main.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index,follow" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="author" content="Image to Code" />
+    <meta name="theme-color" content="#faf7f2" />
+    <link rel="canonical" href="https://screenshottocode.com/" />
+    <link rel="alternate" hreflang="en" href="https://screenshottocode.com/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://screenshottocode.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://screenshottocode.com/" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -12,6 +20,7 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="/seo/home.css" />
 
     <!-- Injected code for hosted version -->
     <%- injectHead %>
@@ -35,10 +44,16 @@
       property="og:image"
       content="https://screenshottocode.com/brand/twitter-summary-card.png"
     />
+    <meta
+      property="og:image:alt"
+      content="Image to Code interface for turning screenshots into front-end code"
+    />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="628" />
-    <meta property="og:url" content="https://screenshottocode.com" />
+    <meta property="og:url" content="https://screenshottocode.com/" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Image to Code" />
+    <meta property="og:locale" content="en_US" />
     <!-- Twitter Card tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@picoapps" />
@@ -55,9 +70,205 @@
       name="twitter:image"
       content="https://screenshottocode.com/brand/twitter-summary-card.png"
     />
+    <script
+      type="application/ld+json"
+      data-seo-json-ld="website"
+    >
+      {"@context":"https://schema.org","@type":"WebSite","name":"Image to Code","url":"https://screenshottocode.com/"}
+    </script>
+    <script
+      type="application/ld+json"
+      data-seo-json-ld="organization"
+    >
+      {"@context":"https://schema.org","@type":"Organization","name":"Image to Code","url":"https://screenshottocode.com/","logo":"https://screenshottocode.com/favicon/main.png"}
+    </script>
+    <script
+      type="application/ld+json"
+      data-seo-json-ld="software"
+    >
+      {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image to Code","applicationCategory":"DeveloperApplication","operatingSystem":"Web","url":"https://screenshottocode.com/","description":"Upload screenshots, mockups, or URLs and generate front-end code you can preview, edit, and ship.","image":"https://screenshottocode.com/brand/twitter-summary-card.png","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+    </script>
+    <script
+      type="application/ld+json"
+      data-seo-json-ld="faq"
+    >
+      {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can this generate production-ready code?","acceptedAnswer":{"@type":"Answer","text":"It works best as a fast first pass you can preview, edit, and refine before shipping."}},{"@type":"Question","name":"What kinds of inputs work best?","acceptedAnswer":{"@type":"Answer","text":"Product screenshots, website references, Figma exports, wireframes, and short text prompts all work well depending on the workflow."}},{"@type":"Question","name":"Can I keep editing the generated result?","acceptedAnswer":{"@type":"Answer","text":"Yes. The generated result is meant to be revised and iterated on, not treated like a frozen export."}},{"@type":"Question","name":"Who is this best suited for?","acceptedAnswer":{"@type":"Answer","text":"It is useful for founders, designers, product teams, agencies, and engineers who want to move from reference visuals to a working front-end draft faster."}}]}
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="seo-home-shell" data-static-home>
+        <header class="seo-home-topbar">
+          <div class="seo-home-container seo-home-topbar-inner">
+            <a class="seo-home-brand" href="/">IMAGETOCODE</a>
+            <nav class="seo-home-nav" aria-label="Primary">
+              <a href="#search-paths">Workflows</a>
+              <a href="#how-it-works">How it works</a>
+              <a href="#faq">FAQ</a>
+            </nav>
+          </div>
+        </header>
+
+        <main class="seo-home-container seo-home-main">
+          <section class="seo-home-hero">
+            <div class="seo-home-eyebrow">
+              <span class="seo-home-eyebrow-dot"></span>
+              Image to Code
+            </div>
+            <h1>Turn screenshots into shippable front-end code.</h1>
+            <p class="seo-home-lead">
+              Upload screenshots, mockups, or URLs and generate front-end code
+              you can preview, edit, and ship. Use it for MVPs, landing pages,
+              design handoff, teardown work, and fast internal prototypes.
+            </p>
+            <div class="seo-home-actions">
+              <a class="seo-home-button seo-home-button-solid" href="#generator">
+                Open the generator
+              </a>
+              <a class="seo-home-button seo-home-button-pill" href="#search-paths">
+                Explore workflows
+              </a>
+            </div>
+            <div class="seo-home-signal-grid" aria-label="Key product strengths">
+              <span>Multiple image inputs</span>
+              <span>Live preview</span>
+              <span>Editable output</span>
+              <span>React and HTML workflows</span>
+            </div>
+          </section>
+
+          <section class="seo-home-section" id="search-paths">
+            <div class="seo-home-section-copy">
+              <p class="seo-home-kicker">Popular search paths</p>
+              <h2>Browse dedicated workflows built around real SEO intent.</h2>
+              <p>
+                These pages target the exact ways people search for this kind of
+                tool, while still linking back into the main product experience.
+              </p>
+            </div>
+            <div class="seo-home-card-grid">
+              <a class="seo-home-card" href="/screenshot-to-react">
+                <strong>Screenshot to React</strong>
+                <p>
+                  Convert UI screenshots into editable React code for teams that
+                  need a strong front-end first draft.
+                </p>
+              </a>
+              <a class="seo-home-card" href="/website-screenshot-to-html">
+                <strong>Website Screenshot to HTML</strong>
+                <p>
+                  Rebuild landing pages, marketing sections, and website
+                  references into editable HTML faster.
+                </p>
+              </a>
+              <a class="seo-home-card" href="/figma-screenshot-to-code">
+                <strong>Figma Screenshot to Code</strong>
+                <p>
+                  Start from exported Figma frames and move into a code draft
+                  your team can review and refine.
+                </p>
+              </a>
+            </div>
+          </section>
+
+          <section class="seo-home-section seo-home-feature-panel" id="generator">
+            <div class="seo-home-section-copy">
+              <p class="seo-home-kicker">Interactive generator</p>
+              <h2>The full app loads the generator, preview, and editing tools.</h2>
+              <p>
+                The JavaScript app enables the upload flow, URL input, text
+                prompting, live preview, and iterative editing. This HTML is
+                here so search engines can understand the product before the app
+                bundle finishes loading.
+              </p>
+            </div>
+            <div class="seo-home-feature-list">
+              <div>
+                <strong>Inputs</strong>
+                <span>Screenshots, mockups, website URLs, text prompts, and imported code.</span>
+              </div>
+              <div>
+                <strong>Best for</strong>
+                <span>Landing pages, dashboards, mobile UIs, and design handoff drafts.</span>
+              </div>
+              <div>
+                <strong>Workflow</strong>
+                <span>Generate a first pass, compare against the reference, and keep iterating.</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="seo-home-section" id="how-it-works">
+            <div class="seo-home-section-copy">
+              <p class="seo-home-kicker">How it works</p>
+              <h2>From reference image to editable front-end draft.</h2>
+            </div>
+            <div class="seo-home-step-grid">
+              <article class="seo-home-step">
+                <strong>01</strong>
+                <h3>Add the reference</h3>
+                <p>Use a screenshot, mockup, website capture, or a small set of related UI images.</p>
+              </article>
+              <article class="seo-home-step">
+                <strong>02</strong>
+                <h3>Generate code</h3>
+                <p>Create a first-pass React or HTML front-end draft that is easier to inspect than a blank file.</p>
+              </article>
+              <article class="seo-home-step">
+                <strong>03</strong>
+                <h3>Refine and ship</h3>
+                <p>Preview the output, compare it to the source, and keep iterating toward a usable result.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="seo-home-section" id="faq">
+            <div class="seo-home-section-copy">
+              <p class="seo-home-kicker">FAQ</p>
+              <h2>Questions people ask before trying Image to Code.</h2>
+            </div>
+            <div class="seo-home-faq-grid">
+              <article class="seo-home-faq">
+                <h3>Can this generate production-ready code?</h3>
+                <p>
+                  It works best as a fast first pass you can preview, edit, and
+                  refine before shipping.
+                </p>
+              </article>
+              <article class="seo-home-faq">
+                <h3>What kinds of inputs work best?</h3>
+                <p>
+                  Product screenshots, website references, Figma exports,
+                  wireframes, and short text prompts all work well depending on
+                  the workflow.
+                </p>
+              </article>
+              <article class="seo-home-faq">
+                <h3>Can I keep editing the generated result?</h3>
+                <p>
+                  Yes. The generated result is meant to be revised and iterated
+                  on, not treated like a frozen export.
+                </p>
+              </article>
+              <article class="seo-home-faq">
+                <h3>Who is this best suited for?</h3>
+                <p>
+                  It is useful for founders, designers, product teams, agencies,
+                  and engineers who want to move from reference visuals to a
+                  working front-end draft faster.
+                </p>
+              </article>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+    <noscript>
+      <div class="seo-home-noscript">
+        JavaScript is required for the interactive generator, but the workflow
+        pages and static product information on this page remain available.
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,3 +1,4 @@
+import { Suspense, lazy, useMemo, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import {
   FaDesktop,
@@ -11,17 +12,16 @@ import {
   LuRefreshCw,
   LuDownload,
 } from "react-icons/lu";
-import { useMemo, useState } from "react";
 import { AppState, Settings } from "../../types";
-import CodeTab from "./CodeTab";
 import { Button } from "../ui/button";
 import { useAppStore } from "../../store/app-store";
 import { useProjectStore } from "../../store/project-store";
 import { extractHtml } from "./extractHtml";
-import PreviewComponent from "./PreviewComponent";
-import { downloadCode } from "./download";
 import { SelectAndEditToolbarButton } from "../select-and-edit/SelectAndEditControls";
 import { useI18n } from "../../i18n";
+
+const CodeTab = lazy(() => import("./CodeTab"));
+const PreviewComponent = lazy(() => import("./PreviewComponent"));
 
 function openInNewTab(code: string) {
   const newWindow = window.open("", "_blank");
@@ -35,6 +35,14 @@ function openInNewTab(code: string) {
 interface Props {
   settings: Settings;
   onOpenVersions: () => void;
+}
+
+function PreviewTabFallback({ label }: { label: string }) {
+  return (
+    <div className="flex min-h-[240px] items-center justify-center text-sm text-stone-500 dark:text-zinc-400">
+      {label}
+    </div>
+  );
 }
 
 function PreviewPane({ settings, onOpenVersions }: Props) {
@@ -191,7 +199,10 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
               )}
             {(appState === AppState.CODE_READY || isSelectedVariantComplete) && (
               <Button
-                onClick={() => downloadCode(previewCode)}
+                onClick={async () => {
+                  const { downloadCode } = await import("./download");
+                  await downloadCode(previewCode);
+                }}
                 variant="ghost"
                 size="icon"
                 title={t("downloadCode")}
@@ -222,26 +233,38 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
           </div>
         </div>
         <TabsContent value="desktop" className="flex-1 min-h-0 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
-          <PreviewComponent
-            code={previewCode}
-            device="desktop"
-            onScaleChange={setDesktopScale}
-            viewMode={desktopViewMode}
-          />
+          {activeTab === "desktop" && (
+            <Suspense fallback={<PreviewTabFallback label="Loading desktop preview..." />}>
+              <PreviewComponent
+                code={previewCode}
+                device="desktop"
+                onScaleChange={setDesktopScale}
+                viewMode={desktopViewMode}
+              />
+            </Suspense>
+          )}
         </TabsContent>
         <TabsContent value="mobile" className="flex-1 min-h-0 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
-          <PreviewComponent
-            code={previewCode}
-            device="mobile"
-            viewMode="actual"
-          />
+          {activeTab === "mobile" && (
+            <Suspense fallback={<PreviewTabFallback label="Loading mobile preview..." />}>
+              <PreviewComponent
+                code={previewCode}
+                device="mobile"
+                viewMode="actual"
+              />
+            </Suspense>
+          )}
         </TabsContent>
         <TabsContent value="code" className="flex-1 min-h-0 mt-0 overflow-auto">
-          <CodeTab
-            code={previewCode}
-            setCode={() => {}}
-            settings={settings}
-          />
+          {activeTab === "code" && (
+            <Suspense fallback={<PreviewTabFallback label="Loading code editor..." />}>
+              <CodeTab
+                code={previewCode}
+                setCode={() => {}}
+                settings={settings}
+              />
+            </Suspense>
+          )}
         </TabsContent>
       </Tabs>
     </div>

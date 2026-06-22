@@ -1,10 +1,11 @@
+import { Suspense, lazy, useCallback } from "react";
 import { FaCopy } from "react-icons/fa";
-import CodeMirror from "./CodeMirror";
 import { Button } from "../ui/button";
 import { Settings } from "../../types";
 import copy from "copy-to-clipboard";
-import { useCallback } from "react";
 import toast from "react-hot-toast";
+
+const CodeMirror = lazy(() => import("./CodeMirror"));
 
 interface Props {
   code: string;
@@ -77,11 +78,19 @@ function CodeTab({ code, setCode, settings }: Props) {
           />
         </Button>
       </div>
-      <CodeMirror
-        code={code}
-        editorTheme={settings.editorTheme}
-        onCodeChange={setCode}
-      />
+      <Suspense
+        fallback={
+          <div className="mx-2 flex min-h-[420px] items-center justify-center rounded-[20px] border-[4px] border-black text-sm text-stone-500 dark:text-zinc-400">
+            Loading editor...
+          </div>
+        }
+      >
+        <CodeMirror
+          code={code}
+          editorTheme={settings.editorTheme}
+          onCodeChange={setCode}
+        />
+      </Suspense>
     </div>
   );
 }

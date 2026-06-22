@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { generateCode } from "./generateCode";
 import {
   AppState,
@@ -33,13 +33,7 @@ import { useProjectStore } from "./store/project-store";
 import { useDesignSystems } from "./hooks/useDesignSystems";
 import { buildSelectedElementInstruction } from "./components/select-and-edit/utils";
 import { useEscapeToExitSelectMode } from "./components/select-and-edit/useEscapeToExitSelectMode";
-import Sidebar from "./components/sidebar/Sidebar";
-import IconStrip from "./components/sidebar/IconStrip";
-import HistoryDisplay from "./components/history/HistoryDisplay";
-import PreviewPane from "./components/preview/PreviewPane";
 import StartPane from "./components/start-pane/StartPane";
-import SettingsTab from "./components/settings/SettingsTab";
-import DesignSystemsModal from "./components/settings/DesignSystemsModal";
 import { Commit } from "./components/commits/types";
 import { createCommit } from "./components/commits/utils";
 import {
@@ -53,6 +47,30 @@ import LanguageToggle from "./components/core/LanguageToggle";
 import { useI18n, translateCurrent } from "./i18n";
 
 const DEFAULT_DESIGN_SYSTEM_ID = "precision-canvas";
+const Sidebar = lazy(() => import("./components/sidebar/Sidebar"));
+const IconStrip = lazy(() => import("./components/sidebar/IconStrip"));
+const HistoryDisplay = lazy(() => import("./components/history/HistoryDisplay"));
+const PreviewPane = lazy(() => import("./components/preview/PreviewPane"));
+const SettingsTab = lazy(() => import("./components/settings/SettingsTab"));
+const DesignSystemsModal = lazy(
+  () => import("./components/settings/DesignSystemsModal")
+);
+
+function DeferredPanelShell({
+  className = "",
+  label = "Loading...",
+}: {
+  className?: string;
+  label?: string;
+}) {
+  return (
+    <div
+      className={`flex min-h-[160px] items-center justify-center rounded-2xl border border-stone-200/80 bg-white/80 px-4 py-8 text-sm text-stone-500 dark:border-zinc-800 dark:bg-zinc-950/80 dark:text-zinc-400 ${className}`}
+    >
+      {label}
+    </div>
+  );
+}
 
 function App() {
   const { t } = useI18n();
@@ -951,38 +969,40 @@ function App() {
         <div
           className="sticky top-0 z-50 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-16 lg:flex-col"
         >
-          <IconStrip
-            isHistoryOpen={isHistoryOpen}
-            isEditorOpen={!isHistoryOpen && !isSettingsOpen}
-            isSettingsOpen={isSettingsOpen}
-            showHistory={isCodingOrReady}
-            showEditor={isCodingOrReady}
-            onToggleHistory={() => {
-              setIsHistoryOpen((prev) => !prev);
-              setIsSettingsOpen(false);
-              setMobilePane("chat");
-            }}
-            onToggleEditor={() => {
-              setIsHistoryOpen(false);
-              setIsSettingsOpen(false);
-              setMobilePane("preview");
-            }}
-            onLogoClick={() => {
-              setIsHistoryOpen(false);
-              setIsSettingsOpen(false);
-              setMobilePane("preview");
-            }}
-            onNewProject={() => {
-              reset();
-              setIsHistoryOpen(false);
-              setIsSettingsOpen(false);
-              setMobilePane("preview");
-            }}
-            onOpenSettings={() => {
-              setIsSettingsOpen(true);
-              setIsHistoryOpen(false);
-            }}
-          />
+          <Suspense fallback={<DeferredPanelShell className="h-16 rounded-none border-0 bg-transparent" label="Loading tools..." />}>
+            <IconStrip
+              isHistoryOpen={isHistoryOpen}
+              isEditorOpen={!isHistoryOpen && !isSettingsOpen}
+              isSettingsOpen={isSettingsOpen}
+              showHistory={isCodingOrReady}
+              showEditor={isCodingOrReady}
+              onToggleHistory={() => {
+                setIsHistoryOpen((prev) => !prev);
+                setIsSettingsOpen(false);
+                setMobilePane("chat");
+              }}
+              onToggleEditor={() => {
+                setIsHistoryOpen(false);
+                setIsSettingsOpen(false);
+                setMobilePane("preview");
+              }}
+              onLogoClick={() => {
+                setIsHistoryOpen(false);
+                setIsSettingsOpen(false);
+                setMobilePane("preview");
+              }}
+              onNewProject={() => {
+                reset();
+                setIsHistoryOpen(false);
+                setIsSettingsOpen(false);
+                setMobilePane("preview");
+              }}
+              onOpenSettings={() => {
+                setIsSettingsOpen(true);
+                setIsHistoryOpen(false);
+              }}
+            />
+          </Suspense>
         </div>
       )}
 
@@ -1036,7 +1056,9 @@ function App() {
                       {t("backToEditor")}
                     </button>
                   </div>
-                  <HistoryDisplay />
+                  <Suspense fallback={<DeferredPanelShell label="Loading history..." />}>
+                    <HistoryDisplay />
+                  </Suspense>
                 </div>
               </div>
             ) : (
@@ -1049,22 +1071,24 @@ function App() {
 
                 {(appState === AppState.CODING ||
                   appState === AppState.CODE_READY) && (
-                  <Sidebar
-                    doUpdate={doUpdate}
-                    regenerate={regenerate}
-                    cancelCodeGeneration={cancelCodeGeneration}
-                    designSystem={{
-                      designSystems,
-                      selectedDesignSystemId: settings.selectedDesignSystemId,
-                      setSelectedDesignSystemId,
-                      onAddNew: handleAddNewDesignSystem,
-                      onManage: () => openDesignSystemsManager(),
-                    }}
-                    onOpenVersions={() => {
-                      setIsHistoryOpen(true);
-                      setMobilePane("chat");
-                    }}
-                  />
+                  <Suspense fallback={<DeferredPanelShell label="Loading editor tools..." />}>
+                    <Sidebar
+                      doUpdate={doUpdate}
+                      regenerate={regenerate}
+                      cancelCodeGeneration={cancelCodeGeneration}
+                      designSystem={{
+                        designSystems,
+                        selectedDesignSystemId: settings.selectedDesignSystemId,
+                        setSelectedDesignSystemId,
+                        onAddNew: handleAddNewDesignSystem,
+                        onManage: () => openDesignSystemsManager(),
+                      }}
+                      onOpenVersions={() => {
+                        setIsHistoryOpen(true);
+                        setMobilePane("chat");
+                      }}
+                    />
+                  </Suspense>
                 )}
               </>
             )}
@@ -1083,12 +1107,14 @@ function App() {
         } ${isCodingOrReady && !isSettingsOpen && mobilePane === "chat" ? "hidden lg:flex" : ""}`}
       >
         {isSettingsOpen ? (
-          <SettingsTab
-            settings={settings}
-            setSettings={setSettings}
-            appTheme={appTheme}
-            setAppTheme={setAppTheme}
-          />
+          <Suspense fallback={<DeferredPanelShell className="m-4" label="Loading settings..." />}>
+            <SettingsTab
+              settings={settings}
+              setSettings={setSettings}
+              appTheme={appTheme}
+              setAppTheme={setAppTheme}
+            />
+          </Suspense>
         ) : (
           <>
             {appState === AppState.INITIAL && (
@@ -1105,29 +1131,33 @@ function App() {
             )}
 
             {isCodingOrReady && (
-              <PreviewPane
-                settings={settings}
-                onOpenVersions={() => {
-                  setIsHistoryOpen(true);
-                  setMobilePane("chat");
-                }}
-              />
+              <Suspense fallback={<DeferredPanelShell className="m-4 flex-1" label="Loading preview..." />}>
+                <PreviewPane
+                  settings={settings}
+                  onOpenVersions={() => {
+                    setIsHistoryOpen(true);
+                    setMobilePane("chat");
+                  }}
+                />
+              </Suspense>
             )}
           </>
         )}
       </main>
 
-      <DesignSystemsModal
-        open={isDesignSystemsModalOpen}
-        onOpenChange={setIsDesignSystemsModalOpen}
-        designSystems={designSystems}
-        selectedDesignSystemId={settings.selectedDesignSystemId}
-        setSelectedDesignSystemId={setSelectedDesignSystemId}
-        initialEditingId={designSystemsModalInitialId}
-        createDesignSystem={createDesignSystem}
-        updateDesignSystem={updateDesignSystem}
-        deleteDesignSystem={deleteDesignSystem}
-      />
+      <Suspense fallback={null}>
+        <DesignSystemsModal
+          open={isDesignSystemsModalOpen}
+          onOpenChange={setIsDesignSystemsModalOpen}
+          designSystems={designSystems}
+          selectedDesignSystemId={settings.selectedDesignSystemId}
+          setSelectedDesignSystemId={setSelectedDesignSystemId}
+          initialEditingId={designSystemsModalInitialId}
+          createDesignSystem={createDesignSystem}
+          updateDesignSystem={updateDesignSystem}
+          deleteDesignSystem={deleteDesignSystem}
+        />
+      </Suspense>
     </div>
   );
 }

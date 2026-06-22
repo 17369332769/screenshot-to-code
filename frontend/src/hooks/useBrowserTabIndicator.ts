@@ -5,7 +5,7 @@ const CODING_SETTINGS = {
   favicon: "/favicon/coding.png",
 };
 const DEFAULT_SETTINGS = {
-  title: "Screenshot to Code",
+  title: null,
   favicon: "/favicon/main.png",
 };
 
@@ -93,8 +93,10 @@ const useBrowserTabIndicator = (isCoding: boolean) => {
       }
     }
 
-    // Set title
-    document.title = settings.title;
+    // Preserve route-specific SEO titles when we're not actively coding.
+    if (settings.title) {
+      document.title = settings.title;
+    }
   }, [isCoding]);
 };
 

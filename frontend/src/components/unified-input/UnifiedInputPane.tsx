@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { Suspense, lazy, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Stack } from "../../lib/stacks";
 import { DesignSystem, Settings } from "../../types";
 import UploadTab from "./tabs/UploadTab";
-import UrlTab from "./tabs/UrlTab";
-import TextTab from "./tabs/TextTab";
-import ImportTab from "./tabs/ImportTab";
 import { DesignSystemSelectorProps } from "../settings/DesignSystemSelector";
 import { useI18n } from "../../i18n";
+
+const UrlTab = lazy(() => import("./tabs/UrlTab"));
+const TextTab = lazy(() => import("./tabs/TextTab"));
+const ImportTab = lazy(() => import("./tabs/ImportTab"));
 
 interface Props {
   doCreate: (
@@ -25,6 +26,14 @@ interface Props {
 }
 
 type InputTab = "upload" | "url" | "text" | "import";
+
+function InputTabFallback({ label }: { label: string }) {
+  return (
+    <div className="flex min-h-[320px] items-center justify-center rounded-[1.4rem] border border-stone-200/80 bg-white/70 px-4 text-sm text-stone-500 dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-400">
+      {label}
+    </div>
+  );
+}
 
 function UnifiedInputPane({
   doCreate,
@@ -113,26 +122,38 @@ function UnifiedInputPane({
         </TabsContent>
 
         <TabsContent value="url" className="mt-0">
-          <UrlTab
-            doCreate={doCreate}
-            screenshotOneApiKey={settings.screenshotOneApiKey}
-            stack={settings.generatedCodeConfig}
-            setStack={setStack}
-            designSystem={designSystemSelectorProps}
-          />
+          {activeTab === "url" && (
+            <Suspense fallback={<InputTabFallback label="Loading URL tools..." />}>
+              <UrlTab
+                doCreate={doCreate}
+                screenshotOneApiKey={settings.screenshotOneApiKey}
+                stack={settings.generatedCodeConfig}
+                setStack={setStack}
+                designSystem={designSystemSelectorProps}
+              />
+            </Suspense>
+          )}
         </TabsContent>
 
         <TabsContent value="text" className="mt-0">
-          <TextTab
-            doCreateFromText={doCreateFromText}
-            stack={settings.generatedCodeConfig}
-            setStack={setStack}
-            designSystem={designSystemSelectorProps}
-          />
+          {activeTab === "text" && (
+            <Suspense fallback={<InputTabFallback label="Loading text generator..." />}>
+              <TextTab
+                doCreateFromText={doCreateFromText}
+                stack={settings.generatedCodeConfig}
+                setStack={setStack}
+                designSystem={designSystemSelectorProps}
+              />
+            </Suspense>
+          )}
         </TabsContent>
 
         <TabsContent value="import" className="mt-0">
-          <ImportTab importFromCode={importFromCode} />
+          {activeTab === "import" && (
+            <Suspense fallback={<InputTabFallback label="Loading import tools..." />}>
+              <ImportTab importFromCode={importFromCode} />
+            </Suspense>
+          )}
         </TabsContent>
       </Tabs>
     </div>

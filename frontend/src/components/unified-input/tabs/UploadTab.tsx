@@ -1,14 +1,15 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { Suspense, lazy, useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
 import { Cross2Icon, ImageIcon } from "@radix-ui/react-icons";
 import { Button } from "../../ui/button";
 import { ScreenRecorderState } from "../../../types";
-import ScreenRecorder from "../../recording/ScreenRecorder";
 import OutputSettingsSection from "../../settings/OutputSettingsSection";
 import { DesignSystemSelectorProps } from "../../settings/DesignSystemSelector";
 import { Stack } from "../../../lib/stacks";
 import { useI18n } from "../../../i18n";
+
+const ScreenRecorder = lazy(() => import("../../recording/ScreenRecorder"));
 
 function fileToDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -63,6 +64,7 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
   const [textPrompt, setTextPrompt] = useState("");
   const [showTextPrompt, setShowTextPrompt] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [showScreenRecorder, setShowScreenRecorder] = useState(false);
   const textInputRef = useRef<HTMLTextAreaElement>(null);
   const filesRef = useRef<FileWithPreview[]>([]);
   const [screenRecorderState, setScreenRecorderState] =
@@ -502,14 +504,28 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
               <div className="h-px w-12 bg-gray-300 dark:bg-zinc-600" />
             </div>
           )}
-          <ScreenRecorder
-            screenRecorderState={screenRecorderState}
-            setScreenRecorderState={setScreenRecorderState}
-            generateCode={handleScreenRecorderGenerate}
-            stack={stack}
-            setStack={setStack}
-            designSystem={designSystem}
-          />
+          {!showScreenRecorder && screenRecorderState === ScreenRecorderState.INITIAL ? (
+            <Button onClick={() => setShowScreenRecorder(true)}>
+              {t("recordScreen")}
+            </Button>
+          ) : (
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-6 text-sm text-stone-500 dark:text-zinc-400">
+                  Loading recorder...
+                </div>
+              }
+            >
+              <ScreenRecorder
+                screenRecorderState={screenRecorderState}
+                setScreenRecorderState={setScreenRecorderState}
+                generateCode={handleScreenRecorderGenerate}
+                stack={stack}
+                setStack={setStack}
+                designSystem={designSystem}
+              />
+            </Suspense>
+          )}
         </div>
       )}
     </div>

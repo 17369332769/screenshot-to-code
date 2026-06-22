@@ -1,0 +1,352 @@
+.seo-home-shell {
+  min-height: 100vh;
+  color: #0f172a;
+  font-family: "IBM Plex Sans", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 22%),
+    radial-gradient(circle at right 18%, rgba(34, 211, 238, 0.14), transparent 26%),
+    linear-gradient(180deg, #faf7f2 0%, #f4efe6 42%, #ffffff 100%);
+}
+
+.seo-home-container {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.seo-home-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid rgba(120, 113, 108, 0.14);
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.seo-home-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+}
+
+.seo-home-brand {
+  color: #57534e;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+
+.seo-home-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.seo-home-nav a {
+  color: #44403c;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.seo-home-main {
+  padding: 44px 0 88px;
+}
+
+.seo-home-hero {
+  padding: 32px;
+  border: 1px solid rgba(214, 211, 209, 0.8);
+  border-radius: 36px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+}
+
+.seo-home-eyebrow,
+.seo-home-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #57534e;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.seo-home-eyebrow {
+  padding: 8px 12px;
+  border: 1px solid rgba(120, 113, 108, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.seo-home-eyebrow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #10b981;
+}
+
+.seo-home-hero h1,
+.seo-home-section h2,
+.seo-home-step h3,
+.seo-home-faq h3,
+.seo-home-card strong,
+.seo-home-feature-list strong {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.seo-home-hero h1 {
+  margin: 24px 0 0;
+  max-width: 820px;
+  font-size: clamp(42px, 7vw, 76px);
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+}
+
+.seo-home-lead,
+.seo-home-section-copy p,
+.seo-home-step p,
+.seo-home-faq p,
+.seo-home-card p,
+.seo-home-feature-list span {
+  color: #57534e;
+  line-height: 1.85;
+}
+
+.seo-home-lead {
+  max-width: 760px;
+  margin: 22px 0 0;
+  font-size: 18px;
+}
+
+.seo-home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.seo-home-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.seo-home-button-solid {
+  background: #111827;
+  color: #fff;
+}
+
+.seo-home-button-pill {
+  border: 1px solid rgba(120, 113, 108, 0.24);
+  background: rgba(255, 255, 255, 0.84);
+  color: #292524;
+}
+
+.seo-home-signal-grid,
+.seo-home-card-grid,
+.seo-home-step-grid,
+.seo-home-faq-grid,
+.seo-home-feature-list {
+  display: grid;
+  gap: 16px;
+}
+
+.seo-home-signal-grid {
+  margin-top: 30px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.seo-home-signal-grid span,
+.seo-home-feature-list div,
+.seo-home-step,
+.seo-home-faq,
+.seo-home-card {
+  border-radius: 24px;
+}
+
+.seo-home-signal-grid span {
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(214, 211, 209, 0.72);
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.seo-home-section {
+  margin-top: 56px;
+}
+
+.seo-home-section-copy h2 {
+  margin: 10px 0 0;
+  max-width: 720px;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.seo-home-section-copy p {
+  margin: 16px 0 0;
+  max-width: 760px;
+  font-size: 16px;
+}
+
+.seo-home-card-grid,
+.seo-home-step-grid {
+  margin-top: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.seo-home-card,
+.seo-home-step,
+.seo-home-faq,
+.seo-home-feature-panel {
+  border: 1px solid rgba(214, 211, 209, 0.76);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.06);
+}
+
+.seo-home-card {
+  display: block;
+  padding: 24px;
+  text-decoration: none;
+}
+
+.seo-home-card strong {
+  display: block;
+  color: #0f172a;
+  font-size: 26px;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.seo-home-card p {
+  margin: 14px 0 0;
+  font-size: 15px;
+}
+
+.seo-home-feature-panel {
+  padding: 28px;
+  border-radius: 32px;
+}
+
+.seo-home-feature-list {
+  margin-top: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.seo-home-feature-list div {
+  padding: 18px;
+  background: #fff;
+  border: 1px solid rgba(214, 211, 209, 0.66);
+}
+
+.seo-home-feature-list strong {
+  display: block;
+  color: #0f172a;
+  font-size: 20px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.seo-home-feature-list span {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.seo-home-step,
+.seo-home-faq {
+  padding: 24px;
+}
+
+.seo-home-step strong {
+  color: #0891b2;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+}
+
+.seo-home-step h3,
+.seo-home-faq h3 {
+  margin: 12px 0 0;
+  color: #0f172a;
+  font-size: 26px;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.seo-home-step p,
+.seo-home-faq p {
+  margin: 14px 0 0;
+  font-size: 15px;
+}
+
+.seo-home-faq-grid {
+  margin-top: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.seo-home-noscript {
+  padding: 16px;
+  background: #fff7ed;
+  border-top: 1px solid #fdba74;
+  color: #9a3412;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 14px;
+  text-align: center;
+}
+
+@media (max-width: 960px) {
+  .seo-home-signal-grid,
+  .seo-home-card-grid,
+  .seo-home-step-grid,
+  .seo-home-feature-list,
+  .seo-home-faq-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .seo-home-topbar-inner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .seo-home-main {
+    padding-top: 32px;
+  }
+
+  .seo-home-hero,
+  .seo-home-feature-panel,
+  .seo-home-card,
+  .seo-home-step,
+  .seo-home-faq {
+    padding: 22px;
+  }
+
+  .seo-home-signal-grid,
+  .seo-home-card-grid,
+  .seo-home-step-grid,
+  .seo-home-feature-list,
+  .seo-home-faq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-home-hero h1 {
+    font-size: clamp(38px, 12vw, 60px);
+  }
+
+  .seo-home-lead {
+    font-size: 16px;
+  }
+}

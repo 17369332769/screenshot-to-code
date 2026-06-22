@@ -134,6 +134,56 @@
   background: rgba(34, 211, 238, 0.18);
 }
 
+.landing-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), transparent 85%);
+  opacity: 0.22;
+}
+
+.dark .landing-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  opacity: 0.26;
+}
+
+.section-divider {
+  position: relative;
+}
+
+.section-divider::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1.5rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(120, 113, 108, 0.28) 18%,
+    rgba(120, 113, 108, 0.28) 82%,
+    transparent
+  );
+}
+
+.dark .section-divider::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(161, 161, 170, 0.22) 18%,
+    rgba(161, 161, 170, 0.22) 82%,
+    transparent
+  );
+}
+
 .sidebar-scrollbar-stable {
   scrollbar-gutter: stable;
 }
