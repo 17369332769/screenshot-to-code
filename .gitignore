@@ -22,5 +22,8 @@ frontend/.env.local
 #Rodney
 .rodney
 
+# Local Playwright CLI artifacts
+.playwright-cli/
+
 # Walkthrough demo videos
 walkthrough/
