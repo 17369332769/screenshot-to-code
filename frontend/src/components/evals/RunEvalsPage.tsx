@@ -88,7 +88,7 @@ function RunEvalsPage() {
       window.clearInterval(faviconFlashIntervalRef.current);
       faviconFlashIntervalRef.current = null;
     }
-    setFavicon("/favicon/main.png");
+    setFavicon("/favicon/log-square.png");
     window.removeEventListener("visibilitychange", stopWhenTabIsVisible);
     window.removeEventListener("focus", stopWhenTabIsVisible);
   };
@@ -103,7 +103,7 @@ function RunEvalsPage() {
     stopFaviconFlash();
     let useAlertIcon = false;
     faviconFlashIntervalRef.current = window.setInterval(() => {
-      setFavicon(useAlertIcon ? "/favicon/coding.png" : "/favicon/main.png");
+      setFavicon(useAlertIcon ? "/favicon/coding.png" : "/favicon/log-square.png");
       useAlertIcon = !useAlertIcon;
     }, 450);
     window.addEventListener("visibilitychange", stopWhenTabIsVisible);

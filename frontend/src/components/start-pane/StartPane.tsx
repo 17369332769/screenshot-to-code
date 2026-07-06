@@ -1,15 +1,52 @@
-import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
+import React, { Suspense, lazy } from "react";
 import { DesignSystem, Settings } from "../../types";
 import { Stack } from "../../lib/stacks";
 import AccountPanel from "../account/AccountPanel";
 import { IS_RUNNING_ON_CLOUD } from "../../config";
-import { useI18n } from "../../i18n";
+import {
+  FaDiscord,
+  FaGithub,
+  FaXTwitter,
+  FaYoutube,
+} from "react-icons/fa6";
+import {
+  SiAndroid,
+  SiBootstrap,
+  SiFlutter,
+  SiHtml5,
+  SiNextdotjs,
+  SiNuxtdotjs,
+  SiReact,
+  SiSwift,
+  SiTailwindcss,
+  SiVuedotjs,
+} from "react-icons/si";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import {
+  LuArrowRight,
+  LuChevronRight,
+  LuCode2,
+  LuComponent,
+  LuFigma,
+  LuFileText,
+  LuGem,
+  LuGlobe2,
+  LuImage,
+  LuLayers,
+  LuLayoutGrid,
+  LuMonitorSmartphone,
+  LuPenTool,
+  LuPlay,
+  LuScan,
+  LuType,
+  LuVideo,
+  LuWind,
+} from "react-icons/lu";
 
 const UnifiedInputPane = lazy(() => import("../unified-input/UnifiedInputPane"));
 
@@ -28,6 +65,244 @@ interface Props {
   onManageDesignSystems: () => void;
 }
 
+const inputItems = [
+  {
+    title: "Screenshot",
+    subtitle: "PNG, JPG, WEBP",
+    accent: "bg-sky-500",
+    icon: LuImage,
+  },
+  {
+    title: "Figma File",
+    subtitle: ".fig, .figma",
+    accent: "bg-pink-500",
+    icon: LuFigma,
+  },
+  {
+    title: "Website URL",
+    subtitle: "Any public URL",
+    accent: "bg-cyan-500",
+    icon: LuGlobe2,
+  },
+  {
+    title: "Mockup",
+    subtitle: "PNG, JPG, PSD",
+    accent: "bg-emerald-500",
+    icon: LuLayers,
+  },
+  {
+    title: "Wireframe",
+    subtitle: "PNG, JPG, SVG",
+    accent: "bg-indigo-500",
+    icon: LuPenTool,
+  },
+  {
+    title: "Sketch File",
+    subtitle: ".sketch",
+    accent: "bg-amber-500",
+    icon: LuGem,
+  },
+  {
+    title: "PDF Document",
+    subtitle: ".pdf",
+    accent: "bg-rose-500",
+    icon: LuFileText,
+  },
+  {
+    title: "Video Recording",
+    subtitle: "MP4, MOV, WEBM",
+    accent: "bg-violet-500",
+    icon: LuVideo,
+  },
+] as const;
+
+const pipelineItems = [
+  {
+    title: "Vision Parsing",
+    description: "Understanding the visual content",
+    icon: LuScan,
+  },
+  {
+    title: "Layout Detection",
+    description: "Detecting structure and spacing",
+    icon: LuLayoutGrid,
+  },
+  {
+    title: "Component Recognition",
+    description: "Identifying UI components",
+    icon: LuComponent,
+  },
+  {
+    title: "Typography Analysis",
+    description: "Extracting fonts, sizes and styles",
+    icon: LuType,
+  },
+  {
+    title: "Responsive Layout",
+    description: "Building responsive grid system",
+    icon: LuMonitorSmartphone,
+  },
+  {
+    title: "Semantic HTML",
+    description: "Generating clean HTML structure",
+    icon: LuCode2,
+  },
+  {
+    title: "Tailwind Optimization",
+    description: "Utility-first CSS generation",
+    icon: LuWind,
+  },
+  {
+    title: "Code Generation",
+    description: "Production-ready code output",
+    icon: LuCode2,
+  },
+] as const;
+
+const stackItems = [
+  { label: "React", icon: SiReact },
+  { label: "Next.js", icon: SiNextdotjs },
+  { label: "Vue", icon: SiVuedotjs },
+  { label: "Nuxt", icon: SiNuxtdotjs },
+  { label: "Tailwind CSS", icon: SiTailwindcss },
+  { label: "HTML", icon: SiHtml5 },
+  { label: "Bootstrap", icon: SiBootstrap },
+  { label: "Flutter", icon: SiFlutter },
+  { label: "SwiftUI", icon: SiSwift },
+  { label: "Jetpack Compose", icon: SiAndroid },
+] as const;
+
+const workflowItems = [
+  "Upload",
+  "Analyze",
+  "Understand",
+  "Generate",
+  "Preview",
+  "Edit",
+  "Deploy",
+] as const;
+
+const useCaseItems = [
+  {
+    title: "Clone Landing Page",
+    description:
+      "Convert any landing page into clean code you can keep editing and shipping.",
+    image: "/showcases/landing-page-output.png",
+  },
+  {
+    title: "Convert Figma Design",
+    description:
+      "Turn Figma design direction into production-ready code with less rebuild work.",
+    image: "/showcases/landing-page-sketch.png",
+  },
+  {
+    title: "Build Dashboard",
+    description:
+      "Recreate complex dashboards and internal tooling layouts in minutes.",
+    image: "/showcases/dashboard-output.png",
+  },
+  {
+    title: "Mobile UI to Code",
+    description:
+      "Convert mobile designs to responsive code that stays easy to refine.",
+    image: "/showcases/mobile-app-output.png",
+  },
+  {
+    title: "Marketing Website",
+    description:
+      "Build marketing sites and launch pages faster from visual references.",
+    image: "/showcases/landing-page-output.png",
+  },
+  {
+    title: "Email Templates",
+    description:
+      "Convert designs into responsive email layouts with a better starting point.",
+    image: "/showcases/landing-page-sketch.png",
+  },
+  {
+    title: "Admin Systems",
+    description:
+      "Generate full admin interfaces with tables, filters, sidebars, and detail views.",
+    image: "/showcases/dashboard-output.png",
+  },
+] as const;
+
+const pricingPlans = [
+  {
+    name: "Free",
+    subtitle: "Try the workflow",
+    price: "$0",
+    description:
+      "Best for validating one real screenshot, testing output quality, and understanding whether the workflow fits your team.",
+    features: [
+      "A few free generations",
+      "Preview and editable output",
+      "Core screenshot, URL, and text flow",
+    ],
+    cta: "Start free",
+    featured: false,
+  },
+  {
+    name: "Pro",
+    subtitle: "For regular use",
+    price: "$29/mo",
+    description:
+      "A better fit for solo builders and designers who want more iterations, more volume, and faster daily workflow.",
+    features: [
+      "More monthly generations",
+      "Better support for repeated iteration",
+      "A stronger fit for shipping side projects and client drafts",
+    ],
+    cta: "Choose Pro",
+    featured: true,
+  },
+  {
+    name: "Team",
+    subtitle: "For shared rollout",
+    price: "Custom",
+    description:
+      "Designed for agencies and product teams that need shared usage, higher limits, and a cleaner path into team workflows.",
+    features: [
+      "Higher-volume collaboration",
+      "Better fit for internal product teams",
+      "Useful for agencies, redesigns, and client delivery",
+    ],
+    cta: "Talk to sales",
+    featured: false,
+  },
+] as const;
+
+const footerProductLinks = [
+  { href: "#pipeline", label: "Features" },
+  { href: "#timeline", label: "How It Works" },
+  { href: "#pricing", label: "Pricing" },
+  { href: "https://github.com/abi/screenshot-to-code/blob/main/README.md", label: "Changelog" },
+] as const;
+
+const footerResourceLinks = [
+  { href: "https://github.com/abi/screenshot-to-code/wiki/Screen-Recording-to-Code", label: "Documentation" },
+  {
+    href: "https://github.com/abi/screenshot-to-code/blob/main/Troubleshooting.md",
+    label: "Guides",
+  },
+  { href: "https://github.com/abi/screenshot-to-code", label: "Blog" },
+  { href: "#use-cases", label: "Examples" },
+] as const;
+
+const footerCompanyLinks = [
+  { href: "#", label: "About Us" },
+  { href: "#", label: "Careers" },
+  { href: "#", label: "Contact" },
+  { href: "/legal/terms-of-service.html", label: "Privacy Policy" },
+] as const;
+
+const footerCommunityLinks = [
+  { href: "https://github.com/abi/screenshot-to-code", label: "GitHub" },
+  { href: "#", label: "Discord" },
+  { href: "https://twitter.com/_abi_", label: "Twitter" },
+  { href: "#", label: "YouTube" },
+] as const;
+
 const StartPane: React.FC<Props> = ({
   doCreate,
   doCreateFromText,
@@ -38,807 +313,560 @@ const StartPane: React.FC<Props> = ({
   onAddNewDesignSystem,
   onManageDesignSystems,
 }) => {
-  const { t } = useI18n();
-  const generatorSectionRef = useRef<HTMLElement | null>(null);
-  const [shouldLoadGenerator, setShouldLoadGenerator] = useState(false);
-  const startModes = [
-    {
-      label: t("uploadTab"),
-      description: t("startModeUploadDescription"),
-      toneClass:
-        "from-amber-100 via-white to-stone-100 dark:from-amber-500/10 dark:via-zinc-950 dark:to-zinc-900",
-    },
-    {
-      label: t("urlTab"),
-      description: t("startModeUrlDescription"),
-      toneClass:
-        "from-cyan-100 via-white to-stone-100 dark:from-cyan-500/10 dark:via-zinc-950 dark:to-zinc-900",
-    },
-    {
-      label: t("textTab"),
-      description: t("startModeTextDescription"),
-      toneClass:
-        "from-rose-100 via-white to-stone-100 dark:from-rose-500/10 dark:via-zinc-950 dark:to-zinc-900",
-    },
-    {
-      label: t("importTab"),
-      description: t("startModeImportDescription"),
-      toneClass:
-        "from-emerald-100 via-white to-stone-100 dark:from-emerald-500/10 dark:via-zinc-950 dark:to-zinc-900",
-    },
-  ];
-
-  useEffect(() => {
-    if (shouldLoadGenerator) {
-      return;
-    }
-
-    const target = generatorSectionRef.current;
-    if (!target) {
-      return;
-    }
-
-    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
-      setShouldLoadGenerator(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setShouldLoadGenerator(true);
-          observer.disconnect();
-        }
-      },
-      {
-        rootMargin: "280px 0px",
-      }
-    );
-
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [shouldLoadGenerator]);
-
   return (
     <div className="relative overflow-hidden">
       <div className="landing-orb landing-orb-left" />
       <div className="landing-orb landing-orb-right" />
       <div className="landing-grid" />
 
-      <section className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24 lg:pt-12">
-        <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-start">
-          <div className="max-w-3xl pt-2 lg:pt-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-stone-300/70 bg-white/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.24em] text-stone-700 shadow-sm backdrop-blur dark:border-stone-700 dark:bg-zinc-900/70 dark:text-stone-200">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              {t("imageToCodeWebsite")}
+      <section className="mx-auto flex w-full max-w-7xl flex-col px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-20 lg:pt-12">
+        <section className="relative px-2 pt-4 sm:px-0 lg:pt-6">
+          <div className="mx-auto max-w-5xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50/90 px-4 py-1.5 text-[11px] font-semibold tracking-[0.02em] text-sky-700 shadow-sm dark:border-sky-900/40 dark:bg-sky-950/30 dark:text-sky-200">
+              <span className="h-2 w-2 rounded-full bg-sky-500" />
+              AI-Powered Visual Development Platform
             </div>
 
-            <h1 className="mt-6 max-w-4xl font-['Space_Grotesk'] text-5xl font-bold leading-[0.92] tracking-[-0.05em] text-slate-950 dark:text-white sm:text-6xl lg:text-7xl">
-              {t("turnScreenshotsIntoCode")}
+            <h1 className="mx-auto mt-8 max-w-4xl font-['Space_Grotesk'] text-5xl font-bold leading-[0.92] tracking-[-0.07em] text-stone-950 dark:text-white sm:text-6xl lg:text-[5.8rem]">
+              Turn Anything
+              <br />
+              Into Frontend Code.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-base leading-8 text-stone-600 dark:text-zinc-300 sm:text-lg">
-              {t("heroDescription")}
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-stone-600 dark:text-zinc-300 sm:text-lg">
+              From screenshots, Figma, URLs, videos and mockups
+              <br className="hidden sm:block" />
+              to production-ready code in seconds.
             </p>
 
-            <div className="mt-7 grid gap-3 text-sm text-stone-700 dark:text-zinc-300 sm:grid-cols-3">
-              <SignalPill label={t("multiImageInput")} />
-              <SignalPill label={t("livePreview")} />
-              <SignalPill label={t("editableOutput")} />
-            </div>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
                 href="#generator"
-                className="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
+                className="inline-flex items-center justify-center rounded-2xl bg-stone-950 px-8 py-4 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(17,17,17,0.16)] transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-stone-950"
               >
-                {t("startConverting")}
+                Start Building
+                <LuArrowRight className="ml-2 h-4 w-4" />
               </a>
               <a
-                href="#how-it-works"
-                className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white/75 px-6 py-3 text-sm font-semibold text-stone-800 transition-colors hover:bg-stone-100 dark:border-zinc-700 dark:bg-zinc-900/75 dark:text-white dark:hover:bg-zinc-800"
+                href="#before-after"
+                className="inline-flex items-center justify-center rounded-2xl border border-stone-200 bg-white px-8 py-4 text-sm font-semibold text-stone-800 shadow-sm transition-colors hover:bg-stone-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
               >
-                {t("seeHowItWorks")}
+                <LuPlay className="mr-2 h-4 w-4" />
+                Watch Demo
               </a>
             </div>
-
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              <Metric
-                label={t("supportedInputs")}
-                value={t("supportedInputsValue")}
-              />
-              <Metric
-                label={t("buildTargets")}
-                value={t("buildTargetsValue")}
-              />
-              <Metric label={t("bestFor")} value={t("bestForValue")} />
-            </div>
-
-            <div className="mt-8 grid gap-3 sm:grid-cols-[1.1fr_0.9fr]">
-              <EditorialStrip
-                eyebrow={t("workflowMapEyebrow")}
-                title={t("heroEditorialTitle")}
-                description={t("heroEditorialDescription")}
-              />
-              <CompactChecklist
-                items={[
-                  t("heroChecklist1"),
-                  t("heroChecklist2"),
-                  t("heroChecklist3"),
-                ]}
-              />
-            </div>
           </div>
 
-          <div className="relative pt-2 lg:pt-0">
-            <div className="absolute inset-x-8 inset-y-10 -z-10 rounded-[2rem] bg-gradient-to-br from-amber-200/35 via-white to-cyan-200/40 blur-3xl dark:from-amber-500/10 dark:via-zinc-950 dark:to-cyan-500/10" />
-            <div className="studio-panel overflow-hidden p-4">
-              <div className="rounded-[1.7rem] border border-slate-800/90 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.18),transparent_32%),linear-gradient(180deg,#0f172a,#111827)] p-5 text-stone-50 dark:border-zinc-800">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="text-xs uppercase tracking-[0.22em] text-stone-400">
-                      {t("coreProduct")}
-                    </div>
-                    <div className="mt-2 max-w-sm font-['Space_Grotesk'] text-2xl font-semibold tracking-[-0.04em] text-white">
-                      {t("imageToCodeReady")}
-                    </div>
-                  </div>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-cyan-200">
-                    {t("liveAi")}
-                  </span>
-                </div>
-
-                <div className="mt-5 grid gap-3 xl:grid-cols-[1.14fr_0.86fr]">
-                  <div className="rounded-[1.55rem] border border-white/10 bg-white/5 p-4">
-                    <div className="flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                      <div className="ml-3 h-6 flex-1 rounded-full border border-white/10 bg-black/20" />
-                    </div>
-                    <div className="mt-4 grid gap-3 sm:grid-cols-[1.04fr_0.96fr]">
-                      <div className="rounded-[1.25rem] bg-white p-3 text-slate-900 shadow-[0_18px_45px_rgba(15,23,42,0.18)]">
-                        <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-                          {t("beforeReference")}
-                        </div>
-                        <div className="mt-3 rounded-xl border border-slate-200 bg-[linear-gradient(135deg,#f8fafc,#e2e8f0)] p-3">
-                          <div className="h-20 rounded-lg bg-[linear-gradient(135deg,#1e293b,#475569)]" />
-                          <div className="mt-3 h-2 w-24 rounded-full bg-slate-300" />
-                          <div className="mt-2 h-2 w-32 rounded-full bg-slate-200" />
-                        </div>
-                      </div>
-                      <div className="rounded-[1.25rem] border border-white/10 bg-white/5 p-3">
-                        <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-emerald-200">
-                          {t("afterOutput")}
-                        </div>
-                        <div className="mt-3 rounded-xl border border-emerald-300/20 bg-emerald-300/10 p-3">
-                          <div className="h-16 rounded-lg bg-[linear-gradient(135deg,rgba(16,185,129,0.95),rgba(6,182,212,0.8))]" />
-                          <div className="mt-3 h-2 w-20 rounded-full bg-emerald-100/60" />
-                          <div className="mt-2 h-2 w-28 rounded-full bg-white/20" />
-                        </div>
-                        <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
-                          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.22em] text-stone-400">
-                            <span>{t("preview")}</span>
-                            <span>{t("code")}</span>
-                          </div>
-                          <div className="mt-3 h-14 rounded-lg bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
+          <div className="mt-10 rounded-[2rem] border border-stone-200/80 bg-white/92 p-4 shadow-[0_30px_90px_rgba(17,17,17,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 sm:p-5 lg:p-6">
+            <div className="grid gap-4 xl:grid-cols-[0.86fr_0.92fr_1.52fr_1.12fr]">
+              <ReferencePanel
+                title="1. Upload"
+                children={
                   <div className="space-y-3">
-                    <PreviewRow
-                      step="01"
-                      title={t("uploadScreenshot")}
-                      description={t("uploadScreenshotDescription")}
-                    />
-                    <PreviewRow
-                      step="02"
-                      title={t("chooseOutputStack")}
-                      description={t("chooseOutputStackDescription")}
-                    />
-                    <PreviewRow
-                      step="03"
-                      title={t("refineUntilItMatches")}
-                      description={t("refineUntilItMatchesDescription")}
-                    />
+                    {inputItems.slice(0, 7).map((item, index) => (
+                      <ReferenceInputRow
+                        key={item.title}
+                        title={item.title}
+                        subtitle={item.subtitle}
+                        accent={item.accent}
+                        active={index === 0}
+                      />
+                    ))}
                   </div>
-                </div>
+                }
+              />
 
-                <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  <MiniStatus
-                    title={t("multiImageInput")}
-                    value={t("supportedInputsValue")}
-                  />
-                  <MiniStatus
-                    title={t("buildTargets")}
-                    value={t("buildTargetsValue")}
-                  />
-                  <MiniStatus
-                    title={t("bestFor")}
-                    value={t("bestForValue")}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              <ReferencePanel
+                title="2. Vision Engine"
+                children={
+                  <div className="space-y-4">
+                    <div className="space-y-3">
+                      <ReferenceStatusRow label="Layout Detection" status="Completed" />
+                      <ReferenceStatusRow label="Component Recognition" status="Completed" />
+                      <ReferenceStatusRow label="Typography Analysis" status="Completed" />
+                      <ReferenceStatusRow label="Color Extraction" status="Completed" />
+                      <ReferenceStatusRow
+                        label="Asset Extraction"
+                        status="Processing..."
+                        active
+                      />
+                    </div>
+                    <div className="rounded-[1.2rem] bg-stone-50 px-4 py-4 dark:bg-zinc-900">
+                      <div className="text-xs text-stone-500 dark:text-zinc-400">
+                        AI is understanding your design...
+                      </div>
+                      <div className="mt-4 h-2.5 rounded-full bg-stone-200 dark:bg-zinc-800">
+                        <div className="h-2.5 w-[80%] rounded-full bg-[linear-gradient(90deg,#2563eb,#3b82f6)]" />
+                      </div>
+                      <div className="mt-2 text-right text-xs font-medium text-stone-500 dark:text-zinc-400">
+                        80%
+                      </div>
+                    </div>
+                  </div>
+                }
+              />
 
-        <section className="mt-10">
-          <div className="studio-panel rounded-[2rem] px-5 py-5 sm:px-6 sm:py-6">
-            <div className="grid gap-6 lg:grid-cols-[0.74fr_1.26fr] lg:items-center">
-              <div>
-                <p className="editorial-kicker">
-                  {t("waysToStart")}
-                </p>
-                <h2 className="mt-2 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
-                  {t("waysToStartTitle")}
-                </h2>
-                <p className="mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-                  {t("waysToStartDescription")}
-                </p>
-              </div>
+              <ReferencePanel
+                title="3. Live Preview"
+                children={
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-stone-600 dark:text-zinc-300">
+                      <span className="h-2 w-2 rounded-full bg-sky-500" />
+                      StartupLanding
+                    </div>
+                    <div className="overflow-hidden rounded-[1.3rem] border border-stone-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+                      <div className="flex items-center justify-between border-b border-stone-200 px-4 py-3 text-[11px] text-stone-500 dark:border-zinc-800 dark:text-zinc-400">
+                        <span>Product</span>
+                        <span>Features</span>
+                        <span>Pricing</span>
+                        <span>About</span>
+                        <span className="rounded-lg bg-stone-950 px-3 py-1 font-semibold text-white dark:bg-white dark:text-stone-950">
+                          Get Started
+                        </span>
+                      </div>
+                      <div className="grid gap-4 p-5 lg:grid-cols-[1.12fr_0.88fr]">
+                        <div>
+                          <div className="max-w-[14rem] text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-stone-950 dark:text-white">
+                            Build faster with better code
+                          </div>
+                          <p className="mt-3 text-sm leading-6 text-stone-500 dark:text-zinc-400">
+                            VisualToCode helps you convert any design into
+                            clean, production-ready code in seconds.
+                          </p>
+                          <div className="mt-5 flex gap-3">
+                            <span className="rounded-lg bg-stone-950 px-4 py-2 text-xs font-semibold text-white dark:bg-white dark:text-stone-950">
+                              Get Started
+                            </span>
+                            <span className="rounded-lg border border-stone-200 px-4 py-2 text-xs font-semibold text-stone-700 dark:border-zinc-700 dark:text-zinc-300">
+                              View Demo
+                            </span>
+                          </div>
+                        </div>
+                        <div className="rounded-[1.2rem] border border-stone-200 bg-stone-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                          <div className="text-xs text-stone-400 dark:text-zinc-500">
+                            Total Revenue
+                          </div>
+                          <div className="mt-2 text-4xl font-semibold tracking-[-0.05em] text-stone-950 dark:text-white">
+                            $24,532
+                          </div>
+                          <div className="mt-2 text-xs text-emerald-600 dark:text-emerald-400">
+                            +12.5% from last month
+                          </div>
+                          <div className="mt-6 h-28 rounded-[1rem] bg-[linear-gradient(180deg,#eff6ff,#dbeafe)] dark:bg-[linear-gradient(180deg,#172554,#0f172a)]" />
+                        </div>
+                      </div>
+                      <div className="border-t border-stone-200 px-5 py-4 text-center text-xs text-stone-400 dark:border-zinc-800 dark:text-zinc-500">
+                        Trusted by developers at Linear, Vercel, Notion, GitHub, Adobe
+                      </div>
+                    </div>
+                  </div>
+                }
+              />
 
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                {startModes.map((mode) => (
-                  <StartModeCard
-                    key={mode.label}
-                    label={mode.label}
-                    description={mode.description}
-                    toneClass={mode.toneClass}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-10">
-          <div className="studio-panel rounded-[1.8rem] px-5 py-5">
-            <div className="editorial-kicker text-center">
-              {t("socialProofTitle")}
-            </div>
-            <div className="mt-5 grid grid-cols-2 items-center gap-6 opacity-75 sm:grid-cols-3 lg:grid-cols-6">
-              <LogoItem src="/logos/amazon.png" alt="Amazon" />
-              <LogoItem src="/logos/microsoft.png" alt="Microsoft" />
-              <LogoItem src="/logos/bytedance.png" alt="ByteDance" />
-              <LogoItem src="/logos/stanford.png" alt="Stanford" />
-              <LogoItem src="/logos/mit.png" alt="MIT" />
-              <LogoItem src="/logos/baidu.png" alt="Baidu" />
+              <ReferencePanel
+                title="4. Generated Code"
+                children={
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 border-b border-stone-200 pb-3 text-xs font-medium text-stone-500 dark:border-zinc-800 dark:text-zinc-400">
+                      <span className="text-sky-600 dark:text-sky-400">React</span>
+                      <span>Vue</span>
+                      <span>HTML</span>
+                      <span>Tailwind</span>
+                    </div>
+                    <div className="rounded-[1.2rem] border border-stone-200 bg-stone-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                      <CodeSnippetMock />
+                    </div>
+                    <div className="flex gap-3">
+                      <button className="rounded-xl border border-stone-200 bg-white px-4 py-2 text-xs font-semibold text-stone-700 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
+                        Copy Code
+                      </button>
+                      <button className="rounded-xl bg-stone-950 px-4 py-2 text-xs font-semibold text-white dark:bg-white dark:text-stone-950">
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                }
+              />
             </div>
           </div>
         </section>
 
         <section
-          id="generator"
-          ref={generatorSectionRef}
-          className="section-divider mt-14 scroll-mt-28 lg:mt-16"
+          id="inputs"
+          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
-          <div className="studio-panel mx-auto max-w-6xl rounded-[2.2rem] p-4 sm:p-6 lg:p-8">
-            <div className="mb-6 grid gap-5 border-b border-stone-200/80 pb-6 dark:border-zinc-800 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-              <div>
-                <p className="editorial-kicker">
-                  {t("coreProduct")}
-                </p>
-                <h2 className="mt-2 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
-                  {t("imageToCodeReady")}
-                </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300">
-                  {t("coreProductDescription")}
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-xs text-stone-600 dark:text-zinc-400 sm:grid-cols-2">
-                <span className="studio-surface px-3 py-2 text-center">
-                  {t("multiImageInput")}
-                </span>
-                <span className="studio-surface px-3 py-2 text-center">
-                  {t("livePreview")}
-                </span>
-                <span className="studio-surface px-3 py-2 text-center">
-                  {t("editableOutput")}
-                </span>
-                <span className="studio-surface px-3 py-2 text-center">
-                  {t("exportReady")}
-                </span>
-              </div>
-            </div>
+          <div className="text-center">
+            <p className="editorial-kicker">Supported Inputs</p>
+            <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold text-stone-950 dark:text-white sm:text-4xl">
+              Supported Inputs
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+              Upload or connect any visual input. Our AI will handle the rest.
+            </p>
+          </div>
 
-            {shouldLoadGenerator ? (
-              <Suspense fallback={<GeneratorFallback />}>
-                <UnifiedInputPane
-                  doCreate={doCreate}
-                  doCreateFromText={doCreateFromText}
-                  importFromCode={importFromCode}
-                  settings={settings}
-                  setSettings={setSettings}
-                  designSystems={designSystems}
-                  onAddNewDesignSystem={onAddNewDesignSystem}
-                  onManageDesignSystems={onManageDesignSystems}
-                />
-              </Suspense>
-            ) : (
-              <GeneratorFallback />
-            )}
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-8">
+            {inputItems.map((item, index) => (
+              <SupportedInputCard
+                key={item.title}
+                label={item.title}
+                subtitle={item.subtitle}
+                icon={item.icon}
+                tone={index}
+                active={index === 0}
+              />
+            ))}
           </div>
         </section>
 
         <section
-          id="how-it-works"
-          className="section-divider mt-14 scroll-mt-28 lg:mt-16"
+          id="pipeline"
+          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
-          <div className="grid gap-4 lg:grid-cols-[0.86fr_1.14fr]">
-            <div className="space-y-4">
-              <div className="studio-panel overflow-hidden rounded-[1.95rem] p-6 lg:p-7">
-                <p className="editorial-kicker">
-                  {t("builtForRealWork")}
-                </p>
-                <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
-                  {t("workflowTitle")}
-                </h2>
-                <p className="mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-                  {t("workflowDescription")}
-                </p>
-                <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                  <InlineMiniMetric value="01" label={t("uploadTab")} />
-                  <InlineMiniMetric value="02" label={t("livePreview")} />
-                  <InlineMiniMetric value="03" label={t("editableOutput")} />
-                </div>
-              </div>
-
-              <FeatureCard
-                title={t("fastFirstDraft")}
-                description={t("fastFirstDraftDescription")}
-              />
-              <FeatureCard
-                title={t("builtForIteration")}
-                description={t("builtForIterationDescription")}
-              />
-              <FeatureCard
-                title={t("deploymentFriendly")}
-                description={t("deploymentFriendlyDescription")}
-              />
-
-              {IS_RUNNING_ON_CLOUD ? (
-                <AccountPanel enabled={IS_RUNNING_ON_CLOUD} />
-              ) : (
-                <LocalWorkspaceCard
-                  title={t("localWorkspaceTitle")}
-                  description={t("localWorkspaceDescription")}
-                />
-              )}
+          <div className="studio-panel rounded-[2rem] p-5 sm:p-6 lg:p-8">
+            <div className="max-w-3xl">
+              <p className="editorial-kicker">How AI Understands UI</p>
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+                How AI Understands UI
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+                Advanced AI models that understand design like a human
+                developer.
+              </p>
             </div>
 
-            <div className="studio-panel overflow-hidden rounded-[1.95rem] p-5 sm:p-6 lg:p-8">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                  <p className="editorial-kicker">
-                    {t("workflowMapEyebrow")}
-                  </p>
-                  <h3 className="mt-2 font-['Space_Grotesk'] text-2xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-3xl">
-                    {t("workflowMapTitle")}
-                  </h3>
-                </div>
-                <p className="max-w-md text-sm leading-6 text-stone-600 dark:text-zinc-300">
-                  {t("workflowMapDescription")}
-                </p>
-              </div>
-
-              <div className="mt-6 grid gap-4">
-                <WorkflowStageCard
-                  step="01"
-                  title={t("uploadScreenshot")}
-                  description={t("uploadScreenshotDescription")}
+            <div className="mt-8 grid gap-3 lg:grid-cols-8">
+              {pipelineItems.map((item, index) => (
+                <PipelineStep
+                  key={item.title}
+                  title={item.title}
+                  description={item.description}
+                  icon={item.icon}
+                  active={index === 2 || index === 6}
+                  isLast={index === pipelineItems.length - 1}
                 />
-                <WorkflowStageCard
-                  step="02"
-                  title={t("chooseOutputStack")}
-                  description={t("chooseOutputStackDescription")}
-                />
-                <WorkflowStageCard
-                  step="03"
-                  title={t("refineUntilItMatches")}
-                  description={t("refineUntilItMatchesDescription")}
-                />
-              </div>
-
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                <MaturityPoint
-                  title={t("multiImageInput")}
-                  description={t("startModeUploadDescription")}
-                />
-                <MaturityPoint
-                  title={t("livePreview")}
-                  description={t("builtForIterationDescription")}
-                />
-                <MaturityPoint
-                  title={t("editableOutput")}
-                  description={t("deploymentFriendlyDescription")}
-                />
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
         <section
           id="cases"
-          className="section-divider mt-14 scroll-mt-28 lg:mt-20"
+          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
-          <div className="flex flex-col gap-3 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
-              {t("beforeAfter")}
-            </p>
-            <h2 className="text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
-              {t("beforeAfterTitle")}
-            </h2>
-            <p className="mx-auto max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-              {t("beforeAfterDescription")}
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            <ShowcaseCard
-              title={t("showcaseLandingPage")}
-              sourceLabel={t("beforeReference")}
-              resultLabel={t("afterOutput")}
-              sourceDescription={t("showcaseLandingPageSource")}
-              resultDescription={t("showcaseLandingPageResult")}
-              sourceImg="/showcases/landing-page-sketch.png"
-              resultImg="/showcases/landing-page-output.png"
-            />
-            <ShowcaseCard
-              title={t("showcaseDashboard")}
-              sourceLabel={t("beforeReference")}
-              resultLabel={t("afterOutput")}
-              sourceDescription={t("showcaseDashboardSource")}
-              resultDescription={t("showcaseDashboardResult")}
-              sourceImg="/showcases/dashboard-sketch.png"
-              resultImg="/showcases/dashboard-output.png"
-            />
-            <ShowcaseCard
-              title={t("showcaseMobileApp")}
-              sourceLabel={t("beforeReference")}
-              resultLabel={t("afterOutput")}
-              sourceDescription={t("showcaseMobileAppSource")}
-              resultDescription={t("showcaseMobileAppResult")}
-              sourceImg="/showcases/mobile-app-sketch.png"
-              resultImg="/showcases/mobile-app-output.png"
-            />
-          </div>
-        </section>
-
-        <section className="section-divider mt-14 lg:mt-20">
-          <div className="flex flex-col gap-3 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
-              {t("builtForRealWork")}
-            </p>
-            <h2 className="text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
-              {t("whoThisIsFor")}
-            </h2>
-            <p className="mx-auto max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-              {t("whoThisIsForDescription")}
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            <UseCaseCard
-              eyebrow={t("useCaseFounders")}
-              title={t("useCaseFoundersTitle")}
-              description={t("useCaseFoundersDescription")}
-            />
-            <UseCaseCard
-              eyebrow={t("useCaseDesigners")}
-              title={t("useCaseDesignersTitle")}
-              description={t("useCaseDesignersDescription")}
-            />
-            <UseCaseCard
-              eyebrow={t("useCaseAgencies")}
-              title={t("useCaseAgenciesTitle")}
-              description={t("useCaseAgenciesDescription")}
-            />
-          </div>
-        </section>
-
-        <section className="section-divider mt-14 lg:mt-20">
-          <div className="flex flex-col gap-3 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
-              Search paths
-            </p>
-            <h2 className="text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
-              Explore the workflows people are already searching for.
-            </h2>
-            <p className="mx-auto max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-              These pages focus on the most common ways teams describe this product category, from React output to HTML rebuilds and Figma-to-code handoff.
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            <SeoPathCard
-              eyebrow="React output"
-              title="Screenshot to React"
-              description="For teams who want UI screenshots translated into editable React front-end drafts they can keep refining."
-              href="/screenshot-to-react"
-            />
-            <SeoPathCard
-              eyebrow="HTML output"
-              title="Website Screenshot to HTML"
-              description="For landing pages, static rebuilds, and quick website teardowns that start from visual references."
-              href="/website-screenshot-to-html"
-            />
-            <SeoPathCard
-              eyebrow="Design handoff"
-              title="Figma Screenshot to Code"
-              description="For product and design teams using exported Figma frames as the starting point for front-end generation."
-              href="/figma-screenshot-to-code"
-            />
-          </div>
-        </section>
-
-        <section className="section-divider mt-14 lg:mt-20">
-          <div className="flex flex-col gap-3 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
-              {t("testimonials")}
-            </p>
-            <h2 className="text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
-              {t("testimonialsTitle")}
-            </h2>
-            <p className="mx-auto max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-              {t("testimonialsDescription")}
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            <TestimonialCard
-              quote={t("testimonial1Quote")}
-              author={t("testimonial1Author")}
-              role={t("testimonial1Role")}
-            />
-            <TestimonialCard
-              quote={t("testimonial2Quote")}
-              author={t("testimonial2Author")}
-              role={t("testimonial2Role")}
-            />
-            <TestimonialCard
-              quote={t("testimonial3Quote")}
-              author={t("testimonial3Author")}
-              role={t("testimonial3Role")}
-            />
-          </div>
-        </section>
-
-        <section className="section-divider mt-14 lg:mt-20">
-          <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="rounded-[2rem] border border-stone-200/80 bg-white/90 p-6 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/85 lg:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
-                {t("whatYouGet")}
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white">
-                {t("whatYouGetTitle")}
+          <div
+            id="before-after"
+            className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr] lg:items-start"
+          >
+            <div>
+              <p className="editorial-kicker">Before / After</p>
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+                Show that the AI understood the interface.
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-                {t("whatYouGetDescription")}
+              <p className="mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+                This comparison frames the product around interface
+                reconstruction, not just code generation, which makes the value
+                feel more premium and more concrete.
               </p>
-
-              <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <ResultChip label={t("resultResponsiveLayouts")} />
-                <ResultChip label={t("resultComponentStructure")} />
-                <ResultChip label={t("resultEditableCode")} />
-                <ResultChip label={t("resultFastIteration")} />
-                <ResultChip label={t("resultExportableFiles")} />
-                <ResultChip label={t("resultStackFlexibility")} />
-              </div>
             </div>
 
-            <div className="rounded-[2rem] border border-stone-200/80 bg-stone-950 p-6 text-white shadow-sm dark:border-zinc-800 lg:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-400">
-                {t("whyPeopleTrustThis")}
+            <BeforeAfterPanel />
+          </div>
+        </section>
+
+        <section
+          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
+        >
+          <div className="studio-panel rounded-[2rem] p-5 sm:p-6 lg:p-8">
+            <div className="max-w-3xl">
+              <p className="editorial-kicker">Pricing</p>
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+                A familiar free-to-paid path.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+                Visitors usually want one simple answer before they try a
+                product: can I start for free, and when would I pay for more?
               </p>
-              <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em]">
-                {t("whyPeopleTrustThisTitle")}
-              </h3>
-              <div className="mt-6 space-y-4">
-                <TrustRow
-                  title={t("trustTransparentInputs")}
-                  description={t("trustTransparentInputsDescription")}
+            </div>
+
+            <div
+              id="pricing"
+              className="mt-8 grid gap-4 xl:grid-cols-3"
+            >
+              {pricingPlans.map((plan) => (
+                <PricingCard
+                  key={plan.name}
+                  name={plan.name}
+                  subtitle={plan.subtitle}
+                  price={plan.price}
+                  description={plan.description}
+                  features={plan.features}
+                  cta={plan.cta}
+                  featured={plan.featured}
                 />
-                <TrustRow
-                  title={t("trustMultipleWaysToStart")}
-                  description={t("trustMultipleWaysToStartDescription")}
-                />
-                <TrustRow
-                  title={t("trustKeepEditing")}
-                  description={t("trustKeepEditingDescription")}
-                />
-                <TrustRow
-                  title={t("trustShipFaster")}
-                  description={t("trustShipFasterDescription")}
-                />
-              </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="stack" className="section-divider mt-12 scroll-mt-28 lg:mt-14">
+          <div className="studio-panel rounded-[2rem] p-5 sm:p-6 lg:p-8">
+            <div className="text-center">
+              <p className="editorial-kicker">Built for Modern Developers</p>
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+                Built for Modern Developers
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300">
+                Export to your favorite frameworks and technologies.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              {stackItems.map((item) => (
+                <div
+                  key={item.label}
+                  className="flex items-center justify-center gap-2 rounded-[1.15rem] border border-stone-200/80 bg-white px-4 py-4 text-sm font-medium text-stone-700 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300"
+                >
+                  <item.icon className="h-5 w-5 shrink-0" />
+                  <span>{item.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         <section
-          id="pricing"
-          className="section-divider mt-14 scroll-mt-28 lg:mt-20"
+          id="timeline"
+          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
+        >
+          <div className="studio-panel rounded-[2rem] p-5 sm:p-6 lg:p-8">
+            <div className="text-center">
+              <p className="editorial-kicker">From Visual to Code in 7 Steps</p>
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+                From Visual to Code in 7 Steps
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+                Simple workflow. Powerful results.
+              </p>
+            </div>
+
+            <div className="relative mt-10 grid gap-4 lg:grid-cols-7">
+              <div className="absolute left-0 right-0 top-5 hidden border-t border-dashed border-sky-300 lg:block" />
+              {workflowItems.map((item, index) => (
+                <HorizontalTimelineStep
+                  key={item}
+                  step={String(index + 1)}
+                  title={item}
+                  description={
+                    [
+                      "Upload any visual input",
+                      "AI analyzes layout, content, styles",
+                      "AI understands UI like a developer",
+                      "Generate clean, structured code",
+                      "Live preview in real-time",
+                      "Fine-tune and customize",
+                      "Export and deploy your project",
+                    ][index]
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="generator"
+          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
+        >
+          <div className="studio-panel mx-auto rounded-[2rem] p-4 sm:p-6 lg:p-8">
+            <div className="mb-6 grid gap-5 border-b border-stone-200/80 pb-6 dark:border-zinc-800 lg:grid-cols-[1.12fr_0.88fr] lg:items-end">
+              <div>
+                <p className="editorial-kicker">Launch Workspace</p>
+                <h2 className="mt-2 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+                  Start from a real visual input.
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300">
+                  The interactive generator stays on the page as the main call
+                  to action, but now it arrives after the product story is
+                  already obvious.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs text-stone-600 dark:text-zinc-400">
+                <span className="studio-surface px-3 py-2 text-center">
+                  Screenshot + URL + Text
+                </span>
+                <span className="studio-surface px-3 py-2 text-center">
+                  Preview + Code
+                </span>
+                <span className="studio-surface px-3 py-2 text-center">
+                  Editable output
+                </span>
+                <span className="studio-surface px-3 py-2 text-center">
+                  Multi-stack
+                </span>
+              </div>
+            </div>
+
+            <Suspense fallback={<GeneratorFallback />}>
+              <UnifiedInputPane
+                doCreate={doCreate}
+                doCreateFromText={doCreateFromText}
+                importFromCode={importFromCode}
+                settings={settings}
+                setSettings={setSettings}
+                designSystems={designSystems}
+                onAddNewDesignSystem={onAddNewDesignSystem}
+                onManageDesignSystems={onManageDesignSystems}
+              />
+            </Suspense>
+          </div>
+        </section>
+
+        <section
+          id="use-cases"
+          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
           <div className="flex flex-col gap-3 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
-              {t("pricing")}
-            </p>
+            <p className="editorial-kicker">Real Use Cases</p>
             <h2 className="text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
-              {t("pricingTitle")}
+              Real Use Cases
             </h2>
             <p className="mx-auto max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-              {t("pricingDescription")}
+              See how developers and teams use VisualToCode.
             </p>
           </div>
 
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            <PricingCard
-              plan={t("pricingFreePlan")}
-              price={t("pricingFreePrice")}
-              description={t("pricingFreeDescription")}
-              features={[
-                t("pricingFreeFeature1"),
-                t("pricingFreeFeature2"),
-                t("pricingFreeFeature3"),
-              ]}
-              cta={t("pricingFreeCta")}
-              href="#generator"
-            />
-            <PricingCard
-              featured
-              plan={t("pricingProPlan")}
-              price={t("pricingProPrice")}
-              description={t("pricingProDescription")}
-              features={[
-                t("pricingProFeature1"),
-                t("pricingProFeature2"),
-                t("pricingProFeature3"),
-              ]}
-              cta={t("pricingProCta")}
-              href="#generator"
-            />
-            <PricingCard
-              plan={t("pricingTeamPlan")}
-              price={t("pricingTeamPrice")}
-              description={t("pricingTeamDescription")}
-              features={[
-                t("pricingTeamFeature1"),
-                t("pricingTeamFeature2"),
-                t("pricingTeamFeature3"),
-              ]}
-              cta={t("pricingTeamCta")}
-              href="#generator"
-            />
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {useCaseItems.map((item) => (
+              <UseCasePreviewCard
+                key={item.title}
+                title={item.title}
+                description={item.description}
+                image={item.image}
+              />
+            ))}
           </div>
         </section>
 
         <section
           id="faq"
-          className="section-divider mt-14 scroll-mt-28 lg:mt-20"
+          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
-          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 dark:text-zinc-400">
-                {t("faq")}
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
-                {t("faqTitle")}
-              </h2>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-                {t("faqDescription")}
-              </p>
-            </div>
+          <div className="text-center">
+            <p className="editorial-kicker">Frequently Asked Questions</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
+              Frequently Asked Questions
+            </h2>
+          </div>
 
-            <div className="rounded-[2rem] border border-stone-200/80 bg-white/90 p-4 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/85 sm:p-6">
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-[2rem] border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,244,0.88))] p-4 shadow-[0_28px_70px_rgba(18,22,33,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-[linear-gradient(180deg,rgba(9,9,11,0.94),rgba(24,24,27,0.84))] sm:p-6">
               <Accordion type="single" collapsible className="w-full">
                 <FaqItem
                   value="item-1"
-                  question={t("faq1Question")}
-                  answer={t("faq1Answer")}
+                  question="How accurate is the generated code?"
+                  answer="The product is strongest as a fast first draft. Clean visual hierarchy and clearer references usually lead to a better initial result and less cleanup afterward."
                 />
                 <FaqItem
                   value="item-2"
-                  question={t("faq2Question")}
-                  answer={t("faq2Answer")}
+                  question="Which frameworks are supported?"
+                  answer="The current product supports common front-end targets such as React, HTML, Vue, and Tailwind-oriented workflows, with the homepage now positioning the brand for broader stack coverage."
                 />
                 <FaqItem
                   value="item-3"
-                  question={t("faq3Question")}
-                  answer={t("faq3Answer")}
+                  question="Can I edit generated code?"
+                  answer="Yes. The workflow is built around previewing, iterating, and refining the output after generation instead of treating the first result like a frozen export."
                 />
+              </Accordion>
+            </div>
+
+            <div className="rounded-[2rem] border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,244,0.88))] p-4 shadow-[0_28px_70px_rgba(18,22,33,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-[linear-gradient(180deg,rgba(9,9,11,0.94),rgba(24,24,27,0.84))] sm:p-6">
+              <Accordion type="single" collapsible className="w-full">
                 <FaqItem
                   value="item-4"
-                  question={t("faq4Question")}
-                  answer={t("faq4Answer")}
+                  question="Does it support responsive layouts?"
+                  answer="Responsive structure is part of the generation pipeline, and the new landing page calls that out directly as one of the core stages of understanding UI."
+                />
+                <FaqItem
+                  value="item-5"
+                  question="Is Tailwind CSS supported?"
+                  answer="Yes. Tailwind remains one of the core output paths and is shown directly in the workspace and code stack sections."
+                />
+                <FaqItem
+                  value="item-6"
+                  question="Can I convert existing websites?"
+                  answer="Yes. You can start from screenshots or a live website URL, which makes the workflow useful for teardowns, redesigns, and structure cloning."
                 />
               </Accordion>
             </div>
           </div>
+
+          {IS_RUNNING_ON_CLOUD ? (
+            <div className="mt-6">
+              <AccountPanel enabled={IS_RUNNING_ON_CLOUD} />
+            </div>
+          ) : null}
         </section>
 
-        <section className="section-divider mt-14 lg:mt-20">
-          <div className="rounded-[2.2rem] border border-stone-200/80 bg-gradient-to-br from-stone-950 via-stone-900 to-emerald-950 p-8 text-white shadow-[0_24px_80px_rgba(28,25,23,0.2)] lg:p-10">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-2xl">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-300">
-                  {t("finalCtaEyebrow")}
-                </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-                  {t("finalCtaTitle")}
-                </h2>
-                <p className="mt-3 text-sm leading-6 text-stone-300 sm:text-base">
-                  {t("finalCtaDescription")}
-                </p>
+        <footer className="mt-12 rounded-[2rem] bg-stone-950 px-6 py-8 text-white shadow-[0_30px_90px_rgba(17,17,17,0.16)] dark:border dark:border-zinc-800 sm:px-8">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_2.7fr_1.2fr]">
+            <div className="max-w-md">
+              <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md border border-white/25">
+                  <img
+                    src="/favicon/log-square.png"
+                    alt="VisualToCode"
+                    className="h-4 w-4 object-contain"
+                  />
+                </span>
+                <span>VisualToCode</span>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <a
-                  href="#generator"
-                  className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-stone-950 transition-transform hover:-translate-y-0.5"
-                >
-                  {t("startConverting")}
+              <p className="mt-3 text-sm leading-6 text-stone-300">
+                Turn any visual into production-ready code. Built for
+                developers, designers, and fast-moving teams.
+              </p>
+              <div className="mt-5 flex items-center gap-4 text-stone-400">
+                <a href="https://github.com/abi/screenshot-to-code" className="transition-colors hover:text-white">
+                  <FaGithub className="h-4 w-4" />
                 </a>
-                <a
-                  href="#how-it-works"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-                >
-                  {t("seeHowItWorks")}
+                <a href="https://twitter.com/_abi_" className="transition-colors hover:text-white">
+                  <FaXTwitter className="h-4 w-4" />
                 </a>
+                <a href="#" className="transition-colors hover:text-white">
+                  <FaDiscord className="h-4 w-4" />
+                </a>
+                <a href="#" className="transition-colors hover:text-white">
+                  <FaYoutube className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-4">
+              <FooterColumn title="Product" links={footerProductLinks} />
+              <FooterColumn title="Resources" links={footerResourceLinks} />
+              <FooterColumn title="Company" links={footerCompanyLinks} />
+              <FooterColumn title="Community" links={footerCommunityLinks} />
+            </div>
+
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">
+                Stay Updated
+              </div>
+              <p className="mt-3 text-sm text-stone-300">
+                Get the latest updates and new features.
+              </p>
+              <div className="mt-4 flex items-center overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                <div className="flex-1 px-4 py-3 text-sm text-stone-400">
+                  Enter your email
+                </div>
+                <button className="border-l border-white/10 px-4 py-3 text-sm font-semibold text-white">
+                  <LuChevronRight className="h-4 w-4" />
+                </button>
               </div>
             </div>
           </div>
-        </section>
-
-        <footer className="mt-10 border-t border-stone-200/80 pt-8 dark:border-zinc-800">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-md">
-              <div className="text-sm font-semibold tracking-[0.18em] text-stone-700 dark:text-zinc-300">
-                IMAGETOCODE
-              </div>
-              <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-400">
-                {t("footerDescription")}
-              </p>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-3">
-              <FooterColumn
-                title={t("footerProduct")}
-                links={[
-                  { href: "#generator", label: t("navProduct") },
-                  { href: "#cases", label: t("navExamples") },
-                  { href: "#pricing", label: t("navPricing") },
-                ]}
-              />
-              <FooterColumn
-                title={t("footerResources")}
-                links={[
-                  { href: "#faq", label: t("navFaq") },
-                  { href: "#how-it-works", label: t("seeHowItWorks") },
-                  { href: "#generator", label: t("launchGenerator") },
-                  {
-                    href: "/screenshot-to-react",
-                    label: "Screenshot to React",
-                  },
-                  {
-                    href: "/website-screenshot-to-html",
-                    label: "Website Screenshot to HTML",
-                  },
-                  {
-                    href: "/figma-screenshot-to-code",
-                    label: "Figma Screenshot to Code",
-                  },
-                ]}
-              />
-              <FooterColumn
-                title={t("footerCompany")}
-                links={[
-                  { href: "#generator", label: t("startConverting") },
-                  { href: "#pricing", label: t("pricing") },
-                  { href: "#cases", label: t("beforeAfter") },
-                ]}
-              />
-            </div>
+          <div className="mt-8 border-t border-white/10 pt-5 text-xs text-stone-400">
+            © 2024 VisualToCode. All rights reserved.
           </div>
         </footer>
       </section>
@@ -846,95 +874,399 @@ const StartPane: React.FC<Props> = ({
   );
 };
 
-function StartModeCard({
-  label,
-  description,
-  toneClass,
+function ReferencePanel({
+  title,
+  children,
 }: {
-  label: string;
-  description: string;
-  toneClass: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-900/70">
+      <div className="text-sm font-semibold text-stone-700 dark:text-zinc-200">
+        {title}
+      </div>
+      <div className="mt-4">{children}</div>
+    </div>
+  );
+}
+
+function ReferenceInputRow({
+  title,
+  subtitle,
+  accent,
+  active = false,
+}: {
+  title: string;
+  subtitle: string;
+  accent: string;
+  active?: boolean;
 }) {
   return (
     <div
-      className={`rounded-[1.5rem] border border-stone-200/80 bg-gradient-to-br p-4 shadow-sm dark:border-zinc-800 ${toneClass}`}
+      className={`flex items-center gap-3 rounded-[1rem] border px-3 py-3 ${
+        active
+          ? "border-sky-200 bg-white shadow-sm dark:border-sky-900/50 dark:bg-zinc-950"
+          : "border-stone-200 bg-white/85 dark:border-zinc-800 dark:bg-zinc-950/80"
+      }`}
     >
-      <div className="font-['Space_Grotesk'] text-lg font-semibold tracking-[-0.03em] text-stone-950 dark:text-white">
+      <div className={`h-8 w-8 rounded-lg ${accent}`} />
+      <div className="min-w-0">
+        <div className="text-sm font-medium text-stone-800 dark:text-zinc-100">
+          {title}
+        </div>
+        <div className="text-xs text-stone-500 dark:text-zinc-400">
+          {subtitle}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReferenceStatusRow({
+  label,
+  status,
+  active = false,
+}: {
+  label: string;
+  status: string;
+  active?: boolean;
+}) {
+  return (
+    <div className="rounded-[1rem] border border-stone-200 bg-white px-3 py-3 dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="text-sm font-medium text-stone-800 dark:text-zinc-100">
         {label}
       </div>
-      <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-zinc-300">
+      <div
+        className={`mt-1 text-xs ${
+          active
+            ? "text-sky-600 dark:text-sky-400"
+            : "text-emerald-600 dark:text-emerald-400"
+        }`}
+      >
+        {status}
+      </div>
+    </div>
+  );
+}
+
+function PricingCard({
+  name,
+  subtitle,
+  price,
+  description,
+  features,
+  cta,
+  featured = false,
+}: {
+  name: string;
+  subtitle: string;
+  price: string;
+  description: string;
+  features: readonly string[];
+  cta: string;
+  featured?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-[1.8rem] border p-6 shadow-sm transition-transform ${
+        featured
+          ? "border-stone-900 bg-stone-950 text-white shadow-[0_28px_70px_rgba(17,17,17,0.18)] dark:border-white dark:bg-white dark:text-stone-950"
+          : "border-stone-200/80 bg-white/90 text-stone-900 dark:border-zinc-800 dark:bg-zinc-950/80 dark:text-white"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div
+            className={`text-[11px] font-semibold uppercase tracking-[0.22em] ${
+              featured
+                ? "text-cyan-200 dark:text-cyan-700"
+                : "text-stone-500 dark:text-zinc-400"
+            }`}
+          >
+            {name}
+          </div>
+          <div
+            className={`mt-2 text-sm ${
+              featured
+                ? "text-stone-300 dark:text-stone-600"
+                : "text-stone-500 dark:text-zinc-400"
+            }`}
+          >
+            {subtitle}
+          </div>
+        </div>
+        {featured ? (
+          <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white dark:border-stone-300 dark:bg-stone-100 dark:text-stone-900">
+            Popular
+          </span>
+        ) : null}
+      </div>
+
+      <div className="mt-6 text-4xl font-semibold tracking-[-0.04em]">
+        {price}
+      </div>
+
+      <p
+        className={`mt-4 text-sm leading-6 ${
+          featured
+            ? "text-stone-300 dark:text-stone-600"
+            : "text-stone-600 dark:text-zinc-300"
+        }`}
+      >
+        {description}
+      </p>
+
+      <div className="mt-6 space-y-3">
+        {features.map((feature) => (
+          <div
+            key={feature}
+            className={`rounded-[1rem] px-4 py-3 text-sm ${
+              featured
+                ? "bg-white/8 text-stone-100 dark:bg-stone-100 dark:text-stone-900"
+                : "bg-stone-50 text-stone-700 dark:bg-zinc-900 dark:text-zinc-300"
+            }`}
+          >
+            {feature}
+          </div>
+        ))}
+      </div>
+
+      <a
+        href="#generator"
+        className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-transform hover:-translate-y-0.5 ${
+          featured
+            ? "bg-white text-stone-950 dark:bg-stone-950 dark:text-white"
+            : "border border-stone-300 bg-white text-stone-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+        }`}
+      >
+        {cta}
+      </a>
+    </div>
+  );
+}
+
+function SupportedInputCard({
+  label,
+  subtitle,
+  icon: Icon,
+  tone,
+  active = false,
+}: {
+  label: string;
+  subtitle: string;
+  icon: React.ComponentType<{ className?: string }>;
+  tone: number;
+  active?: boolean;
+}) {
+  const tones = [
+    "text-sky-600 bg-sky-50 border-sky-100 dark:bg-sky-950/30 dark:border-sky-900/40 dark:text-sky-300",
+    "text-pink-600 bg-pink-50 border-pink-100 dark:bg-pink-950/30 dark:border-pink-900/40 dark:text-pink-300",
+    "text-cyan-600 bg-cyan-50 border-cyan-100 dark:bg-cyan-950/30 dark:border-cyan-900/40 dark:text-cyan-300",
+    "text-emerald-600 bg-emerald-50 border-emerald-100 dark:bg-emerald-950/30 dark:border-emerald-900/40 dark:text-emerald-300",
+    "text-indigo-600 bg-indigo-50 border-indigo-100 dark:bg-indigo-950/30 dark:border-indigo-900/40 dark:text-indigo-300",
+    "text-amber-600 bg-amber-50 border-amber-100 dark:bg-amber-950/30 dark:border-amber-900/40 dark:text-amber-300",
+    "text-rose-600 bg-rose-50 border-rose-100 dark:bg-rose-950/30 dark:border-rose-900/40 dark:text-rose-300",
+    "text-violet-600 bg-violet-50 border-violet-100 dark:bg-violet-950/30 dark:border-violet-900/40 dark:text-violet-300",
+  ];
+
+  return (
+    <div
+      className={`flex min-h-[8.5rem] flex-col items-center justify-center rounded-[1.15rem] border p-4 text-center transition-transform hover:-translate-y-0.5 ${
+        active
+          ? "border-sky-200 bg-white shadow-[0_18px_40px_rgba(14,165,233,0.12)] dark:border-sky-900/50 dark:bg-zinc-950"
+          : "border-stone-200/80 bg-white/78 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/70"
+      }`}
+    >
+      <div
+        className={`flex h-12 w-12 items-center justify-center rounded-full border ${tones[tone % tones.length]}`}
+      >
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="mt-3 text-sm font-semibold text-stone-900 dark:text-white">
+        {label}
+      </div>
+      <div className="mt-1 text-xs leading-5 text-stone-500 dark:text-zinc-400">
+        {subtitle}
+      </div>
+    </div>
+  );
+}
+
+function CodeSnippetMock() {
+  const lines = [
+    "import React from 'react'",
+    "",
+    "export default function LandingDemo() {",
+    "  return (",
+    "    <div className='min-h-screen bg-white'>",
+    "      <header className='px-6 py-4'>",
+    "        <nav className='flex justify-between'>",
+    "          <a href='#' className='font-bold'>",
+    "            StartupLanding",
+    "          </a>",
+    "        </nav>",
+    "      </header>",
+    "    </div>",
+    "  )",
+    "}",
+  ];
+
+  return (
+    <div className="space-y-2 font-mono text-[11px] leading-5 text-sky-700 dark:text-sky-300">
+      {lines.map((line, index) => (
+        <div key={`${line}-${index}`} className="whitespace-pre">
+          <span className="mr-3 inline-block w-4 text-right text-stone-400 dark:text-zinc-500">
+            {index + 1}
+          </span>
+          <span>{line}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PipelineStep({
+  title,
+  description,
+  icon: Icon,
+  active = false,
+  isLast = false,
+}: {
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  active?: boolean;
+  isLast?: boolean;
+}) {
+  return (
+    <div className="relative flex flex-col items-center text-center">
+      {!isLast ? (
+        <div className="absolute left-[calc(50%+2rem)] top-8 hidden h-px w-[calc(100%-2.25rem)] bg-stone-200 lg:block dark:bg-zinc-800">
+          <LuArrowRight className="absolute -right-1.5 -top-2 h-4 w-4 text-sky-500" />
+        </div>
+      ) : null}
+      <div
+        className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full border bg-white shadow-sm dark:bg-zinc-950 ${
+          active
+            ? "border-sky-200 text-sky-600 shadow-[0_0_0_8px_rgba(14,165,233,0.08)] dark:border-sky-900/50 dark:text-sky-300"
+            : "border-stone-200 text-sky-500 dark:border-zinc-800 dark:text-sky-300"
+        }`}
+      >
+        <Icon className="h-6 w-6" />
+      </div>
+      <div className="mt-4 text-sm font-semibold text-stone-950 dark:text-white">
+        {title}
+      </div>
+      <p className="mt-2 max-w-[8.5rem] text-xs leading-5 text-stone-500 dark:text-zinc-400">
         {description}
       </p>
     </div>
   );
 }
 
-function EditorialStrip({
-  eyebrow,
+function BeforeAfterPanel() {
+  return (
+    <div className="studio-panel overflow-hidden rounded-[2rem] p-5 sm:p-6">
+      <div className="relative rounded-[1.6rem] border border-stone-200/80 bg-stone-50/80 p-3 dark:border-zinc-800 dark:bg-zinc-900/70">
+        <div className="grid gap-3 lg:grid-cols-2">
+          <div>
+            <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-zinc-400">
+              Before
+            </div>
+            <div className="overflow-hidden rounded-[1.35rem] border border-stone-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+              <img
+                src="/showcases/landing-page-sketch.png"
+                alt="Original interface reference"
+                width={1024}
+                height={1024}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-top"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">
+              After
+            </div>
+            <div className="overflow-hidden rounded-[1.35rem] border border-emerald-200 bg-white dark:border-emerald-900/40 dark:bg-zinc-950">
+              <img
+                src="/showcases/landing-page-output.png"
+                alt="AI rebuilt interface"
+                width={1024}
+                height={1024}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-top"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="before-after-handle" aria-hidden="true" />
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <ResultChip label="Layout understood" />
+        <ResultChip label="Components reconstructed" />
+        <ResultChip label="Code ready to edit" />
+      </div>
+    </div>
+  );
+}
+
+function HorizontalTimelineStep({
+  step,
   title,
   description,
 }: {
-  eyebrow: string;
+  step: string;
   title: string;
   description: string;
 }) {
   return (
-    <div className="studio-panel rounded-[1.55rem] px-5 py-4">
-      <div className="editorial-kicker">
-        {eyebrow}
+    <div className="relative rounded-[1rem] border border-stone-200/80 bg-white px-4 pb-5 pt-8 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="absolute left-1/2 top-0 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-sky-300 bg-white text-[10px] font-semibold text-sky-700 shadow-sm dark:border-sky-900/60 dark:bg-zinc-950 dark:text-sky-300">
+        {step}
       </div>
-      <div className="mt-2 font-['Space_Grotesk'] text-xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white">
+      <div className="text-sm font-semibold text-stone-900 dark:text-white">
         {title}
       </div>
-      <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-zinc-300">
+      <div className="mt-2 text-xs leading-5 text-stone-500 dark:text-zinc-400">
+        {description}
+      </div>
+    </div>
+  );
+}
+
+function UseCasePreviewCard({
+  title,
+  description,
+  image,
+}: {
+  title: string;
+  description: string;
+  image: string;
+}) {
+  return (
+    <div className="rounded-[1.15rem] border border-stone-200/80 bg-white/92 p-2 shadow-sm transition-transform hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-950/85">
+      <div className="overflow-hidden rounded-[0.85rem] border border-stone-200/80 bg-stone-50 dark:border-zinc-800 dark:bg-zinc-900">
+        <img
+          src={image}
+          alt={title}
+          loading="lazy"
+          decoding="async"
+          className="h-24 w-full object-cover object-top"
+        />
+      </div>
+      <h3 className="mt-3 px-1 text-sm font-semibold text-stone-950 dark:text-white">
+        {title}
+      </h3>
+      <p className="mt-1 px-1 pb-2 text-xs leading-5 text-stone-600 dark:text-zinc-300">
         {description}
       </p>
-    </div>
-  );
-}
-
-function CompactChecklist({ items }: { items: string[] }) {
-  return (
-    <div className="studio-panel rounded-[1.55rem] px-5 py-4">
-      <div className="space-y-3">
-        {items.map((item) => (
-          <div
-            key={item}
-            className="flex items-start gap-3 rounded-2xl border border-stone-200/80 bg-white/70 px-3 py-3 dark:border-zinc-800 dark:bg-zinc-950/70"
-          >
-            <span className="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500" />
-            <span className="text-sm leading-6 text-stone-700 dark:text-zinc-200">
-              {item}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="studio-panel rounded-[1.5rem] px-4 py-4">
-      <div className="editorial-kicker">
-        {label}
-      </div>
-      <div className="mt-2 font-['Space_Grotesk'] text-sm font-semibold text-stone-900 dark:text-white">
-        {value}
-      </div>
-    </div>
-  );
-}
-
-function InlineMiniMetric({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="rounded-[1.3rem] border border-stone-200/80 bg-stone-50/90 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/70">
-      <div className="font-['Space_Grotesk'] text-xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white">
-        {value}
-      </div>
-      <div className="mt-1 text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-zinc-400">
-        {label}
-      </div>
     </div>
   );
 }
@@ -954,241 +1286,12 @@ function GeneratorFallback() {
       </div>
       <div className="mt-5 rounded-[1.5rem] border border-dashed border-stone-300/90 bg-stone-50/80 px-6 py-14 text-center dark:border-zinc-700 dark:bg-zinc-900/60">
         <div className="text-sm font-medium text-stone-600 dark:text-zinc-300">
-          Loading generator...
+          Loading workspace...
         </div>
         <p className="mt-2 text-sm leading-6 text-stone-500 dark:text-zinc-400">
-          The interactive workspace loads as you reach this section so the homepage can stay lighter above the fold.
+          The interactive generator loads inside the page so the new landing
+          experience can keep the workspace at the center of the story.
         </p>
-      </div>
-    </div>
-  );
-}
-
-function SignalPill({ label }: { label: string }) {
-  return (
-    <div className="studio-surface flex items-center gap-2 px-3 py-2">
-      <span className="h-2 w-2 rounded-full bg-cyan-500" />
-      <span>{label}</span>
-    </div>
-  );
-}
-
-function PreviewRow({
-  step,
-  title,
-  description,
-}: {
-  step: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-amber-300">
-        {step}
-      </div>
-      <div className="mt-2 text-base font-semibold text-white">{title}</div>
-      <p className="mt-1 text-sm leading-6 text-stone-300">{description}</p>
-    </div>
-  );
-}
-
-function WorkflowStageCard({
-  step,
-  title,
-  description,
-}: {
-  step: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="grid gap-4 rounded-[1.6rem] border border-stone-200/80 bg-stone-50/85 p-4 dark:border-zinc-800 dark:bg-zinc-900/70 sm:grid-cols-[auto_1fr] sm:items-start sm:p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-stone-950 text-sm font-semibold text-white dark:bg-white dark:text-stone-950">
-        {step}
-      </div>
-      <div>
-        <div className="font-['Space_Grotesk'] text-lg font-semibold tracking-[-0.03em] text-stone-950 dark:text-white">
-          {title}
-        </div>
-        <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-zinc-300">
-          {description}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function MiniStatus({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-      <div className="text-[10px] uppercase tracking-[0.24em] text-stone-400">
-        {title}
-      </div>
-      <div className="mt-2 font-['Space_Grotesk'] text-sm font-semibold text-white">
-        {value}
-      </div>
-    </div>
-  );
-}
-
-function MaturityPoint({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="rounded-[1.35rem] border border-stone-200/80 bg-white/80 p-4 dark:border-zinc-800 dark:bg-zinc-950/70">
-      <div className="text-sm font-semibold text-stone-950 dark:text-white">
-        {title}
-      </div>
-      <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-zinc-300">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function FeatureCard({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="studio-panel rounded-[1.75rem] p-6">
-      <h3 className="font-['Space_Grotesk'] text-lg font-semibold tracking-[-0.03em] text-stone-950 dark:text-white">
-        {title}
-      </h3>
-      <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function LocalWorkspaceCard({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  const { t } = useI18n();
-
-  return (
-    <div className="studio-panel rounded-[1.75rem] p-6">
-      <h3 className="font-['Space_Grotesk'] text-lg font-semibold tracking-[-0.03em] text-stone-950 dark:text-white">
-        {title}
-      </h3>
-      <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300">
-        {description}
-      </p>
-      <div className="mt-5 grid gap-2 sm:grid-cols-3">
-        <ResultChip label={t("multiImageInput")} />
-        <ResultChip label={t("editableOutput")} />
-        <ResultChip label={t("resultStackFlexibility")} />
-      </div>
-    </div>
-  );
-}
-
-function UseCaseCard({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="studio-panel rounded-[1.75rem] p-6">
-      <p className="editorial-kicker">
-        {eyebrow}
-      </p>
-      <h3 className="mt-3 font-['Space_Grotesk'] text-xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white">
-        {title}
-      </h3>
-      <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function ShowcaseCard({
-  title,
-  sourceLabel,
-  resultLabel,
-  sourceDescription,
-  resultDescription,
-  sourceImg,
-  resultImg,
-}: {
-  title: string;
-  sourceLabel: string;
-  resultLabel: string;
-  sourceDescription: string;
-  resultDescription: string;
-  sourceImg?: string;
-  resultImg?: string;
-}) {
-  return (
-    <div className="studio-panel rounded-[1.9rem] p-5">
-      <h3 className="font-['Space_Grotesk'] text-xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white">
-        {title}
-      </h3>
-      <div className="mt-5 grid gap-3">
-        <div className="studio-surface border-dashed p-4 overflow-hidden">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-zinc-500 mb-2">
-            {sourceLabel}
-          </div>
-          {sourceImg ? (
-            <div className="aspect-square w-full rounded-xl overflow-hidden border border-stone-200 dark:border-zinc-800">
-              <img
-                src={sourceImg}
-                alt={sourceLabel}
-                width={1024}
-                height={1024}
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover object-top"
-              />
-            </div>
-          ) : (
-            <div className="mt-1 h-28 rounded-xl bg-[linear-gradient(135deg,#f5f5f4,#e7e5e4)] dark:bg-[linear-gradient(135deg,#27272a,#18181b)]" />
-          )}
-          <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-zinc-300">
-            {sourceDescription}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/20 overflow-hidden">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-400 mb-2">
-            {resultLabel}
-          </div>
-          {resultImg ? (
-            <div className="aspect-square w-full rounded-xl overflow-hidden border border-emerald-200/50 dark:border-emerald-800/30">
-              <img
-                src={resultImg}
-                alt={resultLabel}
-                width={1024}
-                height={1024}
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover object-top"
-              />
-            </div>
-          ) : (
-            <div className="mt-1 h-28 rounded-xl bg-[linear-gradient(135deg,#d1fae5,#a7f3d0)] dark:bg-[linear-gradient(135deg,#14532d,#052e16)]" />
-          )}
-          <p className="mt-2 text-sm leading-6 text-stone-700 dark:text-zinc-200">
-            {resultDescription}
-          </p>
-        </div>
       </div>
     </div>
   );
@@ -1198,118 +1301,6 @@ function ResultChip({ label }: { label: string }) {
   return (
     <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm font-medium text-stone-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
       {label}
-    </div>
-  );
-}
-
-function TestimonialCard({
-  quote,
-  author,
-  role,
-}: {
-  quote: string;
-  author: string;
-  role: string;
-}) {
-  return (
-    <div className="studio-panel rounded-[1.9rem] p-6">
-      <div className="text-2xl leading-none text-amber-500">"</div>
-      <p className="mt-3 text-sm leading-7 text-stone-700 dark:text-zinc-200">
-        {quote}
-      </p>
-      <div className="mt-5">
-        <div className="text-sm font-semibold text-stone-950 dark:text-white">
-          {author}
-        </div>
-        <div className="mt-1 text-xs uppercase tracking-[0.18em] text-stone-500 dark:text-zinc-500">
-          {role}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TrustRow({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <div className="text-sm font-semibold text-white">{title}</div>
-      <p className="mt-1 text-sm leading-6 text-stone-300">{description}</p>
-    </div>
-  );
-}
-
-function PricingCard({
-  plan,
-  price,
-  description,
-  features,
-  cta,
-  href,
-  featured = false,
-}: {
-  plan: string;
-  price: string;
-  description: string;
-  features: string[];
-  cta: string;
-  href: string;
-  featured?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-[1.9rem] border p-6 shadow-sm backdrop-blur ${
-        featured
-          ? "border-stone-900 bg-stone-950 text-white dark:border-white dark:bg-white dark:text-stone-950"
-          : "border-stone-200/80 bg-white/82 dark:border-zinc-800 dark:bg-zinc-950/82"
-      }`}
-    >
-      <div className="editorial-kicker">
-        {plan}
-      </div>
-      <div
-        className={`mt-4 font-['Space_Grotesk'] text-4xl font-semibold tracking-[-0.04em] ${
-          featured ? "text-white dark:text-stone-950" : "text-stone-950 dark:text-white"
-        }`}
-      >
-        {price}
-      </div>
-      <p
-        className={`mt-3 text-sm leading-6 ${
-          featured ? "text-stone-300 dark:text-stone-700" : "text-stone-600 dark:text-zinc-300"
-        }`}
-      >
-        {description}
-      </p>
-      <div className="mt-5 space-y-2">
-        {features.map((feature) => (
-          <div
-            key={feature}
-            className={`rounded-xl px-3 py-2 text-sm ${
-              featured
-                ? "bg-white/10 text-white dark:bg-stone-900/10 dark:text-stone-950"
-                : "bg-stone-100 text-stone-700 dark:bg-zinc-900 dark:text-zinc-300"
-            }`}
-          >
-            {feature}
-          </div>
-        ))}
-      </div>
-      <a
-        href={href}
-        className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-transform hover:-translate-y-0.5 ${
-          featured
-            ? "bg-white text-stone-950 dark:bg-stone-950 dark:text-white"
-            : "bg-stone-950 text-white dark:bg-white dark:text-stone-950"
-        }`}
-      >
-        {cta}
-      </a>
     </div>
   );
 }
@@ -1324,7 +1315,10 @@ function FaqItem({
   answer: string;
 }) {
   return (
-    <AccordionItem value={value} className="border-stone-200 dark:border-zinc-800">
+    <AccordionItem
+      value={value}
+      className="mb-3 overflow-hidden rounded-[1.4rem] border border-stone-200/80 bg-white/80 px-4 dark:border-zinc-800 dark:bg-zinc-900/70"
+    >
       <AccordionTrigger className="text-left text-base font-semibold text-stone-950 hover:no-underline dark:text-white">
         {question}
       </AccordionTrigger>
@@ -1335,64 +1329,16 @@ function FaqItem({
   );
 }
 
-function SeoPathCard({
-  eyebrow,
-  title,
-  description,
-  href,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-  href: string;
-}) {
-  return (
-    <a
-      href={href}
-      className="studio-panel block rounded-[1.9rem] p-5 transition-transform hover:-translate-y-1"
-    >
-      <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-zinc-500">
-        {eyebrow}
-      </div>
-      <h3 className="mt-3 font-['Space_Grotesk'] text-2xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white">
-        {title}
-      </h3>
-      <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300">
-        {description}
-      </p>
-      <div className="mt-5 text-sm font-semibold text-cyan-700 dark:text-cyan-300">
-        Read this workflow
-      </div>
-    </a>
-  );
-}
-
-function LogoItem({ src, alt }: { src: string; alt: string }) {
-  return (
-    <div className="flex items-center justify-center rounded-2xl bg-stone-50 px-4 py-4 dark:bg-zinc-900">
-      <img
-        src={src}
-        alt={alt}
-        width={160}
-        height={52}
-        loading="lazy"
-        decoding="async"
-        className="h-8 w-auto object-contain"
-      />
-    </div>
-  );
-}
-
 function FooterColumn({
   title,
   links,
 }: {
   title: string;
-  links: { href: string; label: string }[];
+  links: ReadonlyArray<{ href: string; label: string }>;
 }) {
   return (
     <div>
-      <div className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500 dark:text-zinc-500">
+      <div className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-400 dark:text-zinc-500">
         {title}
       </div>
       <div className="mt-3 flex flex-col gap-2">
@@ -1400,7 +1346,7 @@ function FooterColumn({
           <a
             key={`${title}-${link.label}`}
             href={link.href}
-            className="text-sm text-stone-600 hover:text-stone-950 dark:text-zinc-400 dark:hover:text-white"
+            className="text-sm text-stone-300 hover:text-white dark:text-zinc-400 dark:hover:text-white"
           >
             {link.label}
           </a>

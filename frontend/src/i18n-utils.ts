@@ -32,10 +32,10 @@ const translations = {
       "If you want to use URLs directly instead of taking the screenshot yourself, add a ScreenshotOne API key.",
     getFreeScreenshots: "Get 100 screenshots/mo for free.",
     screenshotOneApiKey: "ScreenshotOne API key",
-    imageToCodeWebsite: "Image to Code Website",
-    turnScreenshotsIntoCode: "Turn screenshots into code you can ship.",
+    imageToCodeWebsite: "Visual to Code",
+    turnScreenshotsIntoCode: "Turn anything visual into frontend code.",
     heroDescription:
-      "Upload a UI screenshot, landing page, wireframe, or product mockup and generate production-ready front-end code in minutes.",
+      "From screenshots, Figma, URLs, videos, and mockups to production-ready front-end code in seconds.",
     startConverting: "Start Converting",
     seeHowItWorks: "See How It Works",
     navProduct: "Product",
@@ -50,9 +50,9 @@ const translations = {
     bestFor: "Best For",
     bestForValue: "MVPs, clones, redesigns",
     waysToStart: "Ways to start",
-    waysToStartTitle: "Meet people where their design work already lives",
+    waysToStartTitle: "Start from the material you already have",
     waysToStartDescription:
-      "A mature product homepage should make the starting paths obvious. Upload references, capture a live page, describe a concept, or bring your existing code in for refinement.",
+      "Upload references, capture a live page, describe a concept, or bring your existing code in for refinement.",
     startModeUploadDescription:
       "Drop screenshots, wireframes, or short recordings to anchor the first draft in something concrete.",
     startModeUrlDescription:
@@ -96,43 +96,43 @@ const translations = {
     workflowMapEyebrow: "Workflow map",
     workflowMapTitle: "A tighter loop from idea to iteration",
     workflowMapDescription:
-      "The homepage should explain what users can do next, not just what the model can output once.",
-    heroEditorialTitle: "Designed to feel like a working studio, not a throwaway demo",
-    heroEditorialDescription:
-      "A stronger first impression comes from showing craft, workflow, and restraint at the same time.",
-    heroChecklist1:
-      "Start from screenshots, URLs, prompts, or existing code without changing your process first.",
-    heroChecklist2:
-      "Get a live front-end draft quickly, then keep refining it instead of restarting from scratch.",
-    heroChecklist3:
-      "Move from inspiration to something presentable enough for product review, client feedback, or an MVP push.",
+      "Move from source material into a previewable draft, then keep improving it without restarting from scratch.",
     localWorkspaceTitle: "A strong local workspace still deserves a strong homepage",
     localWorkspaceDescription:
-      "Even when everything runs locally, the experience should communicate flexibility, workflow depth, and a believable path from draft to usable output.",
+      "Even when everything runs locally, teams still need a workflow that feels flexible, deep, and believable enough to turn rough drafts into usable front-end output.",
     beforeAfter: "Before and after",
     beforeAfterTitle: "Show the transformation, not just the promise",
     beforeAfterDescription:
-      "A stronger landing page should make the result feel concrete. These examples help visitors picture what happens after they upload a reference.",
+      "These examples show what the generated front-end usually looks like after a screenshot turns into an editable draft.",
     beforeReference: "Before · reference",
     afterOutput: "After · generated output",
     showcaseLandingPage: "Marketing landing page",
     showcaseLandingPageSource:
       "A screenshot of a polished hero section with feature blocks, pricing teaser, and a bold call to action.",
     showcaseLandingPageResult:
-      "A structured front-end draft with reusable sections, clearer layout hierarchy, and editable code ready for refinement.",
+      "A reusable landing page draft with a clear hero, section spacing, conversion-focused content blocks, and code that is ready for iteration.",
+    showcaseLandingPageHighlight1: "Reusable hero + CTA",
+    showcaseLandingPageHighlight2: "Feature and pricing sections",
+    showcaseLandingPageHighlight3: "Editable marketing layout",
     showcaseDashboard: "SaaS dashboard",
     showcaseDashboardSource:
       "A product dashboard reference with stats cards, filters, table views, and navigation patterns.",
     showcaseDashboardResult:
-      "A responsive dashboard scaffold with organized panels, interactive layout regions, and cleaner component separation.",
+      "A dashboard scaffold with stats panels, filter controls, table regions, and cleaner component boundaries for follow-up product work.",
+    showcaseDashboardHighlight1: "Stats cards and filters",
+    showcaseDashboardHighlight2: "Responsive table layout",
+    showcaseDashboardHighlight3: "Sidebar and content shell",
     showcaseMobileApp: "Mobile app UI",
     showcaseMobileAppSource:
       "A mobile screen collection showing onboarding, cards, bottom navigation, and progress elements.",
     showcaseMobileAppResult:
-      "A mobile-first code draft that keeps the screen structure intact while making it easier to iterate on flows and styling.",
+      "A mobile-first draft that preserves screen flow, card hierarchy, navigation patterns, and the structure needed for faster iteration.",
+    showcaseMobileAppHighlight1: "Screen-by-screen flow",
+    showcaseMobileAppHighlight2: "Bottom navigation states",
+    showcaseMobileAppHighlight3: "Cards and progress UI",
     whoThisIsFor: "Who this is for",
     whoThisIsForDescription:
-      "This homepage works better when it speaks to clear jobs-to-be-done. These are the teams most likely to get value fast from image-to-code.",
+      "These are the teams most likely to get useful front-end drafts quickly from screenshots, references, and early UI ideas.",
     useCaseFounders: "Startup teams",
     useCaseFoundersTitle: "Turn ideas into MVPs without rebuilding every screen",
     useCaseFoundersDescription:
@@ -148,7 +148,9 @@ const translations = {
     testimonials: "User feedback",
     testimonialsTitle: "What teams want to hear before they commit",
     testimonialsDescription:
-      "A homepage converts better when visitors can imagine other people like them already using the product successfully.",
+      "People are more likely to try the product when they can picture similar teams using it successfully.",
+    testimonialBridgeEyebrow: "What it looks like in practice",
+    testimonialBridgeTitle: "Signals that the workflow keeps paying off after the first draft",
     testimonial1Quote:
       "We used screenshot references to move from idea to working landing page draft in a single afternoon instead of losing a week in back-and-forth.",
     testimonial1Author: "Maya Chen",
@@ -164,7 +166,7 @@ const translations = {
     whatYouGet: "What you get",
     whatYouGetTitle: "More than a demo. A usable front-end starting point.",
     whatYouGetDescription:
-      "The most convincing image-to-code products do not stop at generation. They help users preview, revise, and keep moving toward a shippable result.",
+      "The best image-to-code workflows do not stop at generation. They help you preview, revise, and keep moving toward a shippable result.",
     resultResponsiveLayouts: "Responsive layout structure",
     resultComponentStructure: "Organized page and component output",
     resultEditableCode: "Editable code after generation",
@@ -172,51 +174,51 @@ const translations = {
     resultExportableFiles: "Exportable files for handoff",
     resultStackFlexibility: "Multiple front-end stack targets",
     whyPeopleTrustThis: "Why people trust this",
-    whyPeopleTrustThisTitle: "The homepage needs proof, not just claims.",
+    whyPeopleTrustThisTitle: "Proof matters more than promises.",
     trustTransparentInputs: "Transparent ways to start",
     trustTransparentInputsDescription:
-      "Users can begin from screenshots, URLs, text prompts, recordings, or imported code instead of being forced into one path.",
+      "Users can begin from screenshots, URLs, text prompts, recordings, or imported code instead of being forced into a single workflow.",
     trustMultipleWaysToStart: "Useful before a full rebuild",
     trustMultipleWaysToStartDescription:
-      "It works well for first drafts, redesign exploration, competitor teardowns, and internal mockups where speed matters most.",
+      "It works well for first drafts, redesign exploration, competitor teardowns, and internal mockups where speed matters more than perfect polish.",
     trustKeepEditing: "You can keep editing after generation",
     trustKeepEditingDescription:
-      "The product does not trap users in a one-shot result. It opens into preview, variants, and follow-up updates so progress keeps compounding.",
+      "The product does not trap users in a one-shot result. It opens into preview, follow-up edits, and repeated iteration so progress keeps compounding.",
     trustShipFaster: "Closer to something you can actually ship",
     trustShipFasterDescription:
-      "Compared with a thin demo page, this flow gives users a stronger sense that the generated code is part of a real production workflow.",
+      "The result is closer to a usable front-end draft that teams can review internally, hand off, or keep refining toward launch.",
     pricing: "Pricing",
-    pricingTitle: "Make the free entry point obvious",
+    pricingTitle: "Start free. Upgrade when the workflow sticks.",
     pricingDescription:
-      "Once login and usage limits exist, the homepage should explain how people can start for free and when they may want more.",
+      "The free plan should answer one question quickly: does this save your team time? Paid plans make sense when you start using it repeatedly.",
     pricingFreePlan: "Free",
     pricingFreePrice: "$0",
     pricingFreeDescription:
-      "Best for trying the workflow, testing screenshot quality, and seeing whether the output matches your use case.",
-    pricingFreeFeature1: "Limited free generations",
-    pricingFreeFeature2: "Project saving after sign-in",
-    pricingFreeFeature3: "Access to the main generator flow",
+      "Best for trying the workflow, checking screenshot quality, and deciding whether the generated draft is useful for your use case.",
+    pricingFreeFeature1: "A small number of free generations",
+    pricingFreeFeature2: "Saved projects after sign-in",
+    pricingFreeFeature3: "Access to the full core flow",
     pricingFreeCta: "Try for free",
     pricingProPlan: "Pro",
     pricingProPrice: "$29/mo",
     pricingProDescription:
-      "Best for solo builders and designers who want more generations, faster iteration, and room to use it regularly.",
-    pricingProFeature1: "Higher monthly generation volume",
-    pricingProFeature2: "Better support for repeated iteration",
-    pricingProFeature3: "Ideal for personal product work",
-    pricingProCta: "Start Pro flow",
+      "Best for solo builders and designers who already know the workflow saves time and want enough volume to use it every week.",
+    pricingProFeature1: "More monthly generations",
+    pricingProFeature2: "Room for repeated iteration",
+    pricingProFeature3: "Best fit for personal product work",
+    pricingProCta: "Choose Pro",
     pricingTeamPlan: "Team",
     pricingTeamPrice: "Custom",
     pricingTeamDescription:
-      "Best for agencies or product teams that want shared workflows, higher volume, and a clearer path to internal adoption.",
-    pricingTeamFeature1: "Shared team usage expectations",
-    pricingTeamFeature2: "Higher-volume collaboration workflows",
-    pricingTeamFeature3: "Good fit for client or product teams",
+      "Best for agencies or product teams that want shared usage, higher volume, and a clearer rollout path inside the team.",
+    pricingTeamFeature1: "Shared team usage",
+    pricingTeamFeature2: "Higher-volume workflows",
+    pricingTeamFeature3: "Fits agency or product teams",
     pricingTeamCta: "Talk to sales",
     faq: "FAQ",
-    faqTitle: "Questions people will have before they try it",
+    faqTitle: "Questions that matter before you commit time",
     faqDescription:
-      "A stronger SaaS homepage usually answers risk, quality, workflow, and output questions before asking for the click.",
+      "These are the questions most people ask before they decide whether the workflow is worth trying seriously.",
     faq1Question: "Can this generate production-ready code?",
     faq1Answer:
       "It generates a strong front-end starting point that is meant to be previewed, edited, and refined. The better your reference and instructions, the closer the first pass gets.",
@@ -232,7 +234,7 @@ const translations = {
     finalCtaEyebrow: "Ready to try it",
     finalCtaTitle: "Start with a screenshot. Leave with code you can keep shaping.",
     finalCtaDescription:
-      "A homepage like this should end with confidence and a clean next step. Let users try the core workflow without forcing them to guess what happens next.",
+      "Try the core workflow without guessing what happens next.",
     footerDescription:
       "Image to Code helps teams move from screenshots, mockups, and references to editable front-end code faster.",
     footerProduct: "Product",
@@ -467,10 +469,10 @@ const translations = {
       "如果你想直接输入 URL，而不是自己先截图，请添加 ScreenshotOne API Key。",
     getFreeScreenshots: "每月免费 100 次截图。",
     screenshotOneApiKey: "ScreenshotOne API Key",
-    imageToCodeWebsite: "图片转代码网站",
-    turnScreenshotsIntoCode: "把截图直接变成可交付的代码。",
+    imageToCodeWebsite: "Visual to Code",
+    turnScreenshotsIntoCode: "把任何视觉输入变成前端代码。",
     heroDescription:
-      "上传 UI 截图、落地页、线框图或产品设计稿，几分钟内生成可用于生产环境的前端代码。",
+      "从截图、Figma、URL、视频和设计稿出发，几秒内生成可继续编辑的生产级前端代码。",
     startConverting: "开始转换",
     seeHowItWorks: "查看工作方式",
     navProduct: "产品",
@@ -485,9 +487,9 @@ const translations = {
     bestFor: "适用场景",
     bestForValue: "MVP、仿站、改版",
     waysToStart: "开始方式",
-    waysToStartTitle: "从用户已经拥有的设计素材开始，而不是强迫他们换流程",
+    waysToStartTitle: "从你已经拥有的素材开始",
     waysToStartDescription:
-      "一个成熟的产品首页，应该把起步路径讲清楚。你可以上传参考图、抓取在线页面、描述想法，或者直接导入已有代码继续打磨。",
+      "你可以上传参考图、抓取在线页面、描述想法，或者直接导入已有代码继续打磨。",
     startModeUploadDescription:
       "上传截图、线框图或短录屏，让第一稿从具体视觉参考出发，而不是空想生成。",
     startModeUrlDescription:
@@ -530,43 +532,43 @@ const translations = {
     workflowMapEyebrow: "工作流地图",
     workflowMapTitle: "把想法变成迭代闭环，而不是一次性输出",
     workflowMapDescription:
-      "首页不该只说模型能生成什么，还应该让用户清楚知道下一步怎么继续推进。",
-    heroEditorialTitle: "它应该像一个认真工作的工作室，而不是临时拼出来的演示页",
-    heroEditorialDescription:
-      "更成熟的第一印象，来自于工艺感、工作流表达和克制感同时成立。",
-    heroChecklist1:
-      "可以从截图、URL、提示词或现有代码开始，而不必先改变你的工作方式。",
-    heroChecklist2:
-      "先快速拿到一个可预览前端，再在这个基础上持续细化，而不是反复从头开始。",
-    heroChecklist3:
-      "更快把灵感推进成适合产品评审、客户反馈或 MVP 冲刺的可展示版本。",
+      "从参考素材快速进入可预览的前端初稿，再在这个基础上持续迭代，而不是反复从头开始。",
     localWorkspaceTitle: "就算是本地工作区，也值得拥有成熟的网站体验",
     localWorkspaceDescription:
-      "即使所有能力都在本地运行，产品表达仍然应该传达出灵活性、工作流深度，以及从初稿走向可用结果的可信路径。",
+      "即使所有能力都在本地运行，团队仍然需要一个足够灵活、足够深入、也足够可信的流程，把草稿推进成可用的前端结果。",
     beforeAfter: "前后对比",
     beforeAfterTitle: "不只讲能力，也要展示变化结果",
     beforeAfterDescription:
-      "更强的首页应该让结果变得具体可感。通过这些案例，访客能更直观理解上传参考图之后会发生什么。",
+      "通过这些案例，访客能更直观理解参考图进入流程之后，最终通常会产出什么样的可编辑前端草稿。",
     beforeReference: "之前 · 参考图",
     afterOutput: "之后 · 生成结果",
     showcaseLandingPage: "营销落地页",
     showcaseLandingPageSource:
       "一张成熟 Hero 区截图，包含功能模块、价格预告和强 CTA。",
     showcaseLandingPageResult:
-      "生成出结构更清晰的前端初稿，区块可复用，层级明确，并可继续编辑打磨。",
+      "生成出可复用的落地页初稿，包含清晰的 Hero、转化导向区块、稳定留白节奏，并且便于继续迭代。",
+    showcaseLandingPageHighlight1: "可复用 Hero 与 CTA",
+    showcaseLandingPageHighlight2: "功能区与价格区",
+    showcaseLandingPageHighlight3: "可编辑营销页结构",
     showcaseDashboard: "SaaS 仪表盘",
     showcaseDashboardSource:
       "一个包含统计卡片、筛选区、表格视图和导航结构的产品后台参考图。",
     showcaseDashboardResult:
-      "生成响应式后台骨架，面板结构更清楚，布局区域更完整，也更方便后续组件化。",
+      "生成后台骨架，包含统计面板、筛选控件、表格区域和更清晰的组件边界，便于继续做产品化迭代。",
+    showcaseDashboardHighlight1: "统计卡片与筛选区",
+    showcaseDashboardHighlight2: "响应式表格布局",
+    showcaseDashboardHighlight3: "侧边栏与内容骨架",
     showcaseMobileApp: "移动端应用界面",
     showcaseMobileAppSource:
       "一组包含引导页、卡片、底部导航和进度元素的移动端界面参考。",
     showcaseMobileAppResult:
-      "生成移动优先的代码草稿，保留原始界面结构，同时更方便继续调整流程和样式。",
+      "生成移动优先的代码草稿，保留页面流转、卡片层级和导航结构，让后续调整流程与样式更轻松。",
+    showcaseMobileAppHighlight1: "逐屏流程结构",
+    showcaseMobileAppHighlight2: "底部导航状态",
+    showcaseMobileAppHighlight3: "卡片与进度组件",
     whoThisIsFor: "这个产品适合谁",
     whoThisIsForDescription:
-      "一个更完整的首页，不应该只有功能，还要明确面向哪些用户和场景。这几类团队最容易从 image-to-code 中快速获得价值。",
+      "下面这些团队，通常最容易从截图、参考图和早期 UI 想法里快速拿到有用的前端初稿。",
     useCaseFounders: "创业团队",
     useCaseFoundersTitle: "不用每个页面都重写，也能更快做出 MVP",
     useCaseFoundersDescription:
@@ -582,7 +584,9 @@ const translations = {
     testimonials: "用户评价",
     testimonialsTitle: "用户在决定尝试之前，通常想看到这些反馈",
     testimonialsDescription:
-      "当访客能想象“和我类似的人已经用过并受益”，首页的说服力会强很多。",
+      "当访客能想象“和我类似的人已经用过并受益”，他们会更容易迈出第一次尝试。",
+    testimonialBridgeEyebrow: "真实使用信号",
+    testimonialBridgeTitle: "这些反馈说明，它的价值不只停在第一版生成",
     testimonial1Quote:
       "我们用截图参考图，从想法走到能跑的落地页初稿，只花了一个下午，而不是来回拉扯一整周。",
     testimonial1Author: "Maya Chen",
@@ -598,7 +602,7 @@ const translations = {
     whatYouGet: "你能得到什么",
     whatYouGetTitle: "不只是演示，而是可继续推进的前端初稿。",
     whatYouGetDescription:
-      "更成熟的 image-to-code 产品，不应该停在“生成一下”。它还要帮助用户预览、修改，并继续向可交付结果推进。",
+      "更成熟的 image-to-code 工作流，不应该停在“生成一下”。它还要帮助你预览、修改，并继续向可交付结果推进。",
     resultResponsiveLayouts: "响应式布局骨架",
     resultComponentStructure: "更清晰的页面与组件结构",
     resultEditableCode: "生成后仍可继续编辑",
@@ -606,51 +610,51 @@ const translations = {
     resultExportableFiles: "支持导出用于交付",
     resultStackFlexibility: "支持多种前端技术栈",
     whyPeopleTrustThis: "为什么更值得信任",
-    whyPeopleTrustThisTitle: "首页不该只有口号，还要建立信任。",
+    whyPeopleTrustThisTitle: "真正有说服力的是证据，而不只是口号。",
     trustTransparentInputs: "开始方式足够透明",
     trustTransparentInputsDescription:
-      "用户可以从截图、URL、文本、录屏或现有代码开始，而不是被限制在单一路径里。",
+      "用户可以从截图、URL、文本、录屏或现有代码开始，而不是被限制在单一工作流里。",
     trustMultipleWaysToStart: "不只适合完整重建",
     trustMultipleWaysToStartDescription:
-      "它也适合首稿生成、改版探索、竞品拆解和内部原型这些更强调速度的场景。",
+      "它也适合首稿生成、改版探索、竞品拆解和内部原型这些更强调速度而不是完美还原的场景。",
     trustKeepEditing: "生成之后还能继续改",
     trustKeepEditingDescription:
-      "产品不会把用户困在“一次性结果”里，而是继续提供预览、候选版本和后续修改能力。",
+      "产品不会把用户困在“一次性结果”里，而是继续提供预览、后续修改和反复迭代能力。",
     trustShipFaster: "更接近真正可交付的结果",
     trustShipFasterDescription:
-      "相比只有简单演示能力的首页，这种流程更容易让用户相信生成代码能融入真实工作流。",
+      "结果会更接近可评审、可交接、也可继续推进上线的前端草稿，而不只是一次演示。",
     pricing: "价格方案",
-    pricingTitle: "把免费入口讲清楚",
+    pricingTitle: "先免费开始，确认有价值再升级。",
     pricingDescription:
-      "既然已经有登录和额度限制，首页就应该清楚说明如何免费开始，以及什么时候适合升级。",
+      "免费版最重要的作用，是帮你快速判断这个流程到底能不能给团队省时间。只有开始高频使用时，付费才真正有意义。",
     pricingFreePlan: "免费版",
     pricingFreePrice: "¥0",
     pricingFreeDescription:
-      "适合先体验工作流、测试截图质量，以及判断输出是否符合你的场景。",
-    pricingFreeFeature1: "有限免费生成次数",
+      "适合先体验工作流、检查截图质量，并判断这类前端初稿是否真的适合你的场景。",
+    pricingFreeFeature1: "少量免费生成次数",
     pricingFreeFeature2: "登录后可保存项目",
-    pricingFreeFeature3: "可使用核心生成流程",
+    pricingFreeFeature3: "可体验完整核心流程",
     pricingFreeCta: "免费开始",
     pricingProPlan: "专业版",
     pricingProPrice: "¥199/月",
     pricingProDescription:
-      "适合独立开发者和设计师，想要更多生成次数、更顺畅的迭代，以及日常高频使用空间。",
-    pricingProFeature1: "更高的每月生成额度",
+      "适合已经确认这套流程能省时间的独立开发者和设计师，让它可以进入每周都会用的工作节奏。",
+    pricingProFeature1: "更多每月生成额度",
     pricingProFeature2: "更适合反复迭代修改",
     pricingProFeature3: "适合个人产品工作流",
-    pricingProCta: "开始专业版",
+    pricingProCta: "选择专业版",
     pricingTeamPlan: "团队版",
     pricingTeamPrice: "定制",
     pricingTeamDescription:
-      "适合代理团队或产品团队，需要共享流程、更高用量，以及更明确的内部协作方式。",
-    pricingTeamFeature1: "适合共享团队使用",
-    pricingTeamFeature2: "支持更高频的协作流程",
-    pricingTeamFeature3: "适合客户交付或产品团队",
+      "适合代理团队或产品团队，需要共享使用、更高用量，以及更清晰的内部推广路径。",
+    pricingTeamFeature1: "支持团队共享使用",
+    pricingTeamFeature2: "支持更高频流程",
+    pricingTeamFeature3: "适合代理或产品团队",
     pricingTeamCta: "联系销售",
     faq: "常见问题",
-    faqTitle: "用户在点击之前，通常会先问这些问题",
+    faqTitle: "这些问题，值得在投入时间前先问清楚",
     faqDescription:
-      "一个更完整的 SaaS 首页，通常会在 CTA 之前先回答质量、风险、流程和输出相关的关键疑问。",
+      "大多数人会先问清楚质量、工作流和输出边界，再决定要不要认真把它接进自己的流程。",
     faq1Question: "它能直接生成可上线的代码吗？",
     faq1Answer:
       "它会生成一个很强的前端起点，但最佳使用方式仍然是先预览、再修改、再迭代。参考图和指令越清晰，首稿越接近可用结果。",
@@ -666,7 +670,7 @@ const translations = {
     finalCtaEyebrow: "准备开始了吗",
     finalCtaTitle: "从一张截图开始，得到一份你可以继续打磨的代码。",
     finalCtaDescription:
-      "更完整的首页，结尾应该给用户信心和清晰的下一步，而不是让他们自己猜测接下来会发生什么。",
+      "直接进入核心流程，不用猜接下来会发生什么。",
     footerDescription:
       "Image to Code 帮助团队更快从截图、设计稿和参考图进入可编辑的前端代码阶段。",
     footerProduct: "产品",

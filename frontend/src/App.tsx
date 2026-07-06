@@ -904,19 +904,16 @@ function App() {
               }}
               className="flex items-center gap-3 text-left"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-stone-950 text-white dark:bg-white dark:text-stone-950">
+              <div className="flex h-10 w-10 items-center justify-center overflow-hidden border border-stone-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-white">
                 <img
-                  src="/favicon/main.png"
+                  src="/favicon/log-square.png"
                   alt="Logo"
-                  className="h-5 w-5 dark:invert"
+                  className="h-10 w-10 object-contain"
                 />
               </div>
               <div>
-                <div className="text-sm font-semibold tracking-[0.2em] text-stone-500 dark:text-zinc-400">
-                  IMAGETOCODE
-                </div>
-                <div className="text-xs text-stone-500 dark:text-zinc-500">
-                  {t("websiteBuilderFromScreenshots")}
+                <div className="text-sm font-semibold text-stone-900 dark:text-zinc-100">
+                  VisualToCode
                 </div>
               </div>
             </button>
@@ -926,25 +923,37 @@ function App() {
                 href="#generator"
                 className="transition-colors hover:text-stone-950 dark:hover:text-white"
               >
-                {t("navProduct")}
+                Product
               </a>
               <a
-                href="#cases"
+                href="#pipeline"
                 className="transition-colors hover:text-stone-950 dark:hover:text-white"
               >
-                {t("navExamples")}
+                Features
+              </a>
+              <a
+                href="#use-cases"
+                className="transition-colors hover:text-stone-950 dark:hover:text-white"
+              >
+                Use Cases
               </a>
               <a
                 href="#pricing"
                 className="transition-colors hover:text-stone-950 dark:hover:text-white"
               >
-                {t("navPricing")}
+                Pricing
               </a>
               <a
-                href="#faq"
+                href="https://github.com/abi/screenshot-to-code/wiki/Screen-Recording-to-Code"
                 className="transition-colors hover:text-stone-950 dark:hover:text-white"
               >
-                {t("navFaq")}
+                Docs
+              </a>
+              <a
+                href="https://github.com/abi/screenshot-to-code/blob/main/README.md"
+                className="transition-colors hover:text-stone-950 dark:hover:text-white"
+              >
+                Changelog
               </a>
             </div>
 
@@ -952,15 +961,15 @@ function App() {
               <LanguageToggle />
               <button
                 onClick={() => setIsSettingsOpen(true)}
-                className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                className="rounded-full px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
               >
-                {t("settings")}
+                Sign in
               </button>
               <a
                 href="#generator"
                 className="hidden rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white sm:inline-flex dark:bg-white dark:text-stone-950"
               >
-                {t("launchGenerator")}
+                Start Building
               </a>
             </div>
           </div>

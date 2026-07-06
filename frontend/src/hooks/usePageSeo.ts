@@ -136,7 +136,7 @@ export function usePageSeo() {
         "@type": "Organization",
         name: "Image to Code",
         url: SITE_URL,
-        logo: `${SITE_URL}/favicon/main.png`,
+        logo: `${SITE_URL}/favicon/log-square.png`,
       });
 
       upsertJsonLd("software", {

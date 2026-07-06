@@ -6,7 +6,7 @@ const CODING_SETTINGS = {
 };
 const DEFAULT_SETTINGS = {
   title: null,
-  favicon: "/favicon/main.png",
+  favicon: "/favicon/log-square.png",
 };
 
 const DEV_FAVICON_COLORS = {
