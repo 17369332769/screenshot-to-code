@@ -904,7 +904,7 @@ function App() {
               }}
               className="flex items-center gap-3 text-left"
             >
-              <div className="flex h-10 w-10 items-center justify-center overflow-hidden border border-stone-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-white">
+              <div className="flex h-10 w-10 items-center justify-center overflow-hidden">
                 <img
                   src="/favicon/log-square.png"
                   alt="Logo"

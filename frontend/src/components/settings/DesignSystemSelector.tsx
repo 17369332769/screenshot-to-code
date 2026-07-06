@@ -89,10 +89,12 @@ function DesignSystemSelector({
           )}
         </SelectTrigger>
       ) : hasSelection ? (
-        <div className="grid grid-cols-3 items-center gap-4 text-sm">
-          <span>{t("designSystem")}</span>
+        <div className="grid grid-cols-1 items-center gap-2 text-sm sm:grid-cols-[minmax(120px,0.7fr)_minmax(0,2fr)] sm:gap-4">
+          <span className="text-sm font-semibold text-stone-700 dark:text-zinc-300">
+            {t("designSystem")}
+          </span>
           <SelectTrigger
-            className="col-span-2"
+            className="h-11 rounded-lg border-stone-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:col-span-1"
             data-testid="design-system-select"
           >
             <SelectValue placeholder={t("noDesignSystem")} />
@@ -101,7 +103,7 @@ function DesignSystemSelector({
       ) : (
         <div className="flex justify-end text-xs">
           <SelectTrigger
-            className="h-auto w-auto justify-start gap-1 border-0 bg-transparent px-0 py-0 text-gray-500 shadow-none hover:text-gray-700 focus:ring-0 focus:ring-offset-0 dark:text-zinc-400 dark:hover:text-zinc-200 [&>svg]:hidden"
+            className="h-auto w-auto justify-start gap-1 rounded-lg border-0 bg-transparent px-0 py-0 text-sm font-medium text-stone-500 shadow-none hover:text-stone-800 focus:ring-0 focus:ring-offset-0 dark:text-zinc-400 dark:hover:text-zinc-200 [&>svg]:hidden"
             data-testid="design-system-select"
           >
             <span>{t("addDesignSystemAction")}</span>

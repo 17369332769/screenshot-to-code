@@ -29,7 +29,7 @@ type InputTab = "upload" | "url" | "text" | "import";
 
 function InputTabFallback({ label }: { label: string }) {
   return (
-    <div className="flex min-h-[320px] items-center justify-center rounded-[1.4rem] border border-stone-200/80 bg-white/70 px-4 text-sm text-stone-500 dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-400">
+    <div className="flex min-h-[280px] items-center justify-center rounded-xl border border-stone-200/80 bg-white/75 px-4 text-sm text-stone-500 dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-400">
       {label}
     </div>
   );
@@ -71,16 +71,16 @@ function UnifiedInputPane({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="mx-auto w-full max-w-6xl">
       <Tabs
         value={activeTab}
         onValueChange={(value) => setActiveTab(value as InputTab)}
         className="w-full"
       >
-        <TabsList className="mb-6 grid h-auto w-full grid-cols-2 gap-2 rounded-[1.4rem] border border-stone-200/80 bg-white/70 p-2 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/80 sm:grid-cols-4">
+        <TabsList className="mb-5 grid h-auto w-full grid-cols-2 gap-1.5 rounded-xl border border-stone-200/80 bg-stone-50/80 p-1.5 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/80 sm:grid-cols-4">
           <TabsTrigger
             value="upload"
-            className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl text-sm data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
+            className="flex min-h-[48px] items-center justify-center gap-2 rounded-lg text-sm font-medium text-stone-500 transition-colors data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:text-zinc-400 dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
             data-testid="tab-upload"
           >
             <UploadIcon />
@@ -88,7 +88,7 @@ function UnifiedInputPane({
           </TabsTrigger>
           <TabsTrigger
             value="url"
-            className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl text-sm data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
+            className="flex min-h-[48px] items-center justify-center gap-2 rounded-lg text-sm font-medium text-stone-500 transition-colors data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:text-zinc-400 dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
             data-testid="tab-url"
           >
             <UrlIcon />
@@ -96,7 +96,7 @@ function UnifiedInputPane({
           </TabsTrigger>
           <TabsTrigger
             value="text"
-            className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl text-sm data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
+            className="flex min-h-[48px] items-center justify-center gap-2 rounded-lg text-sm font-medium text-stone-500 transition-colors data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:text-zinc-400 dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
             data-testid="tab-text"
           >
             <TextIcon />
@@ -104,7 +104,7 @@ function UnifiedInputPane({
           </TabsTrigger>
           <TabsTrigger
             value="import"
-            className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl text-sm data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
+            className="flex min-h-[48px] items-center justify-center gap-2 rounded-lg text-sm font-medium text-stone-500 transition-colors data-[state=active]:bg-stone-950 data-[state=active]:text-white data-[state=active]:shadow-sm dark:text-zinc-400 dark:data-[state=active]:bg-white dark:data-[state=active]:text-stone-950"
             data-testid="tab-import"
           >
             <ImportIcon />

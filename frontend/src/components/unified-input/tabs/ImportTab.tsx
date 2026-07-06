@@ -64,29 +64,34 @@ function ImportTab({ importFromCode }: Props) {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="w-full max-w-lg">
-        <div className="flex flex-col gap-6 p-8 border border-gray-200 dark:border-zinc-700 rounded-xl bg-gray-50/50 dark:bg-zinc-900/50">
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center">
+      <div className="w-full max-w-3xl">
+        <div className="flex flex-col gap-6 rounded-xl border border-stone-200/80 bg-white/75 p-5 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-stone-200 bg-stone-50 text-stone-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
+                width="22"
+                height="22"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-gray-400 dark:text-zinc-500"
+                className="text-current"
               >
                 <polyline points="16 18 22 12 16 6" />
                 <polyline points="8 6 2 12 8 18" />
               </svg>
             </div>
 
-            <div className="text-center">
-              <h3 className="text-gray-700 dark:text-zinc-200 font-medium">{t("importTitle")}</h3>
+            <div>
+              <h3 className="font-['Space_Grotesk'] text-xl font-semibold tracking-normal text-stone-900 dark:text-white">
+                {t("importTitle")}
+              </h3>
+              <p className="mt-1 text-sm text-stone-500 dark:text-zinc-400">
+                Paste HTML or drop a file to continue refining existing code.
+              </p>
             </div>
           </div>
 
@@ -94,7 +99,7 @@ function ImportTab({ importFromCode }: Props) {
             <div
               {...getRootProps({
                 className: `rounded-lg ${
-                  isDraggingFile ? "ring-2 ring-blue-300 dark:ring-blue-700 ring-offset-2 dark:ring-offset-zinc-900" : ""
+                  isDraggingFile ? "ring-2 ring-cyan-200 dark:ring-cyan-800 ring-offset-2 dark:ring-offset-zinc-900" : ""
                 }`,
               })}
             >
@@ -104,7 +109,7 @@ function ImportTab({ importFromCode }: Props) {
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full h-48 font-mono text-sm resize-none"
+                className="h-48 w-full resize-none rounded-lg border-stone-200 bg-white font-mono text-sm shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
                 placeholder={t("pasteHtmlPlaceholder")}
                 data-testid="import-input"
               />
@@ -119,14 +124,14 @@ function ImportTab({ importFromCode }: Props) {
 
             <Button
               onClick={doImport}
-              className="w-full"
+              className="w-full rounded-lg"
               size="lg"
               data-testid="import-submit"
             >
               {t("importCode")}
             </Button>
 
-            <p className="text-xs text-gray-400 dark:text-zinc-500 text-center">
+            <p className="text-center text-xs text-stone-400 dark:text-zinc-500">
               {t("pressCmdCtrlEnterImport")}
             </p>
           </div>

@@ -315,197 +315,245 @@ const StartPane: React.FC<Props> = ({
 }) => {
   return (
     <div className="relative overflow-hidden">
-      <div className="landing-orb landing-orb-left" />
-      <div className="landing-orb landing-orb-right" />
       <div className="landing-grid" />
 
       <section className="mx-auto flex w-full max-w-7xl flex-col px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-20 lg:pt-12">
         <section className="relative px-2 pt-4 sm:px-0 lg:pt-6">
-          <div className="mx-auto max-w-5xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50/90 px-4 py-1.5 text-[11px] font-semibold tracking-[0.02em] text-sky-700 shadow-sm dark:border-sky-900/40 dark:bg-sky-950/30 dark:text-sky-200">
-              <span className="h-2 w-2 rounded-full bg-sky-500" />
-              AI-Powered Visual Development Platform
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            {/* Left Column: Title + CTAs */}
+            <div className="lg:col-span-5 text-left flex flex-col justify-center">
+              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50/95 px-3 py-1 text-[11px] font-semibold tracking-[0.02em] text-zinc-700 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-300">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Screenshot-to-Code Workbench
+              </div>
+
+              <h1 className="mt-6 font-['Space_Grotesk'] text-4xl font-bold leading-[1.05] tracking-normal text-stone-950 dark:text-white sm:text-5xl lg:text-[4.5rem]">
+                Turn Designs
+                <br />
+                Into Clean Code.
+              </h1>
+
+              <p className="mt-6 text-sm leading-7 text-stone-600 dark:text-zinc-300 sm:text-base">
+                A visual workbench built for developers and designers. Convert screenshots, wireframes, Figma designs, and website URLs into clean, production-ready code in React, Next.js, Vue, and Tailwind CSS.
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <a
+                  href="#generator"
+                  className="inline-flex items-center justify-center rounded-lg bg-stone-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-stone-950"
+                >
+                  Start Building
+                  <LuArrowRight className="ml-2 h-4 w-4" />
+                </a>
+                <a
+                  href="#before-after"
+                  className="inline-flex items-center justify-center rounded-lg border border-stone-200 bg-white px-6 py-3 text-sm font-semibold text-stone-800 shadow-sm transition-colors hover:bg-stone-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+                >
+                  <LuPlay className="mr-2 h-4 w-4" />
+                  Watch Demo
+                </a>
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-stone-200/60 dark:border-zinc-800/60">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.15em] text-stone-400 dark:text-zinc-500">
+                  Supported Tech Stack
+                </div>
+                <div className="mt-3 flex items-center gap-4 text-stone-500 dark:text-zinc-400">
+                  <SiReact className="h-5 w-5" title="React" />
+                  <SiNextdotjs className="h-5 w-5" title="Next.js" />
+                  <SiVuedotjs className="h-5 w-5" title="Vue" />
+                  <SiTailwindcss className="h-5 w-5" title="Tailwind CSS" />
+                  <SiHtml5 className="h-5 w-5" title="HTML5" />
+                </div>
+              </div>
             </div>
 
-            <h1 className="mx-auto mt-8 max-w-4xl font-['Space_Grotesk'] text-5xl font-bold leading-[0.92] tracking-[-0.07em] text-stone-950 dark:text-white sm:text-6xl lg:text-[5.8rem]">
-              Turn Anything
-              <br />
-              Into Frontend Code.
-            </h1>
-
-            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-stone-600 dark:text-zinc-300 sm:text-lg">
-              From screenshots, Figma, URLs, videos and mockups
-              <br className="hidden sm:block" />
-              to production-ready code in seconds.
-            </p>
-
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <a
-                href="#generator"
-                className="inline-flex items-center justify-center rounded-2xl bg-stone-950 px-8 py-4 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(17,17,17,0.16)] transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-stone-950"
-              >
-                Start Building
-                <LuArrowRight className="ml-2 h-4 w-4" />
-              </a>
-              <a
-                href="#before-after"
-                className="inline-flex items-center justify-center rounded-2xl border border-stone-200 bg-white px-8 py-4 text-sm font-semibold text-stone-800 shadow-sm transition-colors hover:bg-stone-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
-              >
-                <LuPlay className="mr-2 h-4 w-4" />
-                Watch Demo
-              </a>
-            </div>
-          </div>
-
-          <div className="mt-10 rounded-[2rem] border border-stone-200/80 bg-white/92 p-4 shadow-[0_30px_90px_rgba(17,17,17,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 sm:p-5 lg:p-6">
-            <div className="grid gap-4 xl:grid-cols-[0.86fr_0.92fr_1.52fr_1.12fr]">
-              <ReferencePanel
-                title="1. Upload"
-                children={
-                  <div className="space-y-3">
-                    {inputItems.slice(0, 7).map((item, index) => (
-                      <ReferenceInputRow
-                        key={item.title}
-                        title={item.title}
-                        subtitle={item.subtitle}
-                        accent={item.accent}
-                        active={index === 0}
-                      />
-                    ))}
+            {/* Right Column: IDE Workbench Mockup */}
+            <div className="lg:col-span-7">
+              <div className="w-full rounded-xl border border-stone-200/80 bg-white/92 shadow-[0_20px_50px_rgba(0,0,0,0.05)] backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 overflow-hidden">
+                {/* Top bar representing an IDE chrome */}
+                <div className="flex items-center justify-between border-b border-stone-200 bg-stone-50/50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/50">
+                  <div className="flex items-center gap-2">
+                    {/* Mac window controls */}
+                    <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                    {/* File path tab */}
+                    <span className="ml-4 font-mono text-[10px] text-stone-500 dark:text-zinc-400 bg-stone-100 dark:bg-zinc-900 px-2.5 py-1 rounded border border-stone-200/50 dark:border-zinc-800/50">
+                      workspace / src / LandingPage.tsx
+                    </span>
                   </div>
-                }
-              />
+                  <div className="flex items-center gap-2">
+                    {/* Active status indicator */}
+                    <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-semibold text-stone-600 dark:text-zinc-400">
+                      AI Engine Online
+                    </span>
+                  </div>
+                </div>
 
-              <ReferencePanel
-                title="2. Vision Engine"
-                children={
-                  <div className="space-y-4">
-                    <div className="space-y-3">
-                      <ReferenceStatusRow label="Layout Detection" status="Completed" />
-                      <ReferenceStatusRow label="Component Recognition" status="Completed" />
-                      <ReferenceStatusRow label="Typography Analysis" status="Completed" />
-                      <ReferenceStatusRow label="Color Extraction" status="Completed" />
-                      <ReferenceStatusRow
-                        label="Asset Extraction"
-                        status="Processing..."
-                        active
-                      />
+                {/* Main editor area: 2 columns */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-0 divide-y md:divide-y-0 md:divide-x divide-stone-200 dark:divide-zinc-800">
+                  {/* Left sub-column: Visual Input (Figma/Screenshot) + Detection layer */}
+                  <div className="md:col-span-5 p-4 flex flex-col justify-between space-y-4">
+                    <div>
+                      <div className="text-[11px] font-semibold text-stone-600 dark:text-zinc-300 mb-2">
+                        1. Input & Bounding Boxes
+                      </div>
+                      {/* Mock image screen with visual overlays */}
+                      <div className="relative border border-stone-200 dark:border-zinc-800 bg-stone-100 dark:bg-zinc-900 rounded-lg overflow-hidden h-[180px] flex items-center justify-center">
+                        <img
+                          src="/showcases/landing-page-sketch.png"
+                          alt="Visual input"
+                          className="w-full h-full object-cover opacity-80"
+                        />
+                        {/* Highlight bounding boxes */}
+                        <div className="absolute top-[10%] left-[5%] right-[5%] border border-cyan-500 bg-cyan-500/10 px-1.5 py-0.5 rounded font-mono text-[8px] font-bold text-cyan-800 dark:text-cyan-200 select-none">
+                          Header (Component)
+                        </div>
+                        <div className="absolute top-[35%] left-[10%] w-[45%] h-[35%] border border-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded font-mono text-[8px] font-bold text-amber-800 dark:text-amber-200 select-none">
+                          Hero Text Block
+                        </div>
+                        <div className="absolute top-[40%] right-[10%] w-[35%] h-[40%] border border-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded font-mono text-[8px] font-bold text-emerald-800 dark:text-emerald-200 select-none">
+                          Stats Widget
+                        </div>
+                      </div>
                     </div>
-                    <div className="rounded-[1.2rem] bg-stone-50 px-4 py-4 dark:bg-zinc-900">
-                      <div className="text-xs text-stone-500 dark:text-zinc-400">
-                        AI is understanding your design...
+
+                    {/* Engine Parse Logs */}
+                    <div className="space-y-2">
+                      <div className="text-[11px] font-semibold text-stone-600 dark:text-zinc-300">
+                        2. Analyzer Output
                       </div>
-                      <div className="mt-4 h-2.5 rounded-full bg-stone-200 dark:bg-zinc-800">
-                        <div className="h-2.5 w-[80%] rounded-full bg-[linear-gradient(90deg,#2563eb,#3b82f6)]" />
-                      </div>
-                      <div className="mt-2 text-right text-xs font-medium text-stone-500 dark:text-zinc-400">
-                        80%
+                      <div className="text-[10px] font-mono bg-stone-50 dark:bg-zinc-900/60 p-2 rounded-lg border border-stone-200/60 dark:border-zinc-800/60 space-y-1.5">
+                        <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
+                          <span>[INFO] Vision parser loaded...</span>
+                          <span>OK</span>
+                        </div>
+                        <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
+                          <span>[INFO] Layout system matching...</span>
+                          <span>OK</span>
+                        </div>
+                        <div className="flex items-center justify-between text-cyan-600 dark:text-cyan-400">
+                          <span>[INFO] Tailwind extraction...</span>
+                          <span>100%</span>
+                        </div>
+                        <div className="flex items-center justify-between text-stone-500 dark:text-zinc-400">
+                          <span>[INFO] Synthesizing React code...</span>
+                          <span className="animate-pulse">Building</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                }
-              />
 
-              <ReferencePanel
-                title="3. Live Preview"
-                children={
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-xs font-semibold text-stone-600 dark:text-zinc-300">
-                      <span className="h-2 w-2 rounded-full bg-sky-500" />
-                      StartupLanding
-                    </div>
-                    <div className="overflow-hidden rounded-[1.3rem] border border-stone-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-                      <div className="flex items-center justify-between border-b border-stone-200 px-4 py-3 text-[11px] text-stone-500 dark:border-zinc-800 dark:text-zinc-400">
-                        <span>Product</span>
-                        <span>Features</span>
-                        <span>Pricing</span>
-                        <span>About</span>
-                        <span className="rounded-lg bg-stone-950 px-3 py-1 font-semibold text-white dark:bg-white dark:text-stone-950">
-                          Get Started
+                  {/* Right sub-column: Code & Preview Tabs */}
+                  <div className="md:col-span-7 p-4 flex flex-col justify-between space-y-4">
+                    <div className="flex-1 flex flex-col">
+                      <div className="flex items-center justify-between border-b border-stone-200 dark:border-zinc-800 pb-2 mb-3">
+                        <div className="flex gap-2">
+                          <span className="text-[11px] font-semibold text-stone-800 dark:text-white border-b-2 border-stone-900 dark:border-white pb-2 px-1">
+                            3. Output Preview
+                          </span>
+                        </div>
+                        <span className="text-[9px] font-mono bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded">
+                          Live Refreshing
                         </span>
                       </div>
-                      <div className="grid gap-4 p-5 lg:grid-cols-[1.12fr_0.88fr]">
-                        <div>
-                          <div className="max-w-[14rem] text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-stone-950 dark:text-white">
-                            Build faster with better code
+
+                      {/* High-fidelity preview representation */}
+                      <div className="border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 rounded-lg overflow-hidden p-3 shadow-inner">
+                        <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-900 pb-1.5 text-[8px] text-stone-400 dark:text-zinc-500">
+                          <span className="font-semibold text-stone-700 dark:text-zinc-300">StartupLanding</span>
+                          <div className="flex gap-1.5">
+                            <span>Features</span>
+                            <span>Pricing</span>
                           </div>
-                          <p className="mt-3 text-sm leading-6 text-stone-500 dark:text-zinc-400">
-                            VisualToCode helps you convert any design into
-                            clean, production-ready code in seconds.
-                          </p>
-                          <div className="mt-5 flex gap-3">
-                            <span className="rounded-lg bg-stone-950 px-4 py-2 text-xs font-semibold text-white dark:bg-white dark:text-stone-950">
+                        </div>
+                        <div className="pt-2 pb-1">
+                          <div className="text-xs font-bold tracking-tight text-stone-950 dark:text-white leading-tight">
+                            Build faster with clean code.
+                          </div>
+                          <div className="mt-1 text-[9px] text-stone-500 dark:text-zinc-400 leading-normal">
+                            Convert designs into production-ready UI in seconds.
+                          </div>
+                          <div className="mt-2.5 flex items-center justify-between">
+                            <span className="rounded bg-stone-950 dark:bg-white text-white dark:text-stone-950 text-[8px] font-medium px-2 py-0.5">
                               Get Started
                             </span>
-                            <span className="rounded-lg border border-stone-200 px-4 py-2 text-xs font-semibold text-stone-700 dark:border-zinc-700 dark:text-zinc-300">
-                              View Demo
-                            </span>
+                            {/* Miniature stats widget matching the image */}
+                            <div className="bg-stone-50 dark:bg-zinc-900 border border-stone-100 dark:border-zinc-800 rounded p-1 text-right min-w-[65px]">
+                              <div className="text-[7px] text-stone-400 dark:text-zinc-500">Revenue</div>
+                              <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">$24,532</div>
+                            </div>
                           </div>
                         </div>
-                        <div className="rounded-[1.2rem] border border-stone-200 bg-stone-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
-                          <div className="text-xs text-stone-400 dark:text-zinc-500">
-                            Total Revenue
-                          </div>
-                          <div className="mt-2 text-4xl font-semibold tracking-[-0.05em] text-stone-950 dark:text-white">
-                            $24,532
-                          </div>
-                          <div className="mt-2 text-xs text-emerald-600 dark:text-emerald-400">
-                            +12.5% from last month
-                          </div>
-                          <div className="mt-6 h-28 rounded-[1rem] bg-[linear-gradient(180deg,#eff6ff,#dbeafe)] dark:bg-[linear-gradient(180deg,#172554,#0f172a)]" />
-                        </div>
-                      </div>
-                      <div className="border-t border-stone-200 px-5 py-4 text-center text-xs text-stone-400 dark:border-zinc-800 dark:text-zinc-500">
-                        Trusted by developers at Linear, Vercel, Notion, GitHub, Adobe
                       </div>
                     </div>
-                  </div>
-                }
-              />
 
-              <ReferencePanel
-                title="4. Generated Code"
-                children={
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4 border-b border-stone-200 pb-3 text-xs font-medium text-stone-500 dark:border-zinc-800 dark:text-zinc-400">
-                      <span className="text-sky-600 dark:text-sky-400">React</span>
-                      <span>Vue</span>
-                      <span>HTML</span>
-                      <span>Tailwind</span>
-                    </div>
-                    <div className="rounded-[1.2rem] border border-stone-200 bg-stone-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
-                      <CodeSnippetMock />
-                    </div>
-                    <div className="flex gap-3">
-                      <button className="rounded-xl border border-stone-200 bg-white px-4 py-2 text-xs font-semibold text-stone-700 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
-                        Copy Code
-                      </button>
-                      <button className="rounded-xl bg-stone-950 px-4 py-2 text-xs font-semibold text-white dark:bg-white dark:text-stone-950">
-                        Download
-                      </button>
+                    <div>
+                      <div className="text-[11px] font-semibold text-stone-600 dark:text-zinc-300 mb-2">
+                        4. Code Snippet
+                      </div>
+                      {/* Miniature Editor snippet */}
+                      <div className="border border-stone-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-900/80 rounded-lg p-2.5">
+                        <div className="font-mono text-[9px] text-sky-800 dark:text-sky-300 space-y-1 overflow-hidden h-[90px] leading-relaxed">
+                          <div><span className="text-purple-600 dark:text-purple-400">import</span> React <span className="text-purple-600 dark:text-purple-400">from</span> <span className="text-emerald-600 dark:text-emerald-400">'react'</span>;</div>
+                          <div><span className="text-purple-600 dark:text-purple-400">export default function</span> <span className="text-blue-600 dark:text-blue-400">LandingDemo</span>() &#123;</div>
+                          <div>&nbsp;&nbsp;<span className="text-purple-600 dark:text-purple-400">return</span> (</div>
+                          <div>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span className="text-blue-600 dark:text-blue-400">div</span> <span className="text-amber-600 dark:text-amber-400">className</span>=<span className="text-emerald-600 dark:text-emerald-400">'min-h-screen bg-stone-50'</span>&gt;</div>
+                          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span className="text-blue-600 dark:text-blue-400">header</span> <span className="text-amber-600 dark:text-amber-400">className</span>=<span className="text-emerald-600 dark:text-emerald-400">'flex justify-between px-6 py-4'</span>&gt;</div>
+                          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span className="text-blue-600 dark:text-blue-400">a</span> <span className="text-amber-600 dark:text-amber-400">href</span>=<span className="text-emerald-600 dark:text-emerald-400">'#'</span>&gt;StartupLanding&lt;/<span className="text-blue-600 dark:text-blue-400">a</span>&gt;</div>
+                        </div>
+                      </div>
+                      {/* Copy button */}
+                      <div className="mt-3 flex justify-between items-center">
+                        <span className="text-[10px] text-stone-400 dark:text-zinc-500">React + Tailwind code</span>
+                        <a
+                          href="#generator"
+                          className="rounded bg-stone-950 hover:bg-stone-800 text-white dark:bg-white dark:text-stone-950 dark:hover:bg-zinc-200 text-[10px] font-semibold px-2.5 py-1.5 transition-colors"
+                        >
+                          Launch Workbench
+                        </a>
+                      </div>
                     </div>
                   </div>
-                }
-              />
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
         <section
-          id="inputs"
+          id="generator"
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
           <div className="text-center">
-            <p className="editorial-kicker">Supported Inputs</p>
-            <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold text-stone-950 dark:text-white sm:text-4xl">
-              Supported Inputs
+            <p className="editorial-kicker">Start From Any Input</p>
+            <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
+              Upload a reference and generate code.
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-              Upload or connect any visual input. Our AI will handle the rest.
+              Drop in a screenshot, capture a URL, describe an interface, or
+              import existing code. This is the fastest path into the product.
             </p>
           </div>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-8">
+          <div className="studio-panel mx-auto mt-8 rounded-2xl p-4 sm:p-6 lg:p-8">
+            <Suspense fallback={<GeneratorFallback />}>
+              <UnifiedInputPane
+                doCreate={doCreate}
+                doCreateFromText={doCreateFromText}
+                importFromCode={importFromCode}
+                settings={settings}
+                setSettings={setSettings}
+                designSystems={designSystems}
+                onAddNewDesignSystem={onAddNewDesignSystem}
+                onManageDesignSystems={onManageDesignSystems}
+              />
+            </Suspense>
+          </div>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-8">
             {inputItems.map((item, index) => (
               <SupportedInputCard
                 key={item.title}
@@ -523,10 +571,10 @@ const StartPane: React.FC<Props> = ({
           id="pipeline"
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
-          <div className="studio-panel rounded-[2rem] p-5 sm:p-6 lg:p-8">
+          <div className="studio-panel rounded-2xl p-5 sm:p-6 lg:p-8">
             <div className="max-w-3xl">
               <p className="editorial-kicker">How AI Understands UI</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
                 How AI Understands UI
               </h2>
               <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
@@ -560,7 +608,7 @@ const StartPane: React.FC<Props> = ({
           >
             <div>
               <p className="editorial-kicker">Before / After</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
                 Show that the AI understood the interface.
               </h2>
               <p className="mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
@@ -577,10 +625,10 @@ const StartPane: React.FC<Props> = ({
         <section
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
-          <div className="studio-panel rounded-[2rem] p-5 sm:p-6 lg:p-8">
+          <div className="studio-panel rounded-2xl p-5 sm:p-6 lg:p-8">
             <div className="max-w-3xl">
               <p className="editorial-kicker">Pricing</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
                 A familiar free-to-paid path.
               </h2>
               <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
@@ -610,10 +658,10 @@ const StartPane: React.FC<Props> = ({
         </section>
 
         <section id="stack" className="section-divider mt-12 scroll-mt-28 lg:mt-14">
-          <div className="studio-panel rounded-[2rem] p-5 sm:p-6 lg:p-8">
+          <div className="studio-panel rounded-2xl p-5 sm:p-6 lg:p-8">
             <div className="text-center">
               <p className="editorial-kicker">Built for Modern Developers</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
                 Built for Modern Developers
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300">
@@ -639,10 +687,10 @@ const StartPane: React.FC<Props> = ({
           id="timeline"
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
-          <div className="studio-panel rounded-[2rem] p-5 sm:p-6 lg:p-8">
+          <div className="studio-panel rounded-2xl p-5 sm:p-6 lg:p-8">
             <div className="text-center">
               <p className="editorial-kicker">From Visual to Code in 7 Steps</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
+              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
                 From Visual to Code in 7 Steps
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
@@ -675,60 +723,12 @@ const StartPane: React.FC<Props> = ({
         </section>
 
         <section
-          id="generator"
-          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
-        >
-          <div className="studio-panel mx-auto rounded-[2rem] p-4 sm:p-6 lg:p-8">
-            <div className="mb-6 grid gap-5 border-b border-stone-200/80 pb-6 dark:border-zinc-800 lg:grid-cols-[1.12fr_0.88fr] lg:items-end">
-              <div>
-                <p className="editorial-kicker">Launch Workspace</p>
-                <h2 className="mt-2 font-['Space_Grotesk'] text-3xl font-semibold tracking-[-0.04em] text-stone-950 dark:text-white sm:text-4xl">
-                  Start from a real visual input.
-                </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300">
-                  The interactive generator stays on the page as the main call
-                  to action, but now it arrives after the product story is
-                  already obvious.
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-xs text-stone-600 dark:text-zinc-400">
-                <span className="studio-surface px-3 py-2 text-center">
-                  Screenshot + URL + Text
-                </span>
-                <span className="studio-surface px-3 py-2 text-center">
-                  Preview + Code
-                </span>
-                <span className="studio-surface px-3 py-2 text-center">
-                  Editable output
-                </span>
-                <span className="studio-surface px-3 py-2 text-center">
-                  Multi-stack
-                </span>
-              </div>
-            </div>
-
-            <Suspense fallback={<GeneratorFallback />}>
-              <UnifiedInputPane
-                doCreate={doCreate}
-                doCreateFromText={doCreateFromText}
-                importFromCode={importFromCode}
-                settings={settings}
-                setSettings={setSettings}
-                designSystems={designSystems}
-                onAddNewDesignSystem={onAddNewDesignSystem}
-                onManageDesignSystems={onManageDesignSystems}
-              />
-            </Suspense>
-          </div>
-        </section>
-
-        <section
           id="use-cases"
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
           <div className="flex flex-col gap-3 text-center">
             <p className="editorial-kicker">Real Use Cases</p>
-            <h2 className="text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
+            <h2 className="text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
               Real Use Cases
             </h2>
             <p className="mx-auto max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
@@ -754,13 +754,13 @@ const StartPane: React.FC<Props> = ({
         >
           <div className="text-center">
             <p className="editorial-kicker">Frequently Asked Questions</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-stone-950 dark:text-white sm:text-4xl">
+            <h2 className="mt-3 text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
               Frequently Asked Questions
             </h2>
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-[2rem] border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,244,0.88))] p-4 shadow-[0_28px_70px_rgba(18,22,33,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-[linear-gradient(180deg,rgba(9,9,11,0.94),rgba(24,24,27,0.84))] sm:p-6">
+            <div className="rounded-2xl border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,244,0.88))] p-4 shadow-[0_28px_70px_rgba(18,22,33,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-[linear-gradient(180deg,rgba(9,9,11,0.94),rgba(24,24,27,0.84))] sm:p-6">
               <Accordion type="single" collapsible className="w-full">
                 <FaqItem
                   value="item-1"
@@ -780,7 +780,7 @@ const StartPane: React.FC<Props> = ({
               </Accordion>
             </div>
 
-            <div className="rounded-[2rem] border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,244,0.88))] p-4 shadow-[0_28px_70px_rgba(18,22,33,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-[linear-gradient(180deg,rgba(9,9,11,0.94),rgba(24,24,27,0.84))] sm:p-6">
+            <div className="rounded-2xl border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,244,0.88))] p-4 shadow-[0_28px_70px_rgba(18,22,33,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-[linear-gradient(180deg,rgba(9,9,11,0.94),rgba(24,24,27,0.84))] sm:p-6">
               <Accordion type="single" collapsible className="w-full">
                 <FaqItem
                   value="item-4"
@@ -808,11 +808,11 @@ const StartPane: React.FC<Props> = ({
           ) : null}
         </section>
 
-        <footer className="mt-12 rounded-[2rem] bg-stone-950 px-6 py-8 text-white shadow-[0_30px_90px_rgba(17,17,17,0.16)] dark:border dark:border-zinc-800 sm:px-8">
+        <footer className="mt-12 rounded-2xl bg-stone-950 px-6 py-8 text-white shadow-[0_30px_90px_rgba(17,17,17,0.16)] dark:border dark:border-zinc-800 sm:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_2.7fr_1.2fr]">
             <div className="max-w-md">
               <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <span className="flex h-5 w-5 items-center justify-center rounded-md border border-white/25">
+                <span className="flex h-5 w-5 items-center justify-center">
                   <img
                     src="/favicon/log-square.png"
                     alt="VisualToCode"
@@ -874,81 +874,7 @@ const StartPane: React.FC<Props> = ({
   );
 };
 
-function ReferencePanel({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-900/70">
-      <div className="text-sm font-semibold text-stone-700 dark:text-zinc-200">
-        {title}
-      </div>
-      <div className="mt-4">{children}</div>
-    </div>
-  );
-}
 
-function ReferenceInputRow({
-  title,
-  subtitle,
-  accent,
-  active = false,
-}: {
-  title: string;
-  subtitle: string;
-  accent: string;
-  active?: boolean;
-}) {
-  return (
-    <div
-      className={`flex items-center gap-3 rounded-[1rem] border px-3 py-3 ${
-        active
-          ? "border-sky-200 bg-white shadow-sm dark:border-sky-900/50 dark:bg-zinc-950"
-          : "border-stone-200 bg-white/85 dark:border-zinc-800 dark:bg-zinc-950/80"
-      }`}
-    >
-      <div className={`h-8 w-8 rounded-lg ${accent}`} />
-      <div className="min-w-0">
-        <div className="text-sm font-medium text-stone-800 dark:text-zinc-100">
-          {title}
-        </div>
-        <div className="text-xs text-stone-500 dark:text-zinc-400">
-          {subtitle}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ReferenceStatusRow({
-  label,
-  status,
-  active = false,
-}: {
-  label: string;
-  status: string;
-  active?: boolean;
-}) {
-  return (
-    <div className="rounded-[1rem] border border-stone-200 bg-white px-3 py-3 dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="text-sm font-medium text-stone-800 dark:text-zinc-100">
-        {label}
-      </div>
-      <div
-        className={`mt-1 text-xs ${
-          active
-            ? "text-sky-600 dark:text-sky-400"
-            : "text-emerald-600 dark:text-emerald-400"
-        }`}
-      >
-        {status}
-      </div>
-    </div>
-  );
-}
 
 function PricingCard({
   name,
@@ -969,7 +895,7 @@ function PricingCard({
 }) {
   return (
     <div
-      className={`rounded-[1.8rem] border p-6 shadow-sm transition-transform ${
+      className={`rounded-2xl border p-6 shadow-sm transition-transform ${
         featured
           ? "border-stone-900 bg-stone-950 text-white shadow-[0_28px_70px_rgba(17,17,17,0.18)] dark:border-white dark:bg-white dark:text-stone-950"
           : "border-stone-200/80 bg-white/90 text-stone-900 dark:border-zinc-800 dark:bg-zinc-950/80 dark:text-white"
@@ -1003,7 +929,7 @@ function PricingCard({
         ) : null}
       </div>
 
-      <div className="mt-6 text-4xl font-semibold tracking-[-0.04em]">
+      <div className="mt-6 text-4xl font-semibold tracking-normal">
         {price}
       </div>
 
@@ -1021,9 +947,9 @@ function PricingCard({
         {features.map((feature) => (
           <div
             key={feature}
-            className={`rounded-[1rem] px-4 py-3 text-sm ${
+            className={`rounded-lg px-4 py-3 text-sm ${
               featured
-                ? "bg-white/8 text-stone-100 dark:bg-stone-100 dark:text-stone-900"
+                ? "bg-white/10 text-stone-100 dark:bg-stone-100 dark:text-stone-900"
                 : "bg-stone-50 text-stone-700 dark:bg-zinc-900 dark:text-zinc-300"
             }`}
           >
@@ -1034,7 +960,7 @@ function PricingCard({
 
       <a
         href="#generator"
-        className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-transform hover:-translate-y-0.5 ${
+        className={`mt-6 inline-flex w-full items-center justify-center rounded-lg px-5 py-3 text-sm font-semibold transition-transform hover:-translate-y-0.5 ${
           featured
             ? "bg-white text-stone-950 dark:bg-stone-950 dark:text-white"
             : "border border-stone-300 bg-white text-stone-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
@@ -1072,7 +998,7 @@ function SupportedInputCard({
 
   return (
     <div
-      className={`flex min-h-[8.5rem] flex-col items-center justify-center rounded-[1.15rem] border p-4 text-center transition-transform hover:-translate-y-0.5 ${
+      className={`flex min-h-[8.5rem] flex-col items-center justify-center rounded-xl border p-4 text-center transition-transform hover:-translate-y-0.5 ${
         active
           ? "border-sky-200 bg-white shadow-[0_18px_40px_rgba(14,165,233,0.12)] dark:border-sky-900/50 dark:bg-zinc-950"
           : "border-stone-200/80 bg-white/78 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/70"
@@ -1093,38 +1019,7 @@ function SupportedInputCard({
   );
 }
 
-function CodeSnippetMock() {
-  const lines = [
-    "import React from 'react'",
-    "",
-    "export default function LandingDemo() {",
-    "  return (",
-    "    <div className='min-h-screen bg-white'>",
-    "      <header className='px-6 py-4'>",
-    "        <nav className='flex justify-between'>",
-    "          <a href='#' className='font-bold'>",
-    "            StartupLanding",
-    "          </a>",
-    "        </nav>",
-    "      </header>",
-    "    </div>",
-    "  )",
-    "}",
-  ];
 
-  return (
-    <div className="space-y-2 font-mono text-[11px] leading-5 text-sky-700 dark:text-sky-300">
-      {lines.map((line, index) => (
-        <div key={`${line}-${index}`} className="whitespace-pre">
-          <span className="mr-3 inline-block w-4 text-right text-stone-400 dark:text-zinc-500">
-            {index + 1}
-          </span>
-          <span>{line}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function PipelineStep({
   title,
@@ -1167,14 +1062,14 @@ function PipelineStep({
 
 function BeforeAfterPanel() {
   return (
-    <div className="studio-panel overflow-hidden rounded-[2rem] p-5 sm:p-6">
-      <div className="relative rounded-[1.6rem] border border-stone-200/80 bg-stone-50/80 p-3 dark:border-zinc-800 dark:bg-zinc-900/70">
+    <div className="studio-panel overflow-hidden rounded-2xl p-5 sm:p-6">
+      <div className="relative rounded-xl border border-stone-200/80 bg-stone-50/80 p-3 dark:border-zinc-800 dark:bg-zinc-900/70">
         <div className="grid gap-3 lg:grid-cols-2">
           <div>
             <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-zinc-400">
               Before
             </div>
-            <div className="overflow-hidden rounded-[1.35rem] border border-stone-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="overflow-hidden rounded-lg border border-stone-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
               <img
                 src="/showcases/landing-page-sketch.png"
                 alt="Original interface reference"
@@ -1191,7 +1086,7 @@ function BeforeAfterPanel() {
             <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">
               After
             </div>
-            <div className="overflow-hidden rounded-[1.35rem] border border-emerald-200 bg-white dark:border-emerald-900/40 dark:bg-zinc-950">
+            <div className="overflow-hidden rounded-lg border border-emerald-200 bg-white dark:border-emerald-900/40 dark:bg-zinc-950">
               <img
                 src="/showcases/landing-page-output.png"
                 alt="AI rebuilt interface"
@@ -1227,7 +1122,7 @@ function HorizontalTimelineStep({
   description: string;
 }) {
   return (
-    <div className="relative rounded-[1rem] border border-stone-200/80 bg-white px-4 pb-5 pt-8 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+    <div className="relative rounded-lg border border-stone-200/80 bg-white px-4 pb-5 pt-8 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
       <div className="absolute left-1/2 top-0 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-sky-300 bg-white text-[10px] font-semibold text-sky-700 shadow-sm dark:border-sky-900/60 dark:bg-zinc-950 dark:text-sky-300">
         {step}
       </div>
@@ -1251,8 +1146,8 @@ function UseCasePreviewCard({
   image: string;
 }) {
   return (
-    <div className="rounded-[1.15rem] border border-stone-200/80 bg-white/92 p-2 shadow-sm transition-transform hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-950/85">
-      <div className="overflow-hidden rounded-[0.85rem] border border-stone-200/80 bg-stone-50 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-xl border border-stone-200/80 bg-white/92 p-2 shadow-sm transition-transform hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-950/85">
+      <div className="overflow-hidden rounded-lg border border-stone-200/80 bg-stone-50 dark:border-zinc-800 dark:bg-zinc-900">
         <img
           src={image}
           alt={title}
@@ -1273,18 +1168,18 @@ function UseCasePreviewCard({
 
 function GeneratorFallback() {
   return (
-    <div className="rounded-[1.8rem] border border-stone-200/80 bg-white/70 p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/70">
+    <div className="rounded-2xl border border-stone-200/80 bg-white/70 p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/70">
       <div className="grid gap-3 sm:grid-cols-4">
         {["Upload", "URL", "Text", "Import"].map((label) => (
           <div
             key={label}
-            className="rounded-xl border border-stone-200/80 bg-stone-50/80 px-4 py-4 text-center text-sm font-medium text-stone-500 dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-400"
+            className="rounded-lg border border-stone-200/80 bg-stone-50/80 px-4 py-4 text-center text-sm font-medium text-stone-500 dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-400"
           >
             {label}
           </div>
         ))}
       </div>
-      <div className="mt-5 rounded-[1.5rem] border border-dashed border-stone-300/90 bg-stone-50/80 px-6 py-14 text-center dark:border-zinc-700 dark:bg-zinc-900/60">
+      <div className="mt-5 rounded-xl border border-dashed border-stone-300/90 bg-stone-50/80 px-6 py-14 text-center dark:border-zinc-700 dark:bg-zinc-900/60">
         <div className="text-sm font-medium text-stone-600 dark:text-zinc-300">
           Loading workspace...
         </div>
@@ -1299,7 +1194,7 @@ function GeneratorFallback() {
 
 function ResultChip({ label }: { label: string }) {
   return (
-    <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm font-medium text-stone-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+    <div className="rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-sm font-medium text-stone-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
       {label}
     </div>
   );
@@ -1317,7 +1212,7 @@ function FaqItem({
   return (
     <AccordionItem
       value={value}
-      className="mb-3 overflow-hidden rounded-[1.4rem] border border-stone-200/80 bg-white/80 px-4 dark:border-zinc-800 dark:bg-zinc-900/70"
+      className="mb-3 overflow-hidden rounded-xl border border-stone-200/80 bg-white/80 px-4 dark:border-zinc-800 dark:bg-zinc-900/70"
     >
       <AccordionTrigger className="text-left text-base font-semibold text-stone-950 hover:no-underline dark:text-white">
         {question}

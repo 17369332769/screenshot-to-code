@@ -87,28 +87,34 @@ function UrlTab({
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="w-full max-w-lg">
-        <div className="flex flex-col items-center gap-6 p-8 border border-gray-200 dark:border-zinc-700 rounded-xl bg-gray-50/50 dark:bg-zinc-900/50">
-          <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center">
+      <div className="w-full max-w-3xl">
+        <div className="flex flex-col gap-6 rounded-xl border border-stone-200/80 bg-white/75 p-5 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-stone-200 bg-stone-50 text-stone-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
+              width="22"
+              height="22"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="text-gray-400 dark:text-zinc-500"
+              className="text-current"
             >
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
             </svg>
-          </div>
-
-          <div className="text-center">
-            <h3 className="text-gray-700 dark:text-zinc-200 font-medium">{t("urlTitle")}</h3>
+            </div>
+            <div>
+              <h3 className="font-['Space_Grotesk'] text-xl font-semibold tracking-normal text-stone-900 dark:text-white">
+                {t("urlTitle")}
+              </h3>
+              <p className="mt-1 text-sm text-stone-500 dark:text-zinc-400">
+                Capture a public page and use it as the visual reference.
+              </p>
+            </div>
           </div>
 
           <div className="w-full space-y-3">
@@ -121,7 +127,7 @@ function UrlTab({
                   takeScreenshot();
                 }
               }}
-              className="w-full"
+              className="h-11 rounded-lg border-stone-200 bg-white text-sm shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
               data-testid="url-input"
             />
             {isFigmaUrl(referenceUrl) && (
@@ -138,7 +144,7 @@ function UrlTab({
             <Button
               onClick={takeScreenshot}
               disabled={isLoading}
-              className="w-full"
+              className="w-full rounded-lg"
               size="lg"
               data-testid="url-capture"
             >
@@ -172,7 +178,7 @@ function UrlTab({
             </Button>
           </div>
 
-          <p className="text-xs text-gray-400 dark:text-zinc-500 text-center">
+          <p className="text-center text-xs text-stone-400 dark:text-zinc-500">
             {t("requiresScreenshotOneKey")}
           </p>
         </div>

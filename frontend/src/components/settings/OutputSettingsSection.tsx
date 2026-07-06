@@ -33,8 +33,8 @@ function OutputSettingsSection({
 
   return (
     <div className="flex flex-col gap-y-3 justify-between text-sm">
-      <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-3 sm:gap-4">
-        <span className="font-medium text-stone-700 dark:text-zinc-300">
+      <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-[minmax(120px,0.7fr)_minmax(0,2fr)] sm:gap-4">
+        <span className="text-sm font-semibold text-stone-700 dark:text-zinc-300">
           {resolvedLabel}
         </span>
         <Select
@@ -43,7 +43,7 @@ function OutputSettingsSection({
           disabled={shouldDisableUpdates}
         >
           <SelectTrigger
-            className="col-span-2"
+            className="h-11 rounded-lg border-stone-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:col-span-1"
             id="output-settings-js"
             data-testid="stack-select"
           >

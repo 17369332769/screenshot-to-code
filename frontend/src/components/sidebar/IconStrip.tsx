@@ -36,7 +36,7 @@ function IconStrip({
         onClick={onLogoClick}
         className="rounded-2xl p-2 transition-colors hover:bg-stone-200/70 dark:hover:bg-zinc-800 lg:mb-2 lg:p-1.5"
       >
-        <div className="flex h-10 w-10 items-center justify-center overflow-hidden border border-stone-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-white">
+        <div className="flex h-10 w-10 items-center justify-center overflow-hidden">
           <img
             src="/favicon/log-square.png"
             alt="Logo"
