@@ -80,11 +80,11 @@ export function usePageSeo() {
       ? "index,follow"
       : "noindex,nofollow";
     const title = isHomePage
-      ? `${t("turnScreenshotsIntoCode")} | Image to Code`
-      : seoLandingPage?.title ?? "Screenshot to Code";
+      ? `${t("turnScreenshotsIntoCode")} | ${t("imageToCodeWebsite")}`
+      : seoLandingPage?.title ?? "Image to Code";
     const description = isHomePage
       ? t("heroDescription")
-      : seoLandingPage?.description ?? "Internal tooling for Screenshot to Code.";
+      : seoLandingPage?.description ?? "Internal tooling for Image to Code.";
 
     document.title = title;
 

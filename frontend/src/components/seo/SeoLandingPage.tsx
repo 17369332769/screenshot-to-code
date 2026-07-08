@@ -10,7 +10,7 @@ function SeoLandingPage({ page }: { page: SeoLandingPageData }) {
       <header className="sticky top-0 z-50 border-b border-stone-200/70 bg-white/85 backdrop-blur dark:border-zinc-800 dark:bg-black/60">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <a href="/" className="text-sm font-semibold tracking-[0.22em] text-stone-600 dark:text-zinc-300">
-            IMAGETOCODE
+            Image to Code
           </a>
           <div className="flex items-center gap-3">
             <a

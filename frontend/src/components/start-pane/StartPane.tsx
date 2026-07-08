@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from "react";
+import type { InputTab } from "../unified-input/UnifiedInputPane";
 import { DesignSystem, Settings } from "../../types";
 import { Stack } from "../../lib/stacks";
 import AccountPanel from "../account/AccountPanel";
@@ -10,14 +11,9 @@ import {
   FaYoutube,
 } from "react-icons/fa6";
 import {
-  SiAndroid,
-  SiBootstrap,
-  SiFlutter,
   SiHtml5,
   SiNextdotjs,
-  SiNuxtdotjs,
   SiReact,
-  SiSwift,
   SiTailwindcss,
   SiVuedotjs,
 } from "react-icons/si";
@@ -27,6 +23,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { TranslationKey, useI18n } from "../../i18n";
 import {
   LuArrowRight,
   LuChevronRight,
@@ -34,7 +31,6 @@ import {
   LuComponent,
   LuFigma,
   LuFileText,
-  LuGem,
   LuGlobe2,
   LuImage,
   LuLayers,
@@ -67,241 +63,77 @@ interface Props {
 
 const inputItems = [
   {
-    title: "Screenshot",
-    subtitle: "PNG, JPG, WEBP",
-    accent: "bg-sky-500",
+    id: "screenshot",
+    titleKey: "inputScreenshotTitle",
+    subtitleKey: "inputImageSubtitle",
+    tab: "upload",
     icon: LuImage,
   },
   {
-    title: "Figma File",
-    subtitle: ".fig, .figma",
-    accent: "bg-pink-500",
-    icon: LuFigma,
-  },
-  {
-    title: "Website URL",
-    subtitle: "Any public URL",
-    accent: "bg-cyan-500",
+    id: "website-url",
+    titleKey: "inputWebsiteUrlTitle",
+    subtitleKey: "inputWebsiteUrlSubtitle",
+    tab: "url",
     icon: LuGlobe2,
   },
   {
-    title: "Mockup",
-    subtitle: "PNG, JPG, PSD",
-    accent: "bg-emerald-500",
+    id: "figma-export",
+    titleKey: "inputFigmaExportTitle",
+    subtitleKey: "inputFigmaExportSubtitle",
+    tab: "upload",
+    icon: LuFigma,
+  },
+  {
+    id: "mockup-image",
+    titleKey: "inputMockupImageTitle",
+    subtitleKey: "inputImageSubtitle",
+    tab: "upload",
     icon: LuLayers,
   },
   {
-    title: "Wireframe",
-    subtitle: "PNG, JPG, SVG",
-    accent: "bg-indigo-500",
+    id: "wireframe-image",
+    titleKey: "inputWireframeImageTitle",
+    subtitleKey: "inputImageSubtitle",
+    tab: "upload",
     icon: LuPenTool,
   },
   {
-    title: "Sketch File",
-    subtitle: ".sketch",
-    accent: "bg-amber-500",
-    icon: LuGem,
-  },
-  {
-    title: "PDF Document",
-    subtitle: ".pdf",
-    accent: "bg-rose-500",
-    icon: LuFileText,
-  },
-  {
-    title: "Video Recording",
-    subtitle: "MP4, MOV, WEBM",
-    accent: "bg-violet-500",
+    id: "video-recording",
+    titleKey: "inputVideoRecordingTitle",
+    subtitleKey: "inputVideoRecordingSubtitle",
+    tab: "upload",
     icon: LuVideo,
   },
-] as const;
-
-const pipelineItems = [
   {
-    title: "Vision Parsing",
-    description: "Understanding the visual content",
-    icon: LuScan,
-  },
-  {
-    title: "Layout Detection",
-    description: "Detecting structure and spacing",
-    icon: LuLayoutGrid,
-  },
-  {
-    title: "Component Recognition",
-    description: "Identifying UI components",
-    icon: LuComponent,
-  },
-  {
-    title: "Typography Analysis",
-    description: "Extracting fonts, sizes and styles",
+    id: "text-prompt",
+    titleKey: "inputTextPromptTitle",
+    subtitleKey: "inputTextPromptSubtitle",
+    tab: "text",
     icon: LuType,
   },
   {
-    title: "Responsive Layout",
-    description: "Building responsive grid system",
-    icon: LuMonitorSmartphone,
+    id: "import-code",
+    titleKey: "inputImportCodeTitle",
+    subtitleKey: "inputImportCodeSubtitle",
+    tab: "import",
+    icon: LuFileText,
   },
-  {
-    title: "Semantic HTML",
-    description: "Generating clean HTML structure",
-    icon: LuCode2,
-  },
-  {
-    title: "Tailwind Optimization",
-    description: "Utility-first CSS generation",
-    icon: LuWind,
-  },
-  {
-    title: "Code Generation",
-    description: "Production-ready code output",
-    icon: LuCode2,
-  },
-] as const;
+] as const satisfies readonly {
+  id: string;
+  titleKey: TranslationKey;
+  subtitleKey: TranslationKey;
+  tab: InputTab;
+  icon: React.ComponentType<{ className?: string }>;
+}[];
 
-const stackItems = [
-  { label: "React", icon: SiReact },
-  { label: "Next.js", icon: SiNextdotjs },
-  { label: "Vue", icon: SiVuedotjs },
-  { label: "Nuxt", icon: SiNuxtdotjs },
-  { label: "Tailwind CSS", icon: SiTailwindcss },
-  { label: "HTML", icon: SiHtml5 },
-  { label: "Bootstrap", icon: SiBootstrap },
-  { label: "Flutter", icon: SiFlutter },
-  { label: "SwiftUI", icon: SiSwift },
-  { label: "Jetpack Compose", icon: SiAndroid },
-] as const;
+type SupportedInputId = (typeof inputItems)[number]["id"];
 
-const workflowItems = [
-  "Upload",
-  "Analyze",
-  "Understand",
-  "Generate",
-  "Preview",
-  "Edit",
-  "Deploy",
-] as const;
-
-const useCaseItems = [
-  {
-    title: "Clone Landing Page",
-    description:
-      "Convert any landing page into clean code you can keep editing and shipping.",
-    image: "/showcases/landing-page-output.png",
-  },
-  {
-    title: "Convert Figma Design",
-    description:
-      "Turn Figma design direction into production-ready code with less rebuild work.",
-    image: "/showcases/landing-page-sketch.png",
-  },
-  {
-    title: "Build Dashboard",
-    description:
-      "Recreate complex dashboards and internal tooling layouts in minutes.",
-    image: "/showcases/dashboard-output.png",
-  },
-  {
-    title: "Mobile UI to Code",
-    description:
-      "Convert mobile designs to responsive code that stays easy to refine.",
-    image: "/showcases/mobile-app-output.png",
-  },
-  {
-    title: "Marketing Website",
-    description:
-      "Build marketing sites and launch pages faster from visual references.",
-    image: "/showcases/landing-page-output.png",
-  },
-  {
-    title: "Email Templates",
-    description:
-      "Convert designs into responsive email layouts with a better starting point.",
-    image: "/showcases/landing-page-sketch.png",
-  },
-  {
-    title: "Admin Systems",
-    description:
-      "Generate full admin interfaces with tables, filters, sidebars, and detail views.",
-    image: "/showcases/dashboard-output.png",
-  },
-] as const;
-
-const pricingPlans = [
-  {
-    name: "Free",
-    subtitle: "Try the workflow",
-    price: "$0",
-    description:
-      "Best for validating one real screenshot, testing output quality, and understanding whether the workflow fits your team.",
-    features: [
-      "A few free generations",
-      "Preview and editable output",
-      "Core screenshot, URL, and text flow",
-    ],
-    cta: "Start free",
-    featured: false,
-  },
-  {
-    name: "Pro",
-    subtitle: "For regular use",
-    price: "$29/mo",
-    description:
-      "A better fit for solo builders and designers who want more iterations, more volume, and faster daily workflow.",
-    features: [
-      "More monthly generations",
-      "Better support for repeated iteration",
-      "A stronger fit for shipping side projects and client drafts",
-    ],
-    cta: "Choose Pro",
-    featured: true,
-  },
-  {
-    name: "Team",
-    subtitle: "For shared rollout",
-    price: "Custom",
-    description:
-      "Designed for agencies and product teams that need shared usage, higher limits, and a cleaner path into team workflows.",
-    features: [
-      "Higher-volume collaboration",
-      "Better fit for internal product teams",
-      "Useful for agencies, redesigns, and client delivery",
-    ],
-    cta: "Talk to sales",
-    featured: false,
-  },
-] as const;
-
-const footerProductLinks = [
-  { href: "#pipeline", label: "Features" },
-  { href: "#timeline", label: "How It Works" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "https://github.com/abi/screenshot-to-code/blob/main/README.md", label: "Changelog" },
-] as const;
-
-const footerResourceLinks = [
-  { href: "https://github.com/abi/screenshot-to-code/wiki/Screen-Recording-to-Code", label: "Documentation" },
-  {
-    href: "https://github.com/abi/screenshot-to-code/blob/main/Troubleshooting.md",
-    label: "Guides",
-  },
-  { href: "https://github.com/abi/screenshot-to-code", label: "Blog" },
-  { href: "#use-cases", label: "Examples" },
-] as const;
-
-const footerCompanyLinks = [
-  { href: "#", label: "About Us" },
-  { href: "#", label: "Careers" },
-  { href: "#", label: "Contact" },
-  { href: "/legal/terms-of-service.html", label: "Privacy Policy" },
-] as const;
-
-const footerCommunityLinks = [
-  { href: "https://github.com/abi/screenshot-to-code", label: "GitHub" },
-  { href: "#", label: "Discord" },
-  { href: "https://twitter.com/_abi_", label: "Twitter" },
-  { href: "#", label: "YouTube" },
-] as const;
+const defaultInputByTab: Record<InputTab, SupportedInputId> = {
+  upload: "screenshot",
+  url: "website-url",
+  text: "text-prompt",
+  import: "import-code",
+};
 
 const StartPane: React.FC<Props> = ({
   doCreate,
@@ -313,6 +145,211 @@ const StartPane: React.FC<Props> = ({
   onAddNewDesignSystem,
   onManageDesignSystems,
 }) => {
+  const { t } = useI18n();
+  const [activeInputId, setActiveInputId] =
+    React.useState<SupportedInputId>("screenshot");
+  const activeInputTab =
+    inputItems.find((item) => item.id === activeInputId)?.tab ?? "upload";
+
+  const pipelineItems = [
+    {
+      title: t("pipelineVisionParsing"),
+      description: t("pipelineVisionParsingDescription"),
+      icon: LuScan,
+    },
+    {
+      title: t("pipelineLayoutDetection"),
+      description: t("pipelineLayoutDetectionDescription"),
+      icon: LuLayoutGrid,
+    },
+    {
+      title: t("pipelineComponentRecognition"),
+      description: t("pipelineComponentRecognitionDescription"),
+      icon: LuComponent,
+    },
+    {
+      title: t("pipelineTypographyAnalysis"),
+      description: t("pipelineTypographyAnalysisDescription"),
+      icon: LuType,
+    },
+    {
+      title: t("pipelineResponsiveLayout"),
+      description: t("pipelineResponsiveLayoutDescription"),
+      icon: LuMonitorSmartphone,
+    },
+    {
+      title: t("pipelineSemanticHtml"),
+      description: t("pipelineSemanticHtmlDescription"),
+      icon: LuCode2,
+    },
+    {
+      title: t("pipelineTailwindOptimization"),
+      description: t("pipelineTailwindOptimizationDescription"),
+      icon: LuWind,
+    },
+    {
+      title: t("pipelineCodeGeneration"),
+      description: t("pipelineCodeGenerationDescription"),
+      icon: LuCode2,
+    },
+  ] as const;
+
+  const workflowItems = [
+    {
+      title: t("workflowUpload"),
+      description: t("workflowUploadDescription"),
+    },
+    {
+      title: t("workflowAnalyze"),
+      description: t("workflowAnalyzeDescription"),
+    },
+    {
+      title: t("workflowUnderstand"),
+      description: t("workflowUnderstandDescription"),
+    },
+    {
+      title: t("workflowGenerate"),
+      description: t("workflowGenerateDescription"),
+    },
+    {
+      title: t("workflowPreview"),
+      description: t("workflowPreviewDescription"),
+    },
+    {
+      title: t("workflowEdit"),
+      description: t("workflowEditDescription"),
+    },
+    {
+      title: t("workflowDeploy"),
+      description: t("workflowDeployDescription"),
+    },
+  ] as const;
+
+  const useCaseItems = [
+    {
+      title: t("useCaseCloneLandingPage"),
+      description: t("useCaseCloneLandingPageDescription"),
+      image: "/showcases/landing-page-output.png",
+    },
+    {
+      title: t("useCaseConvertFigmaDesign"),
+      description: t("useCaseConvertFigmaDesignDescription"),
+      image: "/showcases/landing-page-sketch.png",
+    },
+    {
+      title: t("useCaseBuildDashboard"),
+      description: t("useCaseBuildDashboardDescription"),
+      image: "/showcases/dashboard-output.png",
+    },
+    {
+      title: t("useCaseMobileUiToCode"),
+      description: t("useCaseMobileUiToCodeDescription"),
+      image: "/showcases/mobile-app-output.png",
+    },
+    {
+      title: t("useCaseMarketingWebsite"),
+      description: t("useCaseMarketingWebsiteDescription"),
+      image: "/showcases/landing-page-output.png",
+    },
+    {
+      title: t("useCaseEmailTemplates"),
+      description: t("useCaseEmailTemplatesDescription"),
+      image: "/showcases/landing-page-sketch.png",
+    },
+    {
+      title: t("useCaseAdminSystems"),
+      description: t("useCaseAdminSystemsDescription"),
+      image: "/showcases/dashboard-output.png",
+    },
+  ] as const;
+
+  const pricingPlans = [
+    {
+      name: t("pricingFreePlan"),
+      subtitle: t("pricingFreeSubtitle"),
+      price: t("pricingFreePrice"),
+      description: t("pricingFreeDescription"),
+      features: [
+        t("pricingFreeFeature1"),
+        t("pricingFreeFeature2"),
+        t("pricingFreeFeature3"),
+      ],
+      cta: t("pricingFreeCta"),
+      featured: false,
+    },
+    {
+      name: t("pricingProPlan"),
+      subtitle: t("pricingProSubtitle"),
+      price: t("pricingProPrice"),
+      description: t("pricingProDescription"),
+      features: [
+        t("pricingProFeature1"),
+        t("pricingProFeature2"),
+        t("pricingProFeature3"),
+      ],
+      cta: t("pricingProCta"),
+      featured: true,
+    },
+    {
+      name: t("pricingTeamPlan"),
+      subtitle: t("pricingTeamSubtitle"),
+      price: t("pricingTeamPrice"),
+      description: t("pricingTeamDescription"),
+      features: [
+        t("pricingTeamFeature1"),
+        t("pricingTeamFeature2"),
+        t("pricingTeamFeature3"),
+      ],
+      cta: t("pricingTeamCta"),
+      featured: false,
+    },
+  ] as const;
+
+  const footerProductLinks = [
+    { href: "#pipeline", label: t("navFeatures") },
+    { href: "#timeline", label: t("navHowItWorks") },
+    { href: "#pricing", label: t("navPricing") },
+    {
+      href: "https://github.com/abi/screenshot-to-code/blob/main/README.md",
+      label: t("footerChangelog"),
+    },
+  ] as const;
+
+  const footerResourceLinks = [
+    {
+      href: "https://github.com/abi/screenshot-to-code/wiki/Screen-Recording-to-Code",
+      label: t("footerDocumentation"),
+    },
+    {
+      href: "https://github.com/abi/screenshot-to-code/blob/main/Troubleshooting.md",
+      label: t("footerGuides"),
+    },
+    { href: "https://github.com/abi/screenshot-to-code", label: t("footerBlog") },
+    { href: "#use-cases", label: t("footerExamples") },
+  ] as const;
+
+  const footerCompanyLinks = [
+    { href: "#", label: t("footerAbout") },
+    { href: "#", label: t("footerCareers") },
+    { href: "#", label: t("footerContact") },
+    { href: "/legal/terms-of-service.html", label: t("footerPrivacyPolicy") },
+  ] as const;
+
+  const footerCommunityLinks = [
+    { href: "https://github.com/abi/screenshot-to-code", label: "GitHub" },
+    { href: "#", label: "Discord" },
+    { href: "https://twitter.com/_abi_", label: "Twitter" },
+    { href: "#", label: "YouTube" },
+  ] as const;
+
+  function handleInputCardSelect(item: (typeof inputItems)[number]) {
+    setActiveInputId(item.id);
+  }
+
+  function handleInputTabChange(tab: InputTab) {
+    setActiveInputId(defaultInputByTab[tab]);
+  }
+
   return (
     <div className="relative overflow-hidden">
       <div className="landing-grid" />
@@ -324,17 +361,17 @@ const StartPane: React.FC<Props> = ({
             <div className="lg:col-span-5 text-left flex flex-col justify-center">
               <div className="inline-flex w-fit items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50/95 px-3 py-1 text-[11px] font-semibold tracking-[0.02em] text-zinc-700 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-300">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Screenshot-to-Code Workbench
+                {t("heroWorkbenchBadge")}
               </div>
 
               <h1 className="mt-6 font-['Space_Grotesk'] text-4xl font-bold leading-[1.05] tracking-normal text-stone-950 dark:text-white sm:text-5xl lg:text-[4.5rem]">
-                Turn Designs
+                {t("heroTitleLine1")}
                 <br />
-                Into Clean Code.
+                {t("heroTitleLine2")}
               </h1>
 
               <p className="mt-6 text-sm leading-7 text-stone-600 dark:text-zinc-300 sm:text-base">
-                A visual workbench built for developers and designers. Convert screenshots, wireframes, Figma designs, and website URLs into clean, production-ready code in React, Next.js, Vue, and Tailwind CSS.
+                {t("heroWorkbenchDescription")}
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -342,7 +379,7 @@ const StartPane: React.FC<Props> = ({
                   href="#generator"
                   className="inline-flex items-center justify-center rounded-lg bg-stone-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-stone-950"
                 >
-                  Start Building
+                  {t("startBuilding")}
                   <LuArrowRight className="ml-2 h-4 w-4" />
                 </a>
                 <a
@@ -350,13 +387,13 @@ const StartPane: React.FC<Props> = ({
                   className="inline-flex items-center justify-center rounded-lg border border-stone-200 bg-white px-6 py-3 text-sm font-semibold text-stone-800 shadow-sm transition-colors hover:bg-stone-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
                 >
                   <LuPlay className="mr-2 h-4 w-4" />
-                  Watch Demo
+                  {t("watchDemo")}
                 </a>
               </div>
 
               <div className="mt-8 pt-8 border-t border-stone-200/60 dark:border-zinc-800/60">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.15em] text-stone-400 dark:text-zinc-500">
-                  Supported Tech Stack
+                  {t("supportedTechStack")}
                 </div>
                 <div className="mt-3 flex items-center gap-4 text-stone-500 dark:text-zinc-400">
                   <SiReact className="h-5 w-5" title="React" />
@@ -398,7 +435,7 @@ const StartPane: React.FC<Props> = ({
                   <div className="md:col-span-5 p-4 flex flex-col justify-between space-y-4">
                     <div>
                       <div className="text-[11px] font-semibold text-stone-600 dark:text-zinc-300 mb-2">
-                        1. Input & Bounding Boxes
+                        {t("mockInputBoundingBoxes")}
                       </div>
                       {/* Mock image screen with visual overlays */}
                       <div className="relative border border-stone-200 dark:border-zinc-800 bg-stone-100 dark:bg-zinc-900 rounded-lg overflow-hidden h-[180px] flex items-center justify-center">
@@ -409,13 +446,13 @@ const StartPane: React.FC<Props> = ({
                         />
                         {/* Highlight bounding boxes */}
                         <div className="absolute top-[10%] left-[5%] right-[5%] border border-cyan-500 bg-cyan-500/10 px-1.5 py-0.5 rounded font-mono text-[8px] font-bold text-cyan-800 dark:text-cyan-200 select-none">
-                          Header (Component)
+                          {t("mockHeaderComponent")}
                         </div>
                         <div className="absolute top-[35%] left-[10%] w-[45%] h-[35%] border border-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded font-mono text-[8px] font-bold text-amber-800 dark:text-amber-200 select-none">
-                          Hero Text Block
+                          {t("mockHeroTextBlock")}
                         </div>
                         <div className="absolute top-[40%] right-[10%] w-[35%] h-[40%] border border-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded font-mono text-[8px] font-bold text-emerald-800 dark:text-emerald-200 select-none">
-                          Stats Widget
+                          {t("mockStatsWidget")}
                         </div>
                       </div>
                     </div>
@@ -423,7 +460,7 @@ const StartPane: React.FC<Props> = ({
                     {/* Engine Parse Logs */}
                     <div className="space-y-2">
                       <div className="text-[11px] font-semibold text-stone-600 dark:text-zinc-300">
-                        2. Analyzer Output
+                        {t("mockAnalyzerOutput")}
                       </div>
                       <div className="text-[10px] font-mono bg-stone-50 dark:bg-zinc-900/60 p-2 rounded-lg border border-stone-200/60 dark:border-zinc-800/60 space-y-1.5">
                         <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
@@ -452,11 +489,11 @@ const StartPane: React.FC<Props> = ({
                       <div className="flex items-center justify-between border-b border-stone-200 dark:border-zinc-800 pb-2 mb-3">
                         <div className="flex gap-2">
                           <span className="text-[11px] font-semibold text-stone-800 dark:text-white border-b-2 border-stone-900 dark:border-white pb-2 px-1">
-                            3. Output Preview
+                            {t("mockOutputPreview")}
                           </span>
                         </div>
                         <span className="text-[9px] font-mono bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded">
-                          Live Refreshing
+                          {t("mockLiveRefreshing")}
                         </span>
                       </div>
 
@@ -492,7 +529,7 @@ const StartPane: React.FC<Props> = ({
 
                     <div>
                       <div className="text-[11px] font-semibold text-stone-600 dark:text-zinc-300 mb-2">
-                        4. Code Snippet
+                        {t("mockCodeSnippet")}
                       </div>
                       {/* Miniature Editor snippet */}
                       <div className="border border-stone-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-900/80 rounded-lg p-2.5">
@@ -507,12 +544,14 @@ const StartPane: React.FC<Props> = ({
                       </div>
                       {/* Copy button */}
                       <div className="mt-3 flex justify-between items-center">
-                        <span className="text-[10px] text-stone-400 dark:text-zinc-500">React + Tailwind code</span>
+                        <span className="text-[10px] text-stone-400 dark:text-zinc-500">
+                          {t("reactTailwindCode")}
+                        </span>
                         <a
                           href="#generator"
                           className="rounded bg-stone-950 hover:bg-stone-800 text-white dark:bg-white dark:text-stone-950 dark:hover:bg-zinc-200 text-[10px] font-semibold px-2.5 py-1.5 transition-colors"
                         >
-                          Launch Workbench
+                          {t("launchWorkbench")}
                         </a>
                       </div>
                     </div>
@@ -528,13 +567,11 @@ const StartPane: React.FC<Props> = ({
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
           <div className="text-center">
-            <p className="editorial-kicker">Start From Any Input</p>
-            <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
-              Upload a reference and generate code.
+            <h2 className="font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
+              {t("generatorTitle")}
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-              Drop in a screenshot, capture a URL, describe an interface, or
-              import existing code. This is the fastest path into the product.
+              {t("generatorDescription")}
             </p>
           </div>
 
@@ -549,6 +586,8 @@ const StartPane: React.FC<Props> = ({
                 designSystems={designSystems}
                 onAddNewDesignSystem={onAddNewDesignSystem}
                 onManageDesignSystems={onManageDesignSystems}
+                activeTab={activeInputTab}
+                onActiveTabChange={handleInputTabChange}
               />
             </Suspense>
           </div>
@@ -556,12 +595,13 @@ const StartPane: React.FC<Props> = ({
           <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-8">
             {inputItems.map((item, index) => (
               <SupportedInputCard
-                key={item.title}
-                label={item.title}
-                subtitle={item.subtitle}
+                key={item.id}
+                label={t(item.titleKey)}
+                subtitle={t(item.subtitleKey)}
                 icon={item.icon}
                 tone={index}
-                active={index === 0}
+                active={item.id === activeInputId}
+                onClick={() => handleInputCardSelect(item)}
               />
             ))}
           </div>
@@ -572,26 +612,74 @@ const StartPane: React.FC<Props> = ({
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
           <div className="studio-panel rounded-2xl p-5 sm:p-6 lg:p-8">
-            <div className="max-w-3xl">
-              <p className="editorial-kicker">How AI Understands UI</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
-                How AI Understands UI
+            <div className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
+              <div className="max-w-xl">
+                <h2 className="font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
+                  {t("howAiUnderstandsUi")}
+                </h2>
+                <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+                  {t("howAiUnderstandsUiDescription")}
+                </p>
+              </div>
+
+              <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                {pipelineItems.map((item, index) => (
+                  <PipelineCopyItem
+                    key={item.title}
+                    title={item.title}
+                    description={item.description}
+                    icon={item.icon}
+                    active={index === 2 || index === 6}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div
+              id="cases"
+              className="mt-10 scroll-mt-28 border-t border-stone-200/70 pt-10 dark:border-zinc-800/80"
+            >
+              <div
+                id="before-after"
+                className="grid gap-8 lg:grid-cols-[1.18fr_0.82fr] lg:items-center"
+              >
+                <BeforeAfterPanel />
+
+                <div className="max-w-xl lg:justify-self-end lg:pl-4">
+                  <h2 className="font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
+                    {t("beforeAfterSectionTitle")}
+                  </h2>
+                  <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+                    {t("beforeAfterSectionDescription")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="timeline"
+          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
+        >
+          <div className="studio-panel rounded-2xl p-5 sm:p-6 lg:p-8">
+            <div className="text-center">
+              <h2 className="font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
+                {t("visualToCodeSevenSteps")}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-                Advanced AI models that understand design like a human
-                developer.
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+                {t("visualToCodeSevenStepsDescription")}
               </p>
             </div>
 
-            <div className="mt-8 grid gap-3 lg:grid-cols-8">
-              {pipelineItems.map((item, index) => (
-                <PipelineStep
+            <div className="relative mt-10 grid gap-4 lg:grid-cols-7">
+              <div className="absolute left-0 right-0 top-5 hidden border-t border-dashed border-sky-300 lg:block" />
+              {workflowItems.map((item, index) => (
+                <HorizontalTimelineStep
                   key={item.title}
+                  step={String(index + 1)}
                   title={item.title}
                   description={item.description}
-                  icon={item.icon}
-                  active={index === 2 || index === 6}
-                  isLast={index === pipelineItems.length - 1}
                 />
               ))}
             </div>
@@ -599,46 +687,45 @@ const StartPane: React.FC<Props> = ({
         </section>
 
         <section
-          id="cases"
+          id="use-cases"
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
-          <div
-            id="before-after"
-            className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr] lg:items-start"
-          >
-            <div>
-              <p className="editorial-kicker">Before / After</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
-                Show that the AI understood the interface.
-              </h2>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-                This comparison frames the product around interface
-                reconstruction, not just code generation, which makes the value
-                feel more premium and more concrete.
-              </p>
-            </div>
+          <div className="flex flex-col gap-3 text-center">
+            <h2 className="text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
+              {t("realUseCases")}
+            </h2>
+            <p className="mx-auto max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
+              {t("realUseCasesDescription")}
+            </p>
+          </div>
 
-            <BeforeAfterPanel />
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {useCaseItems.map((item) => (
+              <UseCasePreviewCard
+                key={item.title}
+                title={item.title}
+                description={item.description}
+                image={item.image}
+              />
+            ))}
           </div>
         </section>
 
         <section
+          id="pricing"
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
           <div className="studio-panel rounded-2xl p-5 sm:p-6 lg:p-8">
             <div className="max-w-3xl">
-              <p className="editorial-kicker">Pricing</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
-                A familiar free-to-paid path.
+              <h2 className="font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
+                {t("pricingSectionTitle")}
               </h2>
               <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-                Visitors usually want one simple answer before they try a
-                product: can I start for free, and when would I pay for more?
+                {t("pricingSectionDescription")}
               </p>
             </div>
 
             <div
-              id="pricing"
               className="mt-8 grid gap-4 xl:grid-cols-3"
             >
               {pricingPlans.map((plan) => (
@@ -657,145 +744,51 @@ const StartPane: React.FC<Props> = ({
           </div>
         </section>
 
-        <section id="stack" className="section-divider mt-12 scroll-mt-28 lg:mt-14">
-          <div className="studio-panel rounded-2xl p-5 sm:p-6 lg:p-8">
-            <div className="text-center">
-              <p className="editorial-kicker">Built for Modern Developers</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
-                Built for Modern Developers
-              </h2>
-              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300">
-                Export to your favorite frameworks and technologies.
-              </p>
-            </div>
-
-            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-              {stackItems.map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center justify-center gap-2 rounded-[1.15rem] border border-stone-200/80 bg-white px-4 py-4 text-sm font-medium text-stone-700 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300"
-                >
-                  <item.icon className="h-5 w-5 shrink-0" />
-                  <span>{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="timeline"
-          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
-        >
-          <div className="studio-panel rounded-2xl p-5 sm:p-6 lg:p-8">
-            <div className="text-center">
-              <p className="editorial-kicker">From Visual to Code in 7 Steps</p>
-              <h2 className="mt-3 font-['Space_Grotesk'] text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
-                From Visual to Code in 7 Steps
-              </h2>
-              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-                Simple workflow. Powerful results.
-              </p>
-            </div>
-
-            <div className="relative mt-10 grid gap-4 lg:grid-cols-7">
-              <div className="absolute left-0 right-0 top-5 hidden border-t border-dashed border-sky-300 lg:block" />
-              {workflowItems.map((item, index) => (
-                <HorizontalTimelineStep
-                  key={item}
-                  step={String(index + 1)}
-                  title={item}
-                  description={
-                    [
-                      "Upload any visual input",
-                      "AI analyzes layout, content, styles",
-                      "AI understands UI like a developer",
-                      "Generate clean, structured code",
-                      "Live preview in real-time",
-                      "Fine-tune and customize",
-                      "Export and deploy your project",
-                    ][index]
-                  }
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="use-cases"
-          className="section-divider mt-12 scroll-mt-28 lg:mt-14"
-        >
-          <div className="flex flex-col gap-3 text-center">
-            <p className="editorial-kicker">Real Use Cases</p>
-            <h2 className="text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
-              Real Use Cases
-            </h2>
-            <p className="mx-auto max-w-2xl text-sm leading-6 text-stone-600 dark:text-zinc-300 sm:text-base">
-              See how developers and teams use VisualToCode.
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {useCaseItems.map((item) => (
-              <UseCasePreviewCard
-                key={item.title}
-                title={item.title}
-                description={item.description}
-                image={item.image}
-              />
-            ))}
-          </div>
-        </section>
-
         <section
           id="faq"
           className="section-divider mt-12 scroll-mt-28 lg:mt-14"
         >
           <div className="text-center">
-            <p className="editorial-kicker">Frequently Asked Questions</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
-              Frequently Asked Questions
+            <h2 className="text-3xl font-semibold tracking-normal text-stone-950 dark:text-white sm:text-4xl">
+              {t("frequentlyAskedQuestions")}
             </h2>
           </div>
 
-          <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,244,0.88))] p-4 shadow-[0_28px_70px_rgba(18,22,33,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-[linear-gradient(180deg,rgba(9,9,11,0.94),rgba(24,24,27,0.84))] sm:p-6">
+          <div className="mt-8 rounded-2xl border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,244,0.88))] p-4 shadow-[0_28px_70px_rgba(18,22,33,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-[linear-gradient(180deg,rgba(9,9,11,0.94),rgba(24,24,27,0.84))] sm:p-6">
+            <div className="grid gap-4 lg:grid-cols-2">
               <Accordion type="single" collapsible className="w-full">
                 <FaqItem
                   value="item-1"
-                  question="How accurate is the generated code?"
-                  answer="The product is strongest as a fast first draft. Clean visual hierarchy and clearer references usually lead to a better initial result and less cleanup afterward."
+                  question={t("faqAccuracyQuestion")}
+                  answer={t("faqAccuracyAnswer")}
                 />
                 <FaqItem
                   value="item-2"
-                  question="Which frameworks are supported?"
-                  answer="The current product supports common front-end targets such as React, HTML, Vue, and Tailwind-oriented workflows, with the homepage now positioning the brand for broader stack coverage."
+                  question={t("faqFrameworksQuestion")}
+                  answer={t("faqFrameworksAnswer")}
                 />
                 <FaqItem
                   value="item-3"
-                  question="Can I edit generated code?"
-                  answer="Yes. The workflow is built around previewing, iterating, and refining the output after generation instead of treating the first result like a frozen export."
+                  question={t("faqEditGeneratedQuestion")}
+                  answer={t("faqEditGeneratedAnswer")}
                 />
               </Accordion>
-            </div>
 
-            <div className="rounded-2xl border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,244,0.88))] p-4 shadow-[0_28px_70px_rgba(18,22,33,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-[linear-gradient(180deg,rgba(9,9,11,0.94),rgba(24,24,27,0.84))] sm:p-6">
               <Accordion type="single" collapsible className="w-full">
                 <FaqItem
                   value="item-4"
-                  question="Does it support responsive layouts?"
-                  answer="Responsive structure is part of the generation pipeline, and the new landing page calls that out directly as one of the core stages of understanding UI."
+                  question={t("faqResponsiveQuestion")}
+                  answer={t("faqResponsiveAnswer")}
                 />
                 <FaqItem
                   value="item-5"
-                  question="Is Tailwind CSS supported?"
-                  answer="Yes. Tailwind remains one of the core output paths and is shown directly in the workspace and code stack sections."
+                  question={t("faqTailwindQuestion")}
+                  answer={t("faqTailwindAnswer")}
                 />
                 <FaqItem
                   value="item-6"
-                  question="Can I convert existing websites?"
-                  answer="Yes. You can start from screenshots or a live website URL, which makes the workflow useful for teardowns, redesigns, and structure cloning."
+                  question={t("faqExistingWebsitesQuestion")}
+                  answer={t("faqExistingWebsitesAnswer")}
                 />
               </Accordion>
             </div>
@@ -808,22 +801,24 @@ const StartPane: React.FC<Props> = ({
           ) : null}
         </section>
 
-        <footer className="mt-12 rounded-2xl bg-stone-950 px-6 py-8 text-white shadow-[0_30px_90px_rgba(17,17,17,0.16)] dark:border dark:border-zinc-800 sm:px-8">
+      </section>
+
+      <footer className="mt-12 w-full bg-stone-950 text-white shadow-[0_30px_90px_rgba(17,17,17,0.16)] dark:border-t dark:border-zinc-800">
+        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_2.7fr_1.2fr]">
             <div className="max-w-md">
               <div className="flex items-center gap-2 text-sm font-semibold text-white">
                 <span className="flex h-5 w-5 items-center justify-center">
                   <img
                     src="/favicon/log-square.png"
-                    alt="VisualToCode"
+                    alt={t("imageToCodeWebsite")}
                     className="h-4 w-4 object-contain"
                   />
                 </span>
-                <span>VisualToCode</span>
+                <span>{t("imageToCodeWebsite")}</span>
               </div>
               <p className="mt-3 text-sm leading-6 text-stone-300">
-                Turn any visual into production-ready code. Built for
-                developers, designers, and fast-moving teams.
+                {t("footerVisualToCodeDescription")}
               </p>
               <div className="mt-5 flex items-center gap-4 text-stone-400">
                 <a href="https://github.com/abi/screenshot-to-code" className="transition-colors hover:text-white">
@@ -842,22 +837,22 @@ const StartPane: React.FC<Props> = ({
             </div>
 
             <div className="grid gap-6 sm:grid-cols-4">
-              <FooterColumn title="Product" links={footerProductLinks} />
-              <FooterColumn title="Resources" links={footerResourceLinks} />
-              <FooterColumn title="Company" links={footerCompanyLinks} />
-              <FooterColumn title="Community" links={footerCommunityLinks} />
+              <FooterColumn title={t("footerProduct")} links={footerProductLinks} />
+              <FooterColumn title={t("footerResources")} links={footerResourceLinks} />
+              <FooterColumn title={t("footerCompany")} links={footerCompanyLinks} />
+              <FooterColumn title={t("footerCommunity")} links={footerCommunityLinks} />
             </div>
 
             <div>
               <div className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">
-                Stay Updated
+                {t("stayUpdated")}
               </div>
               <p className="mt-3 text-sm text-stone-300">
-                Get the latest updates and new features.
+                {t("stayUpdatedDescription")}
               </p>
               <div className="mt-4 flex items-center overflow-hidden rounded-xl border border-white/10 bg-white/5">
                 <div className="flex-1 px-4 py-3 text-sm text-stone-400">
-                  Enter your email
+                  {t("enterYourEmail")}
                 </div>
                 <button className="border-l border-white/10 px-4 py-3 text-sm font-semibold text-white">
                   <LuChevronRight className="h-4 w-4" />
@@ -866,10 +861,10 @@ const StartPane: React.FC<Props> = ({
             </div>
           </div>
           <div className="mt-8 border-t border-white/10 pt-5 text-xs text-stone-400">
-            © 2024 VisualToCode. All rights reserved.
+            {t("copyrightVisualToCode")}
           </div>
-        </footer>
-      </section>
+        </div>
+      </footer>
     </div>
   );
 };
@@ -978,12 +973,14 @@ function SupportedInputCard({
   icon: Icon,
   tone,
   active = false,
+  onClick,
 }: {
   label: string;
   subtitle: string;
   icon: React.ComponentType<{ className?: string }>;
   tone: number;
   active?: boolean;
+  onClick: () => void;
 }) {
   const tones = [
     "text-sky-600 bg-sky-50 border-sky-100 dark:bg-sky-950/30 dark:border-sky-900/40 dark:text-sky-300",
@@ -997,8 +994,11 @@ function SupportedInputCard({
   ];
 
   return (
-    <div
-      className={`flex min-h-[8.5rem] flex-col items-center justify-center rounded-xl border p-4 text-center transition-transform hover:-translate-y-0.5 ${
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`flex min-h-[8.5rem] w-full flex-col items-center justify-center rounded-xl border p-4 text-center transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 dark:focus-visible:ring-cyan-700 dark:focus-visible:ring-offset-zinc-950 ${
         active
           ? "border-sky-200 bg-white shadow-[0_18px_40px_rgba(14,165,233,0.12)] dark:border-sky-900/50 dark:bg-zinc-950"
           : "border-stone-200/80 bg-white/78 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/70"
@@ -1015,47 +1015,48 @@ function SupportedInputCard({
       <div className="mt-1 text-xs leading-5 text-stone-500 dark:text-zinc-400">
         {subtitle}
       </div>
-    </div>
+    </button>
   );
 }
 
 
 
-function PipelineStep({
+function PipelineCopyItem({
   title,
   description,
   icon: Icon,
   active = false,
-  isLast = false,
 }: {
   title: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
   active?: boolean;
-  isLast?: boolean;
 }) {
   return (
-    <div className="relative flex flex-col items-center text-center">
-      {!isLast ? (
-        <div className="absolute left-[calc(50%+2rem)] top-8 hidden h-px w-[calc(100%-2.25rem)] bg-stone-200 lg:block dark:bg-zinc-800">
-          <LuArrowRight className="absolute -right-1.5 -top-2 h-4 w-4 text-sky-500" />
-        </div>
-      ) : null}
+    <div
+      className={`flex items-start gap-3 border-l pl-4 ${
+        active
+          ? "border-sky-300 dark:border-sky-700"
+          : "border-stone-200 dark:border-zinc-800"
+      }`}
+    >
       <div
-        className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full border bg-white shadow-sm dark:bg-zinc-950 ${
+        className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center ${
           active
-            ? "border-sky-200 text-sky-600 shadow-[0_0_0_8px_rgba(14,165,233,0.08)] dark:border-sky-900/50 dark:text-sky-300"
-            : "border-stone-200 text-sky-500 dark:border-zinc-800 dark:text-sky-300"
+            ? "text-sky-600 dark:text-sky-300"
+            : "text-sky-500 dark:text-sky-400"
         }`}
       >
-        <Icon className="h-6 w-6" />
+        <Icon className="h-4 w-4" />
       </div>
-      <div className="mt-4 text-sm font-semibold text-stone-950 dark:text-white">
-        {title}
+      <div>
+        <div className="text-base font-semibold text-stone-950 dark:text-white">
+          {title}
+        </div>
+        <p className="mt-1 text-sm leading-6 text-stone-600 dark:text-zinc-400">
+          {description}
+        </p>
       </div>
-      <p className="mt-2 max-w-[8.5rem] text-xs leading-5 text-stone-500 dark:text-zinc-400">
-        {description}
-      </p>
     </div>
   );
 }

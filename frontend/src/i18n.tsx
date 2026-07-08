@@ -7,9 +7,10 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from "react";
-import { usePersistedState } from "./hooks/usePersistedState";
 import {
+  getStoredLanguage,
   Language,
   LANGUAGE_STORAGE_KEY,
   translate,
@@ -28,13 +29,11 @@ interface I18nContextValue {
 const I18nContext = createContext<I18nContextValue | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = usePersistedState<Language>(
-    "en",
-    LANGUAGE_STORAGE_KEY
-  );
+  const [language, setLanguage] = useState<Language>(() => getStoredLanguage());
 
   useEffect(() => {
     document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, JSON.stringify(language));
   }, [language]);
 
   const value = useMemo<I18nContextValue>(

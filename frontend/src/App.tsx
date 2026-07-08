@@ -913,7 +913,7 @@ function App() {
               </div>
               <div>
                 <div className="text-sm font-semibold text-stone-900 dark:text-zinc-100">
-                  VisualToCode
+                  {t("imageToCodeWebsite")}
                 </div>
               </div>
             </button>
@@ -923,37 +923,25 @@ function App() {
                 href="#generator"
                 className="transition-colors hover:text-stone-950 dark:hover:text-white"
               >
-                Product
-              </a>
-              <a
-                href="#pipeline"
-                className="transition-colors hover:text-stone-950 dark:hover:text-white"
-              >
-                Features
+                {t("navProduct")}
               </a>
               <a
                 href="#use-cases"
                 className="transition-colors hover:text-stone-950 dark:hover:text-white"
               >
-                Use Cases
+                {t("navExamples")}
               </a>
               <a
                 href="#pricing"
                 className="transition-colors hover:text-stone-950 dark:hover:text-white"
               >
-                Pricing
+                {t("navPricing")}
               </a>
               <a
-                href="https://github.com/abi/screenshot-to-code/wiki/Screen-Recording-to-Code"
+                href="#faq"
                 className="transition-colors hover:text-stone-950 dark:hover:text-white"
               >
-                Docs
-              </a>
-              <a
-                href="https://github.com/abi/screenshot-to-code/blob/main/README.md"
-                className="transition-colors hover:text-stone-950 dark:hover:text-white"
-              >
-                Changelog
+                {t("navFaq")}
               </a>
             </div>
 
@@ -961,16 +949,10 @@ function App() {
               <LanguageToggle />
               <button
                 onClick={() => setIsSettingsOpen(true)}
-                className="rounded-full px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                className="rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-stone-800 dark:bg-white dark:text-stone-950 dark:hover:bg-zinc-200"
               >
-                Sign in
+                {t("signIn")}
               </button>
-              <a
-                href="#generator"
-                className="hidden rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white sm:inline-flex dark:bg-white dark:text-stone-950"
-              >
-                Start Building
-              </a>
             </div>
           </div>
         </header>

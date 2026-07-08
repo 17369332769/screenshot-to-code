@@ -17,6 +17,8 @@ function LanguageToggle({ compact = false }: LanguageToggleProps) {
     >
       <button
         type="button"
+        aria-pressed={language === "en"}
+        disabled={language === "en"}
         onClick={() => setLanguage("en")}
         className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
           language === "en"
@@ -28,6 +30,8 @@ function LanguageToggle({ compact = false }: LanguageToggleProps) {
       </button>
       <button
         type="button"
+        aria-pressed={language === "zh"}
+        disabled={language === "zh"}
         onClick={() => setLanguage("zh")}
         className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
           language === "zh"

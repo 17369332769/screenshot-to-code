@@ -285,48 +285,50 @@ function UploadTab({ doCreate, stack, setStack, designSystem }: Props) {
   return (
     <div className="flex flex-col items-center gap-6">
       {screenRecorderState === ScreenRecorderState.INITIAL && !hasUploadedFile && (
-        <div
-          {...getRootProps({ className: `${dropzoneClassName} relative overflow-hidden` })}
-          data-testid="upload-dropzone"
-        >
-          <input data-testid="upload-input" {...getInputProps()} />
-          <div className="relative flex flex-col items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-stone-950 text-white shadow-sm dark:bg-white dark:text-stone-950">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-current"
+        <div className="w-full">
+          <div
+            {...getRootProps({ className: `${dropzoneClassName} relative overflow-hidden` })}
+            data-testid="upload-dropzone"
+          >
+            <input data-testid="upload-input" {...getInputProps()} />
+            <div className="relative flex flex-col items-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-stone-950 text-white shadow-sm dark:bg-white dark:text-stone-950">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-current"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+              </div>
+              <div className="text-center">
+                <p className="font-['Space_Grotesk'] text-2xl font-semibold tracking-normal text-stone-900 dark:text-white">
+                  {t("dropUiScreenshot")}
+                </p>
+                <p className="mt-2 max-w-md text-sm leading-7 text-stone-600 dark:text-zinc-300">
+                  {t("uploadLimitDescription", { count: MAX_FILES })}
+                </p>
+              </div>
+              <p className="mt-1 text-xs uppercase tracking-[0.22em] text-stone-400 dark:text-zinc-500">
+                {t("uploadSupportTypes")}
+              </p>
+              <button
+                type="button"
+                onClick={open}
+                className="rounded-lg bg-stone-950 px-5 py-2.5 text-sm font-medium text-white transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-stone-950"
               >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
+                {t("browseFiles")}
+              </button>
             </div>
-            <div className="text-center">
-              <p className="font-['Space_Grotesk'] text-2xl font-semibold tracking-normal text-stone-900 dark:text-white">
-                {t("dropUiScreenshot")}
-              </p>
-              <p className="mt-2 max-w-md text-sm leading-7 text-stone-600 dark:text-zinc-300">
-                {t("uploadLimitDescription", { count: MAX_FILES })}
-              </p>
-            </div>
-            <p className="mt-1 text-xs uppercase tracking-[0.22em] text-stone-400 dark:text-zinc-500">
-              {t("uploadSupportTypes")}
-            </p>
-            <button
-              type="button"
-              onClick={open}
-              className="rounded-lg bg-stone-950 px-5 py-2.5 text-sm font-medium text-white transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-stone-950"
-            >
-              {t("browseFiles")}
-            </button>
           </div>
         </div>
       )}

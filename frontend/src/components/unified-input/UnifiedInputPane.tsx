@@ -23,9 +23,11 @@ interface Props {
   designSystems: DesignSystem[];
   onAddNewDesignSystem: () => void;
   onManageDesignSystems: () => void;
+  activeTab?: InputTab;
+  onActiveTabChange?: (tab: InputTab) => void;
 }
 
-type InputTab = "upload" | "url" | "text" | "import";
+export type InputTab = "upload" | "url" | "text" | "import";
 
 function InputTabFallback({ label }: { label: string }) {
   return (
@@ -44,9 +46,18 @@ function UnifiedInputPane({
   designSystems,
   onAddNewDesignSystem,
   onManageDesignSystems,
+  activeTab: controlledActiveTab,
+  onActiveTabChange,
 }: Props) {
   const { t } = useI18n();
-  const [activeTab, setActiveTab] = useState<InputTab>("upload");
+  const [uncontrolledActiveTab, setUncontrolledActiveTab] =
+    useState<InputTab>("upload");
+  const activeTab = controlledActiveTab ?? uncontrolledActiveTab;
+
+  function setActiveTab(tab: InputTab) {
+    setUncontrolledActiveTab(tab);
+    onActiveTabChange?.(tab);
+  }
 
   function setStack(stack: Stack) {
     setSettings((prev: Settings) => ({
