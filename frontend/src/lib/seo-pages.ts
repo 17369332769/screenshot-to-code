@@ -36,9 +36,9 @@ export interface SeoLandingPageData {
 export const seoLandingPages: SeoLandingPageData[] = [
   {
     path: "/screenshot-to-react",
-    title: "Screenshot to React | Convert UI screenshots into editable React code",
+    title: "Screenshot to React | Generate Editable React Code from UI Images",
     description:
-      "Turn screenshots, mockups, and reference UIs into editable React front-end code with live preview, iteration, and export-ready structure.",
+      "Convert screenshots, mockups, and UI references into editable React frontend drafts with live preview, Tailwind-friendly structure, and iterative AI editing.",
     eyebrow: "React workflow",
     headline: "Convert screenshots into React code your team can keep editing.",
     intro:
@@ -92,9 +92,9 @@ export const seoLandingPages: SeoLandingPageData[] = [
   },
   {
     path: "/website-screenshot-to-html",
-    title: "Website Screenshot to HTML | Turn website references into editable HTML",
+    title: "Website Screenshot to HTML | Convert Web References to Editable HTML",
     description:
-      "Convert website screenshots and landing page references into editable HTML front-end drafts you can preview, refine, and ship faster.",
+      "Turn website screenshots, landing pages, and public URL references into editable HTML frontend drafts you can preview, refine, and export.",
     eyebrow: "HTML workflow",
     headline: "Turn website screenshots into HTML you can quickly revise and ship.",
     intro:
@@ -148,9 +148,9 @@ export const seoLandingPages: SeoLandingPageData[] = [
   },
   {
     path: "/figma-screenshot-to-code",
-    title: "Figma Screenshot to Code | Move from Figma screens to editable code",
+    title: "Figma Screenshot to Code | Convert Figma Frames to Frontend Code",
     description:
-      "Start from Figma-exported screenshots or reference screens and turn them into editable front-end code with live preview and follow-up iteration.",
+      "Export Figma frames as screenshots and turn them into editable React, HTML, Vue, or Tailwind frontend drafts with live preview and iteration.",
     eyebrow: "Design handoff",
     headline: "Use Figma screenshots as the starting point for editable front-end code.",
     intro:
