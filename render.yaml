@@ -14,7 +14,7 @@ services:
       - key: IS_PROD
         value: "true"
       - key: ALLOWED_CORS_ORIGINS
-        sync: false
+        value: https://imagetocode.pro,https://www.imagetocode.pro
       - key: SCREENSHOT_TO_CODE_DATA_DIR
         value: /tmp/screenshot-to-code
       - key: LOCAL_ASSET_DIR
@@ -52,9 +52,9 @@ services:
     pullRequestPreviewsEnabled: false
     envVars:
       - key: VITE_HTTP_BACKEND_URL
-        sync: false
+        value: https://api.imagetocode.pro
       - key: VITE_WS_BACKEND_URL
-        sync: false
+        value: wss://api.imagetocode.pro
       - key: VITE_IS_DEPLOYED
         value: "true"
       - key: VITE_PICO_BACKEND_FORM_SECRET

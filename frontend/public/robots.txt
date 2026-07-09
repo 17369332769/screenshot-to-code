@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /evals
 
-Sitemap: https://screenshottocode.com/sitemap.xml
+Sitemap: https://imagetocode.pro/sitemap.xml

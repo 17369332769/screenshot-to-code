@@ -493,15 +493,15 @@ const translations = {
     websiteBuilderFromScreenshots: "Website builder from screenshots",
     launchGenerator: "Launch Generator",
     noCurrentVersion:
-      "No current version set. Please contact support via chat or Github.",
+      "No current version set. Please contact support via chat or GitHub.",
     onlyFirstVersionRegenerate: "Only the first version can be regenerated.",
     noUpdateInstructions:
       "Please include some instructions for AI on what to update.",
     noCurrentVersionIssue:
-      "No current version set. Contact support or open a Github issue.",
+      "No current version set. Contact support or open a GitHub issue.",
     backToEditor: "Back to editor",
     onboardingNote:
-      "To use Image to Code, buy some credits (100 generations for $36) or use your own OpenAI API key with GPT4 vision access. Follow these instructions to get yourself a key, and paste it in the Settings dialog (gear icon above). Your key is only stored in your browser. Never stored on our servers.",
+      "To use Image to Code, buy some credits (100 generations for $36) or use your own OpenAI API key with GPT-4 vision access. Follow these instructions to get yourself a key, and paste it in the Settings dialog (gear icon above). Your key is only stored in your browser. Never stored on our servers.",
     onboardingBuyCredits: "buy some credits (100 generations for $36)",
     onboardingFollowInstructions:
       "Follow these instructions to get yourself a key.",
@@ -578,7 +578,7 @@ const translations = {
     couldNotStartRecording: "Could not start screen recording",
     recordingMissing: "Screen recording does not exist. Please try again.",
     generationError:
-      "Error generating code. Check the Developer Console AND the backend logs for details. Feel free to open a Github issue.",
+      "Error generating code. Check the Developer Console AND the backend logs for details. Feel free to open a GitHub issue.",
     generationCancelled: "Code generation cancelled",
   },
   zh: {
@@ -1072,13 +1072,13 @@ const translations = {
     chat: "对话",
     websiteBuilderFromScreenshots: "从截图生成网站",
     launchGenerator: "启动生成器",
-    noCurrentVersion: "当前没有可用版本，请通过聊天或 Github 联系支持。",
+    noCurrentVersion: "当前没有可用版本，请通过聊天或 GitHub 联系支持。",
     onlyFirstVersionRegenerate: "只有第一个版本可以重新生成。",
     noUpdateInstructions: "请告诉 AI 你希望更新什么。",
-    noCurrentVersionIssue: "当前没有可用版本，请联系支持或提交 Github issue。",
+    noCurrentVersionIssue: "当前没有可用版本，请联系支持或提交 GitHub issue。",
     backToEditor: "返回编辑器",
     onboardingNote:
-      "要使用 Image to Code，你可以购买额度（100 次生成 36 美元），或者使用你自己的、已开通 GPT4 vision 的 OpenAI API Key。请按照这些说明获取 Key，然后粘贴到设置对话框（上方齿轮图标）中。你的 Key 仅保存在浏览器中，不会存到我们的服务器。",
+      "要使用 Image to Code，你可以购买额度（100 次生成 36 美元），或者使用你自己的、已开通 GPT-4 vision 的 OpenAI API Key。请按照这些说明获取 Key，然后粘贴到设置对话框（上方齿轮图标）中。你的 Key 仅保存在浏览器中，不会存到我们的服务器。",
     onboardingBuyCredits: "购买额度（100 次生成 36 美元）",
     onboardingFollowInstructions: "按这些说明获取你的 Key。",
     desktop: "桌面",
@@ -1150,7 +1150,7 @@ const translations = {
     couldNotStartRecording: "无法开始录屏",
     recordingMissing: "录屏不存在，请重试。",
     generationError:
-      "生成代码时出错。请查看开发者控制台和后端日志，也欢迎提交 Github issue。",
+      "生成代码时出错。请查看开发者控制台和后端日志，也欢迎提交 GitHub issue。",
     generationCancelled: "代码生成已取消",
   },
 } as const;

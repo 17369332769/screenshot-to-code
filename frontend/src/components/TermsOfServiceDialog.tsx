@@ -69,7 +69,7 @@ const TermsOfServiceDialog: React.FC<{
               target="_blank"
               className="underline"
             >
-              Download the code and get started on Github.
+              Download the code and get started on GitHub.
             </a>
           </p>
         </div>

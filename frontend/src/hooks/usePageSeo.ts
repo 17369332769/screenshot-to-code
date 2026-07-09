@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useI18n } from "../i18n";
 import { seoLandingPagesByPath } from "../lib/seo-pages";
 
-const SITE_URL = "https://screenshottocode.com";
+const SITE_URL = "https://imagetocode.pro";
 const SITE_NAME = "Image to Code";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/brand/twitter-summary-card.png`;
 const DEFAULT_OG_IMAGE_ALT =
